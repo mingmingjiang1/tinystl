@@ -13,87 +13,9 @@
 
 using namespace ::std;
 
-void printStudent(string name, int age)
-{
-  cout << name[0] << "more concise" << endl;
-}
-
-template <typename T, typename U>
-void printStudent(T name, U age)
-{
-  cout << age << "less concise" << endl;
-}
-
-template <typename T>
-void printStudent(T name, int age)
-{
-  cout << name[0] << endl;
-}
-
-/**
- * @brief Vector Class
- *
- */
-
-// ====== 测试一：函数模板针对特殊数据类型具体化 ======
-struct Node
-{
-  int val;
-  Node *next;
-};
-
-// 函数模板
-template <typename T>
-void tfunc(const T &t)
-{
-  cout << "template: " << t << endl;
-}
-
-// 函数模板指针
-template <typename T>
-void tfunc(const T *t)
-{
-  cout << "template pointer: " << t << endl;
-}
-
-// 函数模板具体化(用于处理Node类型数据)
-template <>
-void tfunc<Node>(const Node &node)
-{
-  cout << "template<Node>: " << node.val << endl;
-}
-
-// 函数模板具体化(用于处理int类型数据)
-template <>
-void tfunc<int>(const int &n)
-{
-  cout << "template<int>: " << n << endl;
-}
-
-// 普通函数
-void tfunc(const int &n) { cout << "no template tfunc(): " << n << endl; }
-
-template <>
-void printStudent(String name, int age)
-{
-  cout << "string" << endl;
-}
 
 int main()
 {
-
-  printStudent("jmm", 12);
-  printStudent("jmm", "12");
-  // String s("heelo"); // 字面量不能直接给const *,因为字面量是const char*;
-  double d = 2.1;
-  tfunc(d); // 函数模板未具体化double类型函数，调用模板
-  tfunc(&d);
-  Node node{2, nullptr};
-  tfunc(node); // 函数模板具体化Node类型函数，调用函数模板的具体化
-
-  int n = 2;
-  tfunc(n); // 函数模板具体化int类型函数，也存在普通函数，调用普通函数
-
   Vector<String> vecs(4);
   // string s;
   // for (int i = 0; i < 10; i++) {
@@ -226,7 +148,7 @@ int main()
     cout << ele << " ";
   }
 
-  cout << get1<0>(arr1) << endl;
+  cout << get<0>(arr1) << endl;
   ;
 
   //   Tuple<int, double, std::string> mm;

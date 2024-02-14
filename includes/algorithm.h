@@ -22,7 +22,7 @@ Tuple<Types &...> tie(Types &...args) noexcept
 
 // Array<int, 2UL> 
 template <size_t id, size_t idx, typename Tp>
-Tp get1(Array<Tp, idx> &arr)
+Tp get(Array<Tp, idx> &arr)
 {
     return arr[id];
 }
