@@ -1,0 +1,275 @@
+#ifndef VECTOR
+#define VECTOR
+
+#include "iterator.h"
+#include "iterator_traits.h"
+#include <iostream>
+
+template <typename T>
+class Vector
+{
+public:
+  typedef T value_type; // alias for T
+  typedef Random_Access_Iterator<T, Vector> random_access_iterator;
+  typedef Reverse_Iterator<T *> reverse_iterator;
+  // typedef Iterator_Traits<T*> __traits_type;
+  Vector(size_t size)
+  {
+    _size = size;
+    _capacity = size;
+    m_data = new value_type[size];
+  }
+  Vector(size_t size, T value)
+  {
+    size = size;
+    _capacity = size;
+    m_data = new value_type[size];
+    for (int i = 0; i < size; i++)
+    {
+      m_data[i] = value;
+    }
+  }
+  Vector() : m_data(nullptr), _size(0), _capacity(0) {}
+  Vector(const Vector &vec);
+  ~Vector();
+  Vector &operator=(const value_type &vec);
+
+  // 移动赋值，为了拿到右值的控制权
+  Vector &operator=(const value_type &&vec)
+  {
+    if (&vec == this)
+    {
+      return *this;
+    }
+    // delete[] m_data;
+    // _size = vec.size;
+    // _capacity = vec.capacity;
+    m_data = vec.m_data;
+    _capacity = vec._capacity;
+    _size = vec._size;
+  }
+
+  void push_back(const value_type &vec)
+  {
+    if (_capacity == 0)
+    {
+      _capacity = 1;
+      m_data = new T[_capacity];
+    }
+    else if (_size == _capacity)
+    {
+      T *new_data = new T[_capacity * 2];
+      for (int i = 0; i < _size; i++)
+      {
+        new_data[i] = m_data[i];
+      }
+      delete[] m_data;
+      m_data = new_data;
+      _capacity *= 2;
+    }
+    m_data[_size++] = vec;
+  }
+  void pop_back() { --_size; }
+  void erase(const random_access_iterator it)
+  {
+    if (it >= m_data + _size)
+    {
+      return;
+    }
+    int index = it - begin();
+    for (int i = index; i < _size; i++)
+    {
+      m_data[i] = m_data[i + 1];
+    }
+    --_size;
+  }
+
+  // void insert(random_access_iterator it, value_type &&val) {
+  //   // value_type tmp = move(val);
+  //   const size_t index = it - begin();
+  //   if (0 == _capacity) {
+  //     // 不涉及shallow copy
+  //     _capacity = 1;
+  //     m_data = new value_type[1];
+  //     m_data[0] = move(val);
+  //   } else if (_size + 1 > _capacity) {
+  //     _capacity *= 2;
+  //     value_type *temp = new value_type[_capacity];
+  //     for (int i = 0; i < index; ++i) {
+  //       temp[i] = m_data[i];
+  //     }
+  //     temp[index] = val;
+  //     for (int i = index; i < _size; i++) {
+  //       temp[i + 1] = m_data[i];
+  //     }
+  //     delete[] m_data;
+  //     m_data = temp;
+  //   } else {
+  //     // shallow copy
+  //     for (int i = _size - 1; i >= index; --i) {
+  //       m_data[i + 1] = m_data[i]; // move semantics
+  //     }
+  //     m_data[index] = val;
+  //   }
+  //   ++_size;
+  // }
+
+  void rinser(reverse_iterator it, value_type val)
+  {
+    const size_t index = it - rbegin();
+  }
+
+  reverse_iterator rbegin()
+  {
+    return reverse_iterator(m_data + _size);
+  }
+
+  void insert(random_access_iterator it, value_type val)
+  {
+    // int index = it - m_data;
+    const size_t index = it - begin();
+    if (0 == _capacity)
+    {
+      _capacity = 1;
+      m_data = new value_type[1];
+      m_data[0] = val;
+    }
+    else if (_size + 1 > _capacity)
+    {
+      _capacity *= 2;
+      value_type *temp = new value_type[_capacity];
+      for (int i = 0; i < index; ++i)
+      {
+        std::cout << m_data[i] << _size << i << "insert5555" << std::endl;
+        temp[i] = m_data[i];
+      }
+      temp[index] = val;
+      for (int i = index; i < _size; i++)
+      {
+        std::cout << m_data[i] << _size << i << "insert" << std::endl;
+        temp[i + 1] = m_data[i];
+      }
+      delete[] m_data;
+      m_data = temp;
+    }
+    else
+    {
+      std::cout << index << "index" << std::endl;
+      for (int i = _size - 1; i >= index; --i)
+      {
+        // std::cout << m_data[i] << _size << i << "insert" << std::endl;
+        m_data[i + 1] = m_data[i];
+      }
+      m_data[index] = val;
+    }
+    ++_size;
+  }
+
+  value_type front() { return m_data[0]; }
+
+  value_type back() { return m_data[_size - 1]; }
+
+  random_access_iterator begin() _GLIBCXX_NOEXCEPT { return random_access_iterator(m_data); }
+
+  random_access_iterator end() _GLIBCXX_NOEXCEPT
+  {
+
+    return random_access_iterator(m_data + _size);
+  }
+
+  size_t capacaity() { return _capacity; }
+
+  bool empty() { return _size == 0; }
+
+  size_t size() { return _size; }
+
+
+  value_type &operator[](int index)
+  {
+    // if (m_data[index] != )
+    // {
+    // 说明是写入
+    // ++_size;
+    // }
+    // 说明是读取
+    // Proxy tmp = Proxy(this, index);
+    return m_data[index];
+  }
+
+  bool operator==(value_type &vec)
+  {
+    if (_size != vec._size)
+      return false;
+    for (int i = 0; i < _size; ++i)
+    {
+      if (m_data[i] != vec._data[i])
+        return false;
+    }
+    return true;
+  }
+
+private:
+  size_t _size;
+  size_t _capacity;
+  T *m_data;
+};
+
+/*
+  初始化列表的初始化顺序并不是由构造函数后的变量顺序决定的，而是由类中成员变量的定义顺序决定的
+ */
+
+// template <typename T> Vector<T>::Vector(int size) {
+//   size = size;
+//   capacity = size;
+//   m_data = new Vector::value_type[size];
+// }
+
+template <typename T>
+Vector<T>::~Vector()
+{
+  if (m_data)
+  {
+    delete[] m_data;
+    m_data = nullptr;
+    _size = 0;
+    _capacity = 0;
+  }
+}
+
+// deep copy
+template <typename T>
+Vector<T>::Vector(const Vector &vec)
+{
+  _size = vec.size;
+  _capacity = vec.capacity;
+  m_data = new Vector::value_type[_size];
+  for (int i = 0; i < _size; i++)
+  {
+    m_data[i] = vec.m_data[i];
+  }
+}
+
+/*
+赋值运算符重载函数时将传入参数的所有信息拷贝一份。
+针对vector而言，赋值运算符重载函数具体实现的是vec1 =
+ve2;，按函数调用来理解就是vec1.operator=(vec2)
+ */
+
+template <typename T>
+Vector<T> &Vector<T>::operator=(const Vector::value_type &vec)
+{
+  if (&vec == this)
+  {
+    return *this;
+  }
+  delete[] m_data;
+  _size = vec.size;
+  _capacity = vec.capacity;
+  m_data = new Vector::value_type[_size];
+  for (int i = 0; i < _size; i++)
+  {
+    m_data[i] = vec.m_data;
+  }
+}
+
+#endif

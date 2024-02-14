@@ -1,0 +1,71 @@
+
+#ifndef ITERATOR_TRAITS
+#define ITERATOR_TRAITS
+
+/**
+ * @brief Iterator_Traits
+ *
+ */
+
+#include <cstddef>
+
+namespace tinystl
+{
+  //    ITERATOR STUFF (from <iterator>)
+  // ITERATOR TAGS (from <iterator>)
+  struct input_iterator_tag
+  { // identifying tag for input iterators
+  };
+
+  struct output_iterator_tag
+  { // identifying tag for output iterators
+  };
+
+  struct forward_iterator_tag
+      : input_iterator_tag,
+        output_iterator_tag
+  { // identifying tag for forward iterators  这些继承关系有有效的IS-A
+  };
+
+  struct bidirectional_iterator_tag
+      : forward_iterator_tag
+  { // identifying tag for bidirectional iterators
+  };
+
+  struct random_access_iterator_tag
+      : bidirectional_iterator_tag
+  { // identifying tag for random-access iterators
+  };
+}
+
+template <typename _Tp, typename _Tag>
+struct Iterator_Traits
+{
+  typedef _Tag iterator_category;
+  typedef _Tp value_type;
+  typedef ptrdiff_t difference_type;
+  typedef _Tp *pointer;
+  typedef _Tp &reference;
+};
+
+template <typename _Tp>
+struct Iterator_Traits<_Tp *, tinystl::random_access_iterator_tag>
+{
+  typedef _Tp value_type;
+  typedef _Tp *pointer;
+  typedef ptrdiff_t difference_type;
+  typedef tinystl::random_access_iterator_tag iterator_category;
+  typedef _Tp &reference;
+};
+
+template <typename _Tp>
+struct Iterator_Traits<const _Tp *, tinystl::random_access_iterator_tag>
+{
+  typedef _Tp value_type;
+  typedef tinystl::random_access_iterator_tag iterator_category;
+  typedef ptrdiff_t difference_type;
+  typedef const _Tp *pointer;
+  typedef const _Tp &reference;
+};
+
+#endif
