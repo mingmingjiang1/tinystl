@@ -26,7 +26,7 @@ public:
     }
     else
     {
-      std::cout << "构造函数" << strlen(str) << std::endl;
+      cout << strlen(str) << "fjjfjgjg";
       _size = strlen(str);
       m_data = new char[_size + 5]() + 4;
       *(int *)(m_data - 4) = 1;
@@ -104,30 +104,63 @@ public:
 
   StringProxy operator[](int index) { return StringProxy(index, this); }
 
-  String &operator=(const String &str)
+  // String &operator=(const String &str)
+  // {
+  //   cout << "Copy Constructor" << str.m_data << &m_data << endl;
+  //   // _size = str._size;
+  //   // m_data = str.m_data; // shallow copy
+  //   // *(int *)(m_data - 4) += 1;
+  //   if (&str != this)
+  //   {
+  //     if (*(int *)(m_data - 4) > 1)
+  //     {
+  //       *(int *)(m_data - 4) -= 1; // origin - 1
+  //       m_data = str.m_data;
+  //       *(int *)(m_data - 4) += 1;
+  //     } else {
+  //       m_data = str.m_data;
+  //     }
+  //     _size = str._size;
+  //   }
+  //   cout << "Copy Constructoring" << m_data << endl;
+  //   return *this;
+  // }
+
+  String operator=(const String &rhs)
   {
-    // if (&str == this) {
-    //   return *this;
-    // }
-    // delete[] m_data;
-    // size = str.size;
-    // m_data = new char[size + 1];
-    // strcpy(m_data, str.m_data);
-    // return *this;
-    if (&str != this)
+    // 判断是否是自己赋值给自己
+    if (this != &rhs)
     {
-      if (*(int *)(m_data - 4) == 1)
+      // 如果被赋值的字符串引用计数为1，那么就释放(被赋值的)原始内存空间，
+      // 防止脏数据（如被赋值的数据长度大于赋值过来的数据）
+      if (1 == *(int *)(m_data - 4))
       {
-        // delete[] (m_data - 4);
-        // m_data = new char[str._size + 5];
-        // strcpy(m_data, str.m_data);
+        delete[] (m_data - 4);
       }
-      m_data = str.m_data;
+
+      // 两个指针指向同一个字符串,实现浅拷贝
+      m_data = rhs.m_data;
+      // 对字符串引用计数+1
       *(int *)(m_data - 4) += 1;
-      // _size = str._size;
+      _size = rhs._size;
     }
     return *this;
   }
+
+  // String operator=(const char *rhs)
+  // {
+  //   // 如果被赋值的字符串引用计数为1，那么就释放(被赋值的)原始内存空间，
+  //   // 防止脏数据（如被赋值的数据长度大于赋值过来的数据）
+  //   if (1 == *(int *)(m_data - 4))
+  //   {
+  //     delete[] (m_data - 4);
+  //   }
+  //   m_data = new char[_size + 5]() + 4;
+  //   strcpy(m_data, rhs);
+  //   *(int *)(m_data - 4) += 1;
+  //   _size = strlen(rhs);
+  //   return *this;
+  // }
 
   // String &operator=(String &&str) {
   //   cout << "Move = Constructor" << endl;
@@ -150,7 +183,7 @@ public:
   // ostream的friend function
   friend ostream &operator<<(ostream &output, const String &str)
   {
-    output << str.m_data << endl;
+    output << str.m_data;
     return output;
   }
 
@@ -158,57 +191,29 @@ public:
 
   const char *strAddr() const { return m_data; }
 
+  String operator+(const String &str)
+  {
+    String tmp;
+    tmp._size = _size + str._size;
+    tmp.m_data = new char[tmp._size + 5]() + 4;
+    strcpy(tmp.m_data, m_data);
+    strcat(tmp.m_data, str.m_data);
+    return tmp;
+  }
+
+  String operator+(const char *str)
+  {
+    String tmp;
+    tmp._size = _size + strlen(str);
+    tmp.m_data = new char[tmp._size + 5]() + 4;
+    strcpy(tmp.m_data, m_data);
+    strcat(tmp.m_data, str);
+    return tmp;
+  }
+
 private:
   char *m_data;
   int _size;
 };
-
-// int main(int argc, char **argv) {
-//   String s1("hello");
-//   cout << "s1 = " << s1 << endl;
-//   cout << "s1.refcount = " << s1.refCount() << endl;
-//   printf("s1.addr = %p\n", s1.strAddr());
-
-//   cout << endl;
-//   cout << "拷贝操作String s2 = s1" << endl;
-//   String s2 = s1;
-//   cout << "s1 = " << s1 << endl;
-//   cout << "s2 = " << s2 << endl;
-//   cout << "s1.refcount = " << s1.refCount() << endl;
-//   printf("s1.addr = %p\n", s1.strAddr());
-//   cout << "s2.refcount = " << s2.refCount() << endl;
-//   printf("s2.addr = %p\n", s2.strAddr());
-//   s2.strAddr();
-
-//   cout << endl;
-//   cout << "赋值操作s3 = s2" << endl;
-//   String s3;
-//   s3 = s2;
-//   cout << "s2.refcount = " << s2.refCount() << endl;
-//   printf("s2.addr = %p\n", s2.strAddr());
-//   cout << "s3.refcount = " << s3.refCount() << endl;
-//   printf("s3.addr = %p\n", s3.strAddr());
-
-//   cout << endl;
-//   cout << "读下标操作" << endl;
-//   cout << "s2[0] = " << s2[0] << ", s1 = " << s1 << endl;
-//   cout << "s1.refcount = " << s1.refCount() << endl;
-//   printf("s1.addr = %p\n", s1.strAddr());
-//   cout << "s2.refcount = " << s2.refCount() << endl;
-//   printf("s2.addr = %p\n", s2.strAddr());
-
-//   cout << endl;
-//   cout << "对数据写操作,将会触发写时复制技术！" << endl;
-//   s2[0] = '0';
-//   cout << "s2[0] = " << s2[0] << ", s2 = " << s2 << endl;
-//   cout << "s1.refcount = " << s1.refCount() << endl;
-//   printf("s1.addr = %p\n", s1.strAddr());
-//   cout << "s2.refcount = " << s2.refCount() << endl;
-//   printf("s2.addr = %p\n", s2.strAddr());
-//   cout << "s3.refcount = " << s3.refCount() << endl;
-//   printf("s3.addr = %p\n", s3.strAddr());
-
-//   return 0;
-// }
 
 #endif

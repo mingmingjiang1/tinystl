@@ -20,8 +20,8 @@ public:
     typedef Reverse_Iterator<T *> reverse_iterator;
     Array(initializer_list<T> arr)
     {
-        m_data = new T[N];
-        _size = N;
+        m_data = new T[arr.size()];
+        _size = arr.size();
         initializer_list<int>::iterator it;
         int i = 0;
         for (it = arr.begin(); it != arr.end(); ++it)
@@ -43,7 +43,6 @@ public:
 
     random_access_iterator end() _GLIBCXX_NOEXCEPT
     {
-        cout << m_data << m_data + _size  << "gggggggg" << endl;
         return random_access_iterator(m_data + _size);
     }
 
@@ -68,7 +67,7 @@ public:
         }
     }
 
-    T operator[](size_t idx) const
+    T& operator[](size_t idx) const
     {
         return m_data[idx];
     }

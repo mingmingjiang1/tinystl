@@ -5,29 +5,43 @@
 #include "iterator_traits.h"
 #include <iostream>
 
+
 template <typename T>
 class Vector
 {
 public:
   typedef T value_type; // alias for T
-  typedef Random_Access_Iterator<T, Vector> random_access_iterator;
+
+  typedef Random_Access_Iterator<T, Vector> iterator;
   typedef Reverse_Iterator<T *> reverse_iterator;
   // typedef Iterator_Traits<T*> __traits_type;
   Vector(size_t size)
   {
-    _size = size;
-    _capacity = size;
+    _size = _capacity = size;
     m_data = new value_type[size];
   }
-  Vector(size_t size, T value)
+  Vector(size_t size, const T& value) // value为临时对象的时候，value在当前行之后的生命周期结束了
   {
-    size = size;
-    _capacity = size;
+    _size = _capacity = size;
     m_data = new value_type[size];
     for (int i = 0; i < size; i++)
     {
       m_data[i] = value;
     }
+
+  }
+
+  Vector(initializer_list<T> arr)
+  {
+    _size = _capacity = arr.size();
+    m_data = new T[_size];
+    typename initializer_list<T>::iterator it;
+    int i = 0;
+    for (it = arr.begin(); it != arr.end(); ++it)
+    {
+      m_data[i++] = *it;
+    }
+
   }
   Vector() : m_data(nullptr), _size(0), _capacity(0) {}
   Vector(const Vector &vec);
@@ -70,7 +84,7 @@ public:
     m_data[_size++] = vec;
   }
   void pop_back() { --_size; }
-  void erase(const random_access_iterator it)
+  void erase(const iterator it)
   {
     if (it >= m_data + _size)
     {
@@ -124,7 +138,7 @@ public:
     return reverse_iterator(m_data + _size);
   }
 
-  void insert(random_access_iterator it, value_type val)
+  void insert(iterator it, value_type val)
   {
     // int index = it - m_data;
     const size_t index = it - begin();
@@ -169,12 +183,12 @@ public:
 
   value_type back() { return m_data[_size - 1]; }
 
-  random_access_iterator begin() _GLIBCXX_NOEXCEPT { return random_access_iterator(m_data); }
+  iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
 
-  random_access_iterator end() _GLIBCXX_NOEXCEPT
+  iterator end() _GLIBCXX_NOEXCEPT
   {
 
-    return random_access_iterator(m_data + _size);
+    return iterator(m_data + _size);
   }
 
   size_t capacaity() { return _capacity; }
@@ -183,16 +197,8 @@ public:
 
   size_t size() { return _size; }
 
-
   value_type &operator[](int index)
   {
-    // if (m_data[index] != )
-    // {
-    // 说明是写入
-    // ++_size;
-    // }
-    // 说明是读取
-    // Proxy tmp = Proxy(this, index);
     return m_data[index];
   }
 

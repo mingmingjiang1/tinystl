@@ -14,15 +14,15 @@ public:
   typedef T *pointer;
   typedef const T &const_reference;
   typedef const T *const_pointer;
-  typedef Sequence_Access_Iterator<T> iterator;
-  typedef node<T> self;
+  typedef node<T> _node;
+  typedef Sequence_Access_Iterator<T, _node> iterator;
 
-  List() { head = tail = new self(); };
+  List(): _size(0) { head = tail = new _node(); };
 
   ~List() {
-    self *p = head;
+    _node *p = head;
     while (p != nullptr) {
-      self *tmp = p;
+      _node *tmp = p;
       p = p->next;
       delete tmp;
     }
@@ -33,7 +33,7 @@ public:
   iterator end() { return iterator(tail->next); }
 
   void push_front(const_reference val) {
-    self *cur = new self(); // T* cur = new node; // 泛型会报错
+    _node *cur = new _node(); // T* cur = new node; // 泛型会报错
     cur->next = head->next;
     cur->prev = head;
     cur->m_data = val;
@@ -47,23 +47,24 @@ public:
   }
 
   void push_back(const_reference val) {
-    self *cur = new self();
+   _node *cur = new _node();
     cur->next = nullptr;
     cur->m_data = val;
     if (nullptr == head->next) {
-      tail->prev->next = cur;
+      head->next = tail->next = cur;
     } else {
       tail->next = cur;
     }
     cur->prev = tail;
     tail = cur;
+    // tail->next = nullptr;
     ++_size;
   }
 
   void pop_front() {
     if (empty())
       return;
-    self *tmp = head->next;
+    _node *tmp = head->next;
     head->next = tmp->next;
     // only one element
     if (nullptr == tmp->next)
@@ -77,7 +78,7 @@ public:
   void pop_back() {
     if (empty())
       return;
-    self *tmp = tail->prev;
+    _node *tmp = tail->prev;
     delete tail;
     tail = tmp;
     tail->next = nullptr;
@@ -89,8 +90,8 @@ public:
   size_t size() { return _size; }
 
 private:
-  self *head;
-  self *tail;
+  _node *head;
+  _node *tail;
   size_t _size;
 };
 

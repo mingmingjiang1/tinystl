@@ -46,6 +46,12 @@ struct Iterator_Traits
   typedef ptrdiff_t difference_type;
   typedef _Tp *pointer;
   typedef _Tp &reference;
+  // typedef typename _Tp::iterator_category iterator_category;
+  // typedef typename _Tp::value_type value_type;
+  // typedef typename _Tp::difference_type difference_type;
+
+  // typedef typename _Tp::pointer pointer;
+  // typedef typename _Tp::reference reference;
 };
 
 template <typename _Tp>

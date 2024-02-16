@@ -21,36 +21,38 @@ class Iterator
   typedef _Tag iterator_category;
 };
 
-int count = 0;
-
+// T是迭代器
 template <typename T, typename Container>
 class Random_Access_Iterator
 {
 public:
-  // typedef T value_type;
-  // typedef T *pointer;
-  // typedef random_access_iterator_tag iterator_category;
+  typedef Random_Access_Iterator<T, Container> self;
   typedef Iterator_Traits<T, tinystl::random_access_iterator_tag> __traits_type;
+
+
+    typedef typename __traits_type::iterator_category iterator_category;
+    typedef typename __traits_type::value_type  	value_type;
+    typedef typename __traits_type::difference_type 	difference_type;
+    typedef typename __traits_type::reference 	reference;
+    typedef typename __traits_type::pointer   	pointer;
+  
 
   typedef T *iterator_type;
 
   // iterator必须包含的五种typedef
-  typedef typename __traits_type::iterator_category iterator_category;
-  typedef typename __traits_type::value_type value_type;
-  typedef typename __traits_type::difference_type difference_type;
-  typedef typename __traits_type::reference reference;
-  typedef typename __traits_type::pointer pointer;
+  // using iterator_category = tinystl::random_access_iterator_tag;
+  // typedef T value_type;
+  // typedef ptrdiff_t difference_type;
+  // typedef T &reference;
+  // typedef T *pointer;
 
-  typedef Random_Access_Iterator<T, Container> self;
-
-  // Random_Access_Iterator(pointer M_current) : _M_current(M_current) {}
   explicit Random_Access_Iterator(T *__i) : _M_current(__i) {}
 
   self &operator++()
   {
-    std::cout << _M_current << "   heeee-----" << std::endl;
+    // std::cout << _M_current << "   heeee-----" << std::endl;
     ++_M_current;
-    std::cout << _M_current << "   heeee++++" << std::endl;
+    // std::cout << _M_current << "   heeee++++" << std::endl;
     return *this;
   }
 
@@ -58,6 +60,11 @@ public:
   {
     --_M_current;
     return *this;
+  }
+
+  pointer getAddr()
+  {
+    return _M_current;
   }
 
   self operator-(difference_type __n) { return self(_M_current - __n); }
@@ -83,7 +90,7 @@ public:
   bool operator!=(const Random_Access_Iterator &it) const
   {
     // it.current是end
-    std::cout << it._M_current << "   jjjjjjjjj   " << _M_current << std::endl;
+    // std::cout << "end:>>>>> " << it._M_current << "   begin:>>>>>>   " << _M_current << std::endl;
     return it._M_current != _M_current;
   }
 
@@ -93,26 +100,20 @@ public:
   }
 
   // +=操作符 跳跃n个difference_type
-  Random_Access_Iterator &operator+=(difference_type __n) _GLIBCXX_NOEXCEPT
+  self &operator+=(difference_type __n) _GLIBCXX_NOEXCEPT
   {
     _M_current += __n;
     return *this;
   }
 
   // -=操作符 后退n个difference_type
-  Random_Access_Iterator &operator-=(difference_type __n) _GLIBCXX_NOEXCEPT
+  self &operator-=(difference_type __n) _GLIBCXX_NOEXCEPT
   {
     _M_current -= __n;
     return *this;
   }
 
   reference operator*() { return *_M_current; }
-
-  /*
-    T &operator*() { return _cur->m_data; }
-
-    T *operator->() { return &_cur->m_data; }
- */
 
   pointer operator->()
   {
@@ -162,54 +163,105 @@ bool operator!=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
  * @brief List Node Class
  *
  */
-template <typename T>
+template <typename T, typename Container>
 class Sequence_Access_Iterator
 {
 public:
-  typedef node<T> self;
+  // typedef node<T> self;
+  typedef Sequence_Access_Iterator<T, Container> self;
+  typedef Iterator_Traits<self, tinystl::forward_iterator_tag> __traits_type;
+  typedef Container node;
+  typedef T value_type;
+  typedef ptrdiff_t difference_type;
+  typedef T &reference;
+  typedef T *pointer;
 
-  Sequence_Access_Iterator(self *cur) : _cur(cur){};
+  Sequence_Access_Iterator() = default;
 
-  Sequence_Access_Iterator operator++()
+  Sequence_Access_Iterator(node *cur) : _cur(cur){};
+
+  self operator++()
   {
     _cur = _cur->next;
     return *this;
   }
 
-  Sequence_Access_Iterator operator--()
+  self operator-(difference_type __n)
+  {
+    while (-__n)
+    {
+      _cur = _cur->prev;
+      --__n;
+    }
+    return self(_cur);
+  }
+
+  self operator+(difference_type __n)
+  {
+    while (-__n)
+    {
+      _cur = _cur->next;
+      --__n;
+    }
+    return self(_cur);
+  }
+
+  self operator--()
   {
     _cur = _cur->prev;
     return *this;
   }
 
-  Sequence_Access_Iterator operator++(int)
+  self operator++(int)
   {
-    Sequence_Access_Iterator temp(_cur);
+    self temp(_cur);
     _cur = _cur->next;
     return temp;
   }
-  Sequence_Access_Iterator operator--(int)
+  self operator--(int)
   {
-    Sequence_Access_Iterator temp(_cur);
+    self temp(_cur);
     _cur = _cur->prev;
     return temp;
   }
-  bool operator==(const Sequence_Access_Iterator &it) const
+  bool operator==(const self &it) const
   {
     return _cur == it._cur;
   }
-  bool operator!=(const Sequence_Access_Iterator &it) const
+  bool operator!=(const self &it) const
   {
     return _cur != it._cur;
   }
 
-  T &operator*() { return _cur->m_data; }
+  T &operator*()
+  {
+    if (_cur != nullptr)
+    {
+      return _cur->m_data;
+    }
+  }
 
   T *operator->() { return &_cur->m_data; }
 
 private:
-  self *_cur;
+  node *_cur;
 };
+
+template <typename _Iterator, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator-(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator+(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() + __rhs.base();
+}
 
 // iterator 模板
 template <class Category, class T, class Distance = ptrdiff_t,

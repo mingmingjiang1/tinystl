@@ -4,7 +4,7 @@ SET(CMAKE_CXX_COMPILER /usr/bin/clang++)
 # add_compile_options(-g -O3 ${LLVM_SRC})
 # find_package(LLVM_SRC)
 cmake_minimum_required(VERSION 3.0.0)
-project(jmm VERSION 0.1.0 LANGUAGES C CXX)
+project(tinystl VERSION 0.1.0 LANGUAGES C CXX)
 
 
 include_directories()
@@ -13,8 +13,7 @@ include_directories()
 include(CTest)
 enable_testing()
 
-add_executable(jmm main.cpp)
-add_executable(toy toy.cpp)
+add_executable(main main.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
