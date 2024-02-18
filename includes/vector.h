@@ -11,8 +11,12 @@ class Vector
 {
 public:
   typedef T value_type; // alias for T
+  // typedef T* iterator;
 
   typedef Random_Access_Iterator<T, Vector> iterator;
+
+  // typedef Iterator_Traits<T, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
+
   typedef Reverse_Iterator<T *> reverse_iterator;
   // typedef Iterator_Traits<T*> __traits_type;
   Vector(size_t size)

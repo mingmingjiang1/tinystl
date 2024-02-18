@@ -17,19 +17,19 @@ using namespace ::std;
 
 void fun1(int i)
 {
-  cout << i << endl;
+  cout << i << " ";
 }
 
 void fun(int i, const char *str)
 {
-  cout << str << i << endl;
+  cout << str << i << " ";
 }
 
 struct Play
 {
   void operator()(int i)
   {
-    cout << i << endl;
+    cout << i << " ";
   }
 };
 
@@ -204,7 +204,45 @@ int main()
 
   cout << "********************** Test Tuple **********************" << endl;
 
-  cout << "********************** Test Tuplie **********************" << endl;
+  Tuple<int, double, std::string> t{1, 2.3, "haha"};
+  cout << get<0>(t) << endl;
+  cout << get<1>(t) << endl;
+  cout << get<2>(t) << endl;
+  cout << get<0>(t) << endl;
+
+  std::string name("jmm");
+  double score(1.2);
+  int rank(10);
+  Tuple<int, double, std::string> tt(1, 2.3, "haha");
+
+  tt = tie(rank, score, name); // 10, 2.3, haha
+
+  cout << rank << endl;  // 10
+  cout << name << endl;  // haha
+  cout << score << endl; // 2.3
+  cout << get<0>(tt) << endl;
+  cout << get<1>(tt) << endl;
+  cout << get<2>(tt) << endl;
+
+  // Tuple<int, double, std::string> mm;
+
+  // Pair<int, std::string> a1(101, "lanzhihui"); // 参数类型必须与定义类型一样
+  // cout << a1.first << " " << a1.second << endl;
+
+  // Tuple<int, std::string> t2;
+  // t2 = a1;
+
+  // cout << get<0>(t2) << " hhhhh" << get<1>(t2) << "eee" << endl;
+  // 这么看来copy构造是返回一个新的地址；
+  // string name1;
+  // Tuple<string&, int> tpRef(name1,30);
+  // // 对tpRef第一个元素赋值，同时name也被赋值 - 引用
+  // get<0>(tpRef) = "Sven";
+
+  // // name输出也是Sven
+  // cout << "name: " << name1 << '\n';
+
+  cout << "********************** Test Tuple **********************" << endl;
 
   cout << "********************** Test Pair **********************" << endl;
 
@@ -220,7 +258,7 @@ int main()
 
   cout << "********************** Test max **********************" << endl;
 
-    int a = 6, b = -7;
+  int a = 6, b = -7;
   int c = -10, d = 8;
   // 返回绝对值较大的整数
   const int &result1 = tinystl::max(a, b, abs_greater);
@@ -228,7 +266,7 @@ int main()
   const int &result2 = tinystl::max(a, b);
   const int &result3 = tinystl::max({a, b, c, d});
   const int &result4 = tinystl::max({a, b, c, d}, abs_greater);
-  cout << result2 << " " <<  result1 << " " << result3 << " " << result4 << endl;
+  cout << result2 << " " << result1 << " " << result3 << " " << result4 << endl;
 
   cout << "********************** Test max **********************" << endl;
 
@@ -263,6 +301,19 @@ int main()
 
   cout << "********************** Test fill **********************" << endl;
   cout << "********************** Test fill **********************" << endl;
+
+  cout << "********************** Test Array get **********************" << endl;
+
+  Array<int, 3> arr1{1, 2, 3};
+
+  for (auto ele : arr1)
+  {
+    cout << ele << " ";
+  }
+
+  cout << get<0>(arr1) << endl;
+
+  cout << "********************** Test Array get **********************" << endl;
 
   cout << "********************** Test advance **********************" << endl;
   cout << "********************** Test advance **********************" << endl;
@@ -309,54 +360,6 @@ int main()
   tinystl::for_each(v1.begin(), v1.end(), Play1("Element:"));
 
   cout << "********************** Test ptr_func **********************" << endl;
-
-  // Tuple<int, double, std::string> t{1, 2.3, "haha"};
-  // cout << get<0>(t) << endl;
-  // cout << get<1>(t) << endl;
-  // cout << get<2>(t) << endl;
-  // cout << get<0>(t) << endl;
-
-  // std::string name("jmm");
-  // double score(1.2);
-  // int rank(10);
-  // Tuple<int, double, std::string> tt(1, 2.3, "haha");
-
-  // tt = tie(rank, score, name); // 10, 2.3, haha
-
-  // cout << rank << "eee" << endl;  // 10
-  // cout << name << "eee" << endl;  // haha
-  // cout << score << "eee" << endl; // 2.3
-  // cout << get<0>(tt) << "downin" << endl;
-  // cout << get<1>(tt) << "downin" << endl;
-  // cout << get<2>(tt) << "downin" << endl;
-
-  // Array<int, 3> arr1{1, 2, 3};
-
-  // for (auto ele : arr1)
-  // {
-  //   cout << ele << " ";
-  // }
-
-  // cout << get<0>(arr1) << endl;
-  ;
-
-  //   Tuple<int, double, std::string> mm;
-
-  //   Pair<int, std::string> a1(101, "lanzhihui"); // 参数类型必须与定义类型一样
-  //   cout << a1.first << " " << a1.second << endl;
-
-  //   Tuple<int, std::string> t2;
-  //   t2 = a1;
-
-  //   cout << get<0>(t2) << " hhhhh" << get<1>(t2) << "eee" << endl;
-  //   // 这么看来copy构造是返回一个新的地址；
-  // string name1;
-  // Tuple<string&, int> tpRef(name1,30);
-  // // 对tpRef第一个元素赋值，同时name也被赋值 - 引用
-  // get<0>(tpRef) = "Sven";
-
-  // // name输出也是Sven
-  // cout << "name: " << name1 << '\n';
 
   return 0;
 }

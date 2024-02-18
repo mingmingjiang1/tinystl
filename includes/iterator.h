@@ -11,40 +11,47 @@
 #include <cstddef>
 #include <iostream>
 
-template <typename _Tp, typename _Tag>
-class Iterator
+// iterator 模板
+template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T *, class Reference = T &>
+struct iterator
 {
+public:
+  typedef Category iterator_category;
+  typedef T value_type;
+  typedef Pointer pointer;
+  typedef Reference reference;
+  typedef Distance difference_type;
+};
+
+/* 
+
+  typedef _Tag iterator_category;
   typedef _Tp value_type;
   typedef ptrdiff_t difference_type;
   typedef _Tp *pointer;
   typedef _Tp &reference;
-  typedef _Tag iterator_category;
-};
+
+ */
 
 // T是迭代器
 template <typename T, typename Container>
 class Random_Access_Iterator
 {
+
+private:
+  T* _M_current;
+
 public:
   typedef Random_Access_Iterator<T, Container> self;
   typedef Iterator_Traits<T, tinystl::random_access_iterator_tag> __traits_type;
 
-
-    typedef typename __traits_type::iterator_category iterator_category;
-    typedef typename __traits_type::value_type  	value_type;
-    typedef typename __traits_type::difference_type 	difference_type;
-    typedef typename __traits_type::reference 	reference;
-    typedef typename __traits_type::pointer   	pointer;
-  
+  typedef typename __traits_type::iterator_category iterator_category;
+  typedef typename __traits_type::value_type  	value_type;
+  typedef typename __traits_type::difference_type 	difference_type;
+  typedef typename __traits_type::reference 	reference;
+  typedef typename __traits_type::pointer   	pointer;
 
   typedef T *iterator_type;
-
-  // iterator必须包含的五种typedef
-  // using iterator_category = tinystl::random_access_iterator_tag;
-  // typedef T value_type;
-  // typedef ptrdiff_t difference_type;
-  // typedef T &reference;
-  // typedef T *pointer;
 
   explicit Random_Access_Iterator(T *__i) : _M_current(__i) {}
 
@@ -122,9 +129,6 @@ public:
   }
 
   iterator_type base() const { return _M_current; }
-
-private:
-  pointer _M_current;
 };
 
 template <typename T>
@@ -262,20 +266,6 @@ operator+(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
 {
   return __lhs.base() + __rhs.base();
 }
-
-// iterator 模板
-template <class Category, class T, class Distance = ptrdiff_t,
-          class Pointer = T *, class Reference = T &>
-struct iterator
-{
-  typedef Category iterator_category;
-  typedef T value_type;
-  typedef Pointer pointer;
-  typedef Reference reference;
-  typedef Distance difference_type;
-};
-
-// iterator traits
 
 template <class T>
 struct has_iterator_cat
