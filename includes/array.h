@@ -4,6 +4,7 @@
 #include <iostream>
 #include "iterator.h"
 #include "iterator_traits.h"
+#include <cstring>
 
 // template <size_t idx, typename T>
 // class Array;

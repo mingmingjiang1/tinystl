@@ -2,6 +2,7 @@
 #define LIST
 
 #include "iterator.h"
+#include <iostream>
 
 /**
  * @brief List Class
@@ -31,6 +32,7 @@ public:
       p->next->prev = p;
       p->next->m_data = init_val;
       p = p->next;
+      tail = p;
     };
   };
 
@@ -42,8 +44,9 @@ public:
     {
       p->next = new _node();
       p->next->prev = p;
-      p->next->m_data = nullptr; // 赋值 nullptr可能会有问题
+      p->next->m_data = static_cast<T>(0); // 赋值 nullptr可能会有问题
       p = p->next;
+      tail = p;
     };
   };
 
@@ -60,16 +63,34 @@ public:
     {
       p->next = new _node();
       p->next->prev = p;
+      p->next->m_data = *it; // 赋值 nullptr可能会有问题
+      p = p->next;
+      tail = p;
     };
   }
 
   List(iterator first, iterator last)
   {
+    if (first == last)
+    {
+      head = tail = new _node();
+      return;
+    }
+    _node *p = new _node();
+    head = tail = p;
+    for (iterator it = first; it != last; ++it)
+    {
+      p->next = new _node();
+      p->next->prev = p;
+      p->next->m_data = *it; // 赋值 nullptr可能会有问题
+      p = p->next;
+      tail = p;
+    }
   }
 
   List(std::initializer_list<T> args)
   {
-    if (args.size() == 0)
+    if (args.size() == 0 && head != nullptr)
     {
       head = tail = new _node();
       return;
@@ -82,6 +103,7 @@ public:
       p->next->prev = p;
       p->next->m_data = *it;
       p = p->next;
+      tail = p;
     };
     _size = args.size();
   }
@@ -165,10 +187,74 @@ public:
 
   size_t size() { return _size; }
 
+  // List<T> operator=(const List<T> &list)
+  // {
+  //   if (&list == this)
+  //     return *this;
+  //   _node *p = head;
+  //   while (p != nullptr)
+  //   {
+  //     _node *tmp = p;
+  //     p = p->next;
+  //     delete tmp;
+  //   }
+  //   _node *cur = list.head;
+  //   while (cur != nullptr)
+  //   {
+  //     push_back(cur->m_data);
+  //     cur = cur->next;
+  //   }
+  //   return *this;
+  // }
+
+
+  List<T> &operator=(const List<T> &list)
+  {
+    if (&list == this)
+      return *this;
+    _node *p = head;
+    while (p != nullptr)
+    {
+      _node *tmp = p;
+      p = p->next;
+      delete tmp;
+    }
+    _node *cur = list.head;
+    while (cur != nullptr)
+    {
+      push_back(cur->m_data);
+      cur = cur->next;
+    }
+    return *this;
+    // if (args.size() == 0 && head != nullptr)
+    // {
+    //   head = tail = new _node();
+    //   return *this;
+    // }
+    // _node *p = new _node();
+    // head = tail = p;
+    // for (auto it = args.begin(); it != args.end(); ++it)
+    // {
+    //   p->next = new _node();
+    //   p->next->prev = p;
+    //   p->next->m_data = *it;
+    //   cout << *it << "hfhghhg" << endl;
+    //   p = p->next;
+    //   tail = p;
+    // };
+    // _size = args.size();
+  }
+
 private:
   _node *head;
   _node *tail;
   size_t _size;
 };
+
+int multiply(int a, int b);
+
+float multiply(float a, float b);
+
+double multiply(double a, double b);
 
 #endif

@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
+#include <string> // for string class
 using namespace std;
 
 class String
@@ -26,7 +27,6 @@ public:
     }
     else
     {
-      cout << strlen(str) << "fjjfjgjg";
       _size = strlen(str);
       m_data = new char[_size + 5]() + 4;
       *(int *)(m_data - 4) = 1;

@@ -1,8 +1,6 @@
 # SET(LLVM_SRC /usr/bin/llvm-config)
 SET(CMAKE_C_COMPILER /usr/bin/gcc)
-SET(CMAKE_CXX_COMPILER /usr/bin/clang++)
-# add_compile_options(-g -O3 ${LLVM_SRC})
-# find_package(LLVM_SRC)
+SET(CMAKE_CXX_COMPILER /usr/bin/g++)
 cmake_minimum_required(VERSION 3.0.0)
 project(tinystl)
 
@@ -14,7 +12,7 @@ set(MyTinySTL_VERSION "${MyTinySTL_VERSION_MAJOR}.${MyTinySTL_VERSION_MINOR}.${M
 message(STATUS "The version of this project is: ${MyTinySTL_VERSION}")
 
 
-include_directories(includes)
+# include_directories(includes)
 
 get_property(dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 message(">>> include_dirs=${dirs}") #打印一下目录情况
@@ -23,7 +21,13 @@ message(">>> include_dirs=${dirs}") #打印一下目录情况
 include(CTest)
 enable_testing()
 
-add_executable(main main.cpp)
+# add_subdirectory(includes)
+add_subdirectory(test)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+add_test(NAME ${PROJECT_NAME}
+        COMMAND ${PROJECT_NAME})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

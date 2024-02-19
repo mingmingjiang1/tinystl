@@ -1,7 +1,6 @@
 #include "./includes/list.h"
 #include "./includes/string.h"
 #include "./includes/vector.h"
-#include <bits/c++config.h>
 #include <cstddef>
 #include <iostream>
 #include <string>
@@ -151,6 +150,70 @@ int main()
   cout << "********************** Test Array **********************" << endl;
 
   cout << "********************** Test List **********************" << endl;
+  int a22[] = {11, 22, 33, 44, 55};
+  List<int>::iterator it_tmp; // 声明一个迭代器
+  List<int> l2(5);
+  cout << "l2: >>>>>" << endl;
+  for (it_tmp = l2.begin(); it_tmp != l2.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l3: >>>>>" << endl;
+  List<int> l3(5, 1);
+  for (it_tmp = l3.begin(); it_tmp != l3.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l4: >>>>>" << endl;
+  List<int> l4(a22, a22 + 5);
+  for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l5: >>>>>" << endl;
+  List<int> l5(l2);
+  for (it_tmp = l5.begin(); it_tmp != l5.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l6: >>>>>" << endl;
+  List<int> l6(std::move(l4));
+  for (it_tmp = l6.begin(); it_tmp != l6.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l7: >>>>>" << endl;
+  List<int> l7{1, 2, 3, 4, 5, 6, 7, 8, 9};
+  for (it_tmp = l7.begin(); it_tmp != l7.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  cout << "l8: >>>>>" << endl;
+  List<int> l8;
+  for (it_tmp = l8.begin(); it_tmp != l8.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  l8 = l3;
+  cout << "l8: >>>>>" << endl;
+  for (it_tmp = l8.begin(); it_tmp != l8.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  List<int> l9;
+  l9 = std::move(l3);
+  cout << "l9: >>>>>" << endl;
+  for (it_tmp = l9.begin(); it_tmp != l9.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
+  List<int> l10;
+  l10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
+  cout << "l10: >>>>>" << endl;
+  for (it_tmp = l10.begin(); it_tmp != l10.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
 
   List<int> l1;
   l1.push_back(1);
@@ -168,7 +231,7 @@ int main()
     cout << *it << endl;
   }
 
-  cout << "first ele" << *(l1.begin()) << endl;
+  cout << "first ele: " << *(l1.begin()) << endl;
   // cout << "last ele" << *(l1.end()) << endl;
 
   l1.push_front(10); // 10 1 2 3 4 5 6 7
