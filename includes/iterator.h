@@ -53,6 +53,8 @@ public:
 
   typedef T *iterator_type;
 
+  Random_Access_Iterator() = default;
+
   explicit Random_Access_Iterator(T *__i) : _M_current(__i) {}
 
   self &operator++()

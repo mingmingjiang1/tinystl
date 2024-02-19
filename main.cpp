@@ -263,6 +263,71 @@ int main()
 
   cout << "********************** Test Vector **********************" << endl;
 
+  Vector<int>::iterator it_tmp_vec; // 声明一个迭代器
+  Vector<int> v2(5);
+  cout << "v2: >>>>>" << endl;
+  for (it_tmp_vec = v2.begin(); it_tmp_vec != v2.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v3: >>>>>" << endl;
+  Vector<int> v3(5, 1);
+  for (it_tmp_vec = v3.begin(); it_tmp_vec != v3.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v4: >>>>>" << endl;
+  Vector<int> v4(a22, a22 + 5);
+  for (it_tmp_vec = v4.begin(); it_tmp_vec != v4.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v5: >>>>>" << endl;
+  Vector<int> v5(v2);
+  for (it_tmp_vec = v5.begin(); it_tmp_vec != v5.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v6: >>>>>" << endl;
+  Vector<int> v6(std::move(v4));
+  for (it_tmp_vec = v6.begin(); it_tmp_vec != v6.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v7: >>>>>" << endl;
+  Vector<int> v7{1, 2, 3, 4, 5, 6, 7, 8, 9};
+  for (it_tmp_vec = v7.begin(); it_tmp_vec != v7.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  cout << "v8: >>>>>" << endl;
+  Vector<int> v8;
+  for (it_tmp_vec = v8.begin(); it_tmp_vec != v8.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  v8 = v3;
+  cout << "v8: >>>>>" << endl;
+  for (it_tmp_vec = v8.begin(); it_tmp_vec != v8.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  Vector<int> v9;
+  v9 = std::move(v3);
+  cout << "v9: >>>>>" << endl;
+  for (it_tmp_vec = v9.begin(); it_tmp_vec != v9.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+  Vector<int> v10;
+  v10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
+  cout << "v10: >>>>>" << endl;
+  for (it_tmp_vec = v10.begin(); it_tmp_vec != v10.end(); it_tmp_vec++)
+  {
+    cout << *it_tmp_vec << endl;
+  }
+
+
   cout << "********************** Test Vector **********************" << endl;
 
   cout << "********************** Test Tuple **********************" << endl;

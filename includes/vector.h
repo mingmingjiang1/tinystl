@@ -5,7 +5,6 @@
 #include "iterator_traits.h"
 #include <iostream>
 
-
 template <typename T>
 class Vector
 {
@@ -23,8 +22,31 @@ public:
   {
     _size = _capacity = size;
     m_data = new value_type[size];
+    for (int i = 0; i < size; i++)
+    {
+      m_data[i] = static_cast<T>(0);
+    }
   }
-  Vector(size_t size, const T& value) // value为临时对象的时候，value在当前行之后的生命周期结束了
+  Vector(T *first, T *last)
+  {
+    _size = _capacity = last - first;
+    m_data = new value_type[_size];
+    for (int i = 0; i < _size; i++)
+    {
+      m_data[i] = first[i];
+    }
+  }
+
+  Vector(iterator first, iterator last)
+  {
+    _size = _capacity = last - first;
+    m_data = new value_type[_size];
+    for (int i = 0; i < _size; i++)
+    {
+      m_data[i] = first[i];
+    }
+  }
+  Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
   {
     _size = _capacity = size;
     m_data = new value_type[size];
@@ -32,7 +54,6 @@ public:
     {
       m_data[i] = value;
     }
-
   }
 
   Vector(initializer_list<T> arr)
@@ -45,27 +66,26 @@ public:
     {
       m_data[i++] = *it;
     }
-
   }
   Vector() : m_data(nullptr), _size(0), _capacity(0) {}
   Vector(const Vector &vec);
   ~Vector();
-  Vector &operator=(const value_type &vec);
+  Vector<T> &operator=(const Vector<T> &vec);
 
   // 移动赋值，为了拿到右值的控制权
-  Vector &operator=(const value_type &&vec)
-  {
-    if (&vec == this)
-    {
-      return *this;
-    }
-    // delete[] m_data;
-    // _size = vec.size;
-    // _capacity = vec.capacity;
-    m_data = vec.m_data;
-    _capacity = vec._capacity;
-    _size = vec._size;
-  }
+  // Vector &operator=(const value_type &&vec)
+  // {
+  //   if (&vec == this)
+  //   {
+  //     return *this;
+  //   }
+  //   // delete[] m_data;
+  //   // _size = vec.size;
+  //   // _capacity = vec.capacity;
+  //   m_data = vec.m_data;
+  //   _capacity = vec._capacity;
+  //   _size = vec._size;
+  // }
 
   void push_back(const value_type &vec)
   {
@@ -158,7 +178,6 @@ public:
       value_type *temp = new value_type[_capacity];
       for (int i = 0; i < index; ++i)
       {
-        std::cout << m_data[i] << _size << i << "insert5555" << std::endl;
         temp[i] = m_data[i];
       }
       temp[index] = val;
@@ -195,7 +214,7 @@ public:
     return iterator(m_data + _size);
   }
 
-  size_t capacaity() { return _capacity; }
+  size_t capacity() { return _capacity; }
 
   bool empty() { return _size == 0; }
 
@@ -250,8 +269,8 @@ Vector<T>::~Vector()
 template <typename T>
 Vector<T>::Vector(const Vector &vec)
 {
-  _size = vec.size;
-  _capacity = vec.capacity;
+  _size = vec._size;
+  _capacity = vec._capacity;
   m_data = new Vector::value_type[_size];
   for (int i = 0; i < _size; i++)
   {
@@ -266,19 +285,20 @@ ve2;，按函数调用来理解就是vec1.operator=(vec2)
  */
 
 template <typename T>
-Vector<T> &Vector<T>::operator=(const Vector::value_type &vec)
+Vector<T> &Vector<T>::operator=(const Vector<T> &vec)
 {
+  std::cout << _size << "fnnnngv";
   if (&vec == this)
   {
     return *this;
   }
   delete[] m_data;
-  _size = vec.size;
-  _capacity = vec.capacity;
+  _size = vec._size;
+  _capacity = vec._capacity;
   m_data = new Vector::value_type[_size];
   for (int i = 0; i < _size; i++)
   {
-    m_data[i] = vec.m_data;
+    m_data[i] = vec.m_data[i];
   }
 }
 
