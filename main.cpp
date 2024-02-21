@@ -56,9 +56,9 @@ bool greater10(int value)
   return value > 10;
 }
 
-String dash_fold(String &a, String &b)
+tinystl::String dash_fold(tinystl::String &a, tinystl::String &b)
 {
-  return String(a + "-" + b);
+  return tinystl::String(a + "-" + b);
 };
 
 int main()
@@ -67,9 +67,13 @@ int main()
   /* 测试String */
   cout << "********************** Test String **********************" << endl;
 
-  String s1 = "hello";
-  String s2 = "world";
-  String s3 = s1 + s2;
+  tinystl::String s1 = "hello";
+  tinystl::String s2 = "hello";
+  bool r1 = s1 == s2;
+  bool r2 = s1 != s2;
+  cout << "boolean测试：" << r1 << endl;
+  cout << "boolean测试："  << r2 << endl;
+  tinystl::String s3 = s1 + s2;
   cout << s3 << endl;
   cout << s3.size() << endl;
   s2 = s1;
@@ -81,7 +85,7 @@ int main()
 
   cout << endl;
   cout << "拷贝操作String s_2 = s1" << endl;
-  String s_2 = s1;
+  tinystl::String s_2 = s1;
   cout << "s1 = " << s1 << endl;
   cout << "s_2 = " << s_2 << endl;
   cout << "s1.refcount = " << s1.refCount() << endl;
@@ -119,9 +123,9 @@ int main()
   printf("s3.addr = %p\n", s3.strAddr());
   cout << "s3.size = " << s2.size() << endl;
 
-  Vector<String> vs{String("aaa"), String("bbb"), String("ccc"), String("ddd"), String("eee")};
+  Vector<tinystl::String> vs{tinystl::String("aaa"), tinystl::String("bbb"), tinystl::String("ccc"), tinystl::String("ddd"), tinystl::String("eee")};
 
-  String ss = tinystl::accumulate(vs.begin(), vs.end(), String("receive"), dash_fold);
+  tinystl::String ss = tinystl::accumulate(vs.begin(), vs.end(), tinystl::String("receive"), dash_fold);
 
   std::cout << "dash-separated string : " << ss << std::endl;
 
@@ -151,45 +155,53 @@ int main()
 
   cout << "********************** Test List **********************" << endl;
   int a22[] = {11, 22, 33, 44, 55};
-  List<int>::iterator it_tmp; // 声明一个迭代器
-  List<int> l2(5);
+  tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
+  tinystl::List<int> l2(5);
   cout << "l2: >>>>>" << endl;
   for (it_tmp = l2.begin(); it_tmp != l2.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
   cout << "l3: >>>>>" << endl;
-  List<int> l3(5, 1);
+  tinystl::List<int> l3(5, 1);
   for (it_tmp = l3.begin(); it_tmp != l3.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
   cout << "l4: >>>>>" << endl;
-  List<int> l4(a22, a22 + 5);
+  tinystl::List<int> l4(a22, a22 + 5);
   for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
+
+  cout << "l4-2: >>>>>" << endl;
+  tinystl::List<int> l42(a22 + 1, a22 + 5);
+  cout << l42.size() << endl;
+  for (it_tmp = l42.begin(); it_tmp != l42.end(); it_tmp++)
+  {
+    cout << *it_tmp << endl;
+  }
   cout << "l5: >>>>>" << endl;
-  List<int> l5(l2);
+  tinystl::List<int> l5(l2);
   for (it_tmp = l5.begin(); it_tmp != l5.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
   cout << "l6: >>>>>" << endl;
-  List<int> l6(std::move(l4));
+  tinystl::List<int> l6(std::move(l4));
   for (it_tmp = l6.begin(); it_tmp != l6.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
   cout << "l7: >>>>>" << endl;
-  List<int> l7{1, 2, 3, 4, 5, 6, 7, 8, 9};
+  tinystl::List<int> l7{1, 2, 3, 4, 5, 6, 7, 8, 9};
   for (it_tmp = l7.begin(); it_tmp != l7.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
   cout << "l8: >>>>>" << endl;
-  List<int> l8;
+  tinystl::List<int> l8;
   for (it_tmp = l8.begin(); it_tmp != l8.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
@@ -200,14 +212,14 @@ int main()
   {
     cout << *it_tmp << endl;
   }
-  List<int> l9;
+  tinystl::List<int> l9;
   l9 = std::move(l3);
   cout << "l9: >>>>>" << endl;
   for (it_tmp = l9.begin(); it_tmp != l9.end(); it_tmp++)
   {
     cout << *it_tmp << endl;
   }
-  List<int> l10;
+  tinystl::List<int> l10;
   l10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
   cout << "l10: >>>>>" << endl;
   for (it_tmp = l10.begin(); it_tmp != l10.end(); it_tmp++)
@@ -215,7 +227,7 @@ int main()
     cout << *it_tmp << endl;
   }
 
-  List<int> l1;
+  tinystl::List<int> l1;
   l1.push_back(1);
   l1.push_back(2);
   l1.push_back(3);
@@ -224,7 +236,7 @@ int main()
   l1.push_back(6);
   l1.push_back(7);
 
-  List<int>::iterator it; // 声明一个迭代器
+  tinystl::List<int>::iterator it; // 声明一个迭代器
 
   for (it = l1.begin(); it != l1.end(); it++)
   {
@@ -326,7 +338,6 @@ int main()
   {
     cout << *it_tmp_vec << endl;
   }
-
 
   cout << "********************** Test Vector **********************" << endl;
 
@@ -450,7 +461,7 @@ int main()
   cout << "********************** Test binder2nd **********************" << endl;
 
   cout << "********************** Test ptr_func **********************" << endl;
-  List<int>::iterator it1 = l1.begin(); // 声明一个迭代器
+  tinystl::List<int>::iterator it1 = l1.begin(); // 声明一个迭代器
   tinystl::advance(it1, 2);
   std::cout << "The sixth element in mylist is: " << *it1 << '\n';
 

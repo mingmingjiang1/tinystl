@@ -21,8 +21,7 @@ add_executable(list_test list_test.cpp)
 # 把GTest和被测函数都链接到 可执行文件 上
 target_link_libraries(list_test
  PRIVATE
-  GTest::GTest
-  multiply)
+  GTest::GTest)
 
-# 增加测试
+# # 增加测试
 add_test(list_gtests list_test)

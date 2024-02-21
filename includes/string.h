@@ -12,6 +12,8 @@
 #include <string> // for string class
 using namespace std;
 
+namespace tinystl {
+
 class String
 {
 public:
@@ -211,9 +213,55 @@ public:
     return tmp;
   }
 
+  friend bool operator==(const String& c1, const char* str) {
+    int size = strlen(str);
+    if (size != c1._size) {
+      return false;
+    }
+
+    for (int i = 0;i < size;i++) {
+      if (str[i] != c1.m_data[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  friend bool operator==(const String& c1, const String& str) {
+    int size = str._size;
+    if (size != c1._size) {
+      return false;
+    }
+
+    for (int i = 0;i < size;i++) {
+      if (str.m_data[i] != c1.m_data[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  friend bool operator!=(const String& c1, const String& str) {
+    int size = str._size;
+    if (size != c1._size) {
+      return true;
+    }
+
+    for (int i = 0;i < size;i++) {
+      if (str.m_data[i] != c1.m_data[i]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 private:
   char *m_data;
   int _size;
 };
+}
 
 #endif
