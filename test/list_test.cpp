@@ -8,34 +8,53 @@
 #include <string>
 #include <list>
 
-TEST(MultiplyTests, TestIntegerOne_One)
-{
-    const auto expected = 1;
-    const auto actual = multiply(1, 1);
-    ASSERT_EQ(expected, actual);
-}
-
-TEST(MultiplyTests, TestIntegerZero_Zero)
-{
-    const auto expected = 0;
-    const auto actual = multiply(0, 0);
-    ASSERT_EQ(expected, actual);
-}
-
-TEST(MultiplyTests, TestIntegerZero_One)
-{
-    const auto expected = 0;
-    const auto actual = multiply(0, 1);
-    ASSERT_EQ(actual, expected);
-}
-
 template <typename T>
-class FooTest : public testing::Test
+class ListTest : public testing::Test
 {
-
-    T value_[];
-
 public:
+    T *value_;
+    void fillVal(unsigned int val, int size)
+    {
+        value_ = new unsigned int[size];
+        srand((unsigned)time(NULL));
+        for (int i = 0; i < size; i++)
+        {
+            value_[i] = rand() % (100 + 1);
+        }
+    }
+
+    void fillVal(int val, int size)
+    {
+        value_ = new int[size];
+        srand((unsigned)time(NULL));
+        for (int i = 0; i < size; i++)
+        {
+            value_[i] = rand() % (100 + 1);
+        }
+    }
+
+    void fillVal(char val, int size)
+    {
+        // 随机生成string
+
+        value_ = new char[size];
+        srand((unsigned)time(NULL));
+        for (int i = 0; i < size; i++)
+        {
+            value_[i] = rand() % (100 + 1);
+        }
+    }
+
+    void fillVal(const char *val, int size)
+    {
+        // 随机生成string
+        value_ = new const char *[size];
+        srand((unsigned)time(NULL));
+        for (int i = 0; i < size; i++)
+        {
+            value_[i] = std::to_string(rand() % (100 + 1)).c_str();
+        }
+    }
 };
 
 unsigned int *fillVal(unsigned int val, int size)
@@ -88,7 +107,7 @@ const char **fillVal(const char *val, int size)
     return a;
 }
 
-TYPED_TEST_CASE_P(FooTest);
+TYPED_TEST_CASE_P(ListTest);
 
 // 测试所有的声明
 template <typename T>
@@ -101,7 +120,6 @@ void testDeclareWithInit(T *a, int size)
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, a[i++]);
-        std::cout << *it_tmp << "  " << std::endl;
     }
 
     tinystl::List<T> l3(a, a + 2);
@@ -109,7 +127,6 @@ void testDeclareWithInit(T *a, int size)
     ASSERT_EQ(l3.size(), 2);
     for (it_tmp = l3.begin(); it_tmp != l3.end(); it_tmp++)
     {
-        std::cout << *it_tmp << "  " << l3.size() << std::endl;
         ASSERT_EQ(*it_tmp, a[i++]);
     }
 
@@ -155,7 +172,6 @@ void testDeclareWithNoInit(int size)
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, static_cast<T>(0));
-        std::cout << *it_tmp << "  " << std::endl;
     }
 }
 
@@ -179,7 +195,6 @@ void testAssign(T *a, int size)
     ASSERT_EQ(l3.size(), 2);
     for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
     {
-        std::cout << *it_tmp << "  " << l4.size() << std::endl;
         ASSERT_EQ(*it_tmp, a[i++]);
     }
 
@@ -203,36 +218,33 @@ void testAssign(T *a, int size)
     }
 }
 
-TYPED_TEST_P(FooTest, DoesBlah)
+TYPED_TEST_P(ListTest, CONSTRUCTOR)
 {
 
-    // TypeParam a[] = {11, 22, 33, 44, 55};
     TypeParam n = 0;
-    TypeParam *tmp = fillVal(n, 5);
-    for (int i = 0; i < 5; i++)
-    {
-        std::cout << tmp[i] << " hello" << std::endl;
-    }
+
+    this->fillVal(n, 5);
+    TypeParam *tmp = this->value_;
     testDeclareWithInit<TypeParam>(tmp, 5);
     testDeclareWithNoInit<TypeParam>(5);
     testAssign<TypeParam>(tmp, 5);
     delete[] tmp;
 }
 
-REGISTER_TYPED_TEST_CASE_P(FooTest, DoesBlah);
+REGISTER_TYPED_TEST_CASE_P(ListTest, CONSTRUCTOR);
 
-typedef testing::Types<char, int, unsigned int, const char *> MyTypes;
+typedef testing::Types<char, int, unsigned int, const char *> ListTypes;
 
-INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(tinystl, ListTest, ListTypes);
 
-// 测试string类型
-TEST(MultiplyTests, TestLISTSTRING)
+// 测试自定义string类型
+TEST(ListTests, TestLIST_MYSTRING)
 {
-    std::string a[] = {"aa", "bb", "cc", "dd", "ee"};
-    tinystl::List<std::string>::iterator it_tmp; // 声明一个迭代器
-    tinystl::List<std::string> l1(a, a + 5);
+    tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
+    tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
+    tinystl::List<tinystl::String> l1(a, a + 5);
     int i = 0;
-    // ASSERT_EQ(l2.size(), 5);
+    ASSERT_EQ(l1.size(), 5);
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, a[i++]);
@@ -240,7 +252,7 @@ TEST(MultiplyTests, TestLISTSTRING)
 }
 
 // 测试嵌套类型
-TEST(MultiplyTests, TestLISTINT)
+TEST(ListTests, TestLIST_INILIALIZE_LIST)
 {
     tinystl::List<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
@@ -262,7 +274,7 @@ TEST(MultiplyTests, TestLISTINT)
 
     tinystl::List<std::string> l3;
     l3 = l2;
-        i = 0;
+    i = 0;
     for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
     {
         ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
@@ -275,7 +287,6 @@ TEST(MultiplyTests, TestLISTINT)
     for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
     {
         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-        std::cout << "[===============================================================]" << *it_tmp_3 << std::endl;
         i++;
     }
 
@@ -285,42 +296,16 @@ TEST(MultiplyTests, TestLISTINT)
     for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
     {
         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-        std::cout << "[===============================================================]" << *it_tmp_3 << std::endl;
         i++;
     }
 }
 
+// 明天给list测试一些常见方法
+
 int main(int argc, char **argv)
 {
-    std::cout << "[===============================================================]" << std::endl;
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
 
-// namespace list_test
-// {
-//   bool is_odd(int x) { return x & 1; }
-
-//   void list_test()
-//   {
-//     std::cout << "[===============================================================]" << std::endl;
-//     std::cout << "[------------------ Run container test : list ------------------]" << std::endl;
-//     std::cout << "[-------------------------- API test ---------------------------]" << std::endl;
-//     int a[] = { 1,2,3,4,5 };
-//     List<int> l1;
-//     // List<int> l2(5);
-//     // List<int> l3(5, 1);
-//     // List<int> l4(a, a + 5);
-//     List<int> l5(l2);
-//     List<int> l6(std::move(l2));
-//     // List<int> l7 { 1,2,3,4,5,6,7,8,9 };
-//     List<int> l8;
-//     l8 = l3;
-//     List<int> l9;
-//     l9 = std::move(l3);
-//     List<int> l10;
-//     // l10 = { 1, 2, 2, 3, 5, 6, 7, 8, 9 };
-//   }
-
-// }
-#endif // !MYTINYSTL_LIST_TEST_H_
+#endif

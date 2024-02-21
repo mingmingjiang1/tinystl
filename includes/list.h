@@ -119,7 +119,6 @@ namespace tinystl
     List(const List<T> &list)
     {
       head = tail = new _node();
-      std::cout << "List(const List<T> &list)" << std::endl;
       _node *p = list.head->next;
       while (p != nullptr)
       {
@@ -254,21 +253,6 @@ namespace tinystl
     _node *tail;
     size_t _size;
   };
-}
-
-int multiply(int a, int b)
-{
-  return a * b;
-}
-
-float multiply(float a, float b)
-{
-  return a * b;
-}
-
-double multiply(double a, double b)
-{
-  return a * b;
 }
 
 #endif

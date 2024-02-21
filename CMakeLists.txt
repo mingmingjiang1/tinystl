@@ -26,8 +26,8 @@ add_subdirectory(test)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-add_test(NAME ${PROJECT_NAME}
-        COMMAND ${PROJECT_NAME})
+# add_test(NAME ${PROJECT_NAME}
+#         COMMAND ${PROJECT_NAME})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

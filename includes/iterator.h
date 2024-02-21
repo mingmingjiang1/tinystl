@@ -241,10 +241,7 @@ public:
 
   T &operator*()
   {
-    if (_cur != nullptr)
-    {
-      return _cur->m_data;
-    }
+    return _cur->m_data;
   }
 
   T *operator->() { return &_cur->m_data; }

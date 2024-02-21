@@ -287,7 +287,6 @@ ve2;，按函数调用来理解就是vec1.operator=(vec2)
 template <typename T>
 Vector<T> &Vector<T>::operator=(const Vector<T> &vec)
 {
-  std::cout << _size << "fnnnngv";
   if (&vec == this)
   {
     return *this;
@@ -300,6 +299,7 @@ Vector<T> &Vector<T>::operator=(const Vector<T> &vec)
   {
     m_data[i] = vec.m_data[i];
   }
+  return *this;
 }
 
 #endif

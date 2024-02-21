@@ -3,6 +3,7 @@
 
 #include "./tuple.h"
 #include "./array.h"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // 静默 warning: warning: 'template<class _Operation> class tinystl::binder2nd' is deprecated [-Wdeprecated-declarations]...
 
 template <size_t idx, typename Head, typename... Tail>
 typename get_helper<idx, Tuple<Head, Tail...>>::value_type
