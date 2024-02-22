@@ -1,5 +1,5 @@
-#ifndef TUPLE
-#define TUPLE
+#ifndef TUPLE_H
+#define TUPLE_H
 
 #include "pair.h"
 #include <iostream>

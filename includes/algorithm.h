@@ -1,5 +1,5 @@
-#ifndef AGRITHOM
-#define AGRITHOM
+#ifndef AGRITHOM_H
+#define AGRITHOM_H
 
 #include "./tuple.h"
 #include "./array.h"
@@ -22,7 +22,7 @@ Tuple<Types &...> tie(Types &...args) noexcept
 
 // Array<int, 2UL>
 template <size_t id, size_t idx, typename Tp>
-Tp get(Array<Tp, idx> &arr)
+Tp get(tinystl::Array<Tp, idx> &arr)
 {
   return arr[id];
 }

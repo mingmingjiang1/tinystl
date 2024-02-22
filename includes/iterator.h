@@ -39,7 +39,7 @@ class Random_Access_Iterator
 {
 
 private:
-  T* _M_current;
+  T _M_current;
 
 public:
   typedef Random_Access_Iterator<T, Container> self;
@@ -51,11 +51,11 @@ public:
   typedef typename __traits_type::reference 	reference;
   typedef typename __traits_type::pointer   	pointer;
 
-  typedef T *iterator_type;
+  typedef T iterator_type;
 
   Random_Access_Iterator() = default;
 
-  explicit Random_Access_Iterator(T *__i) : _M_current(__i) {}
+  explicit Random_Access_Iterator(T __i) : _M_current(__i) {}
 
   self &operator++()
   {
@@ -241,7 +241,7 @@ public:
 
   T &operator*()
   {
-    return _cur->m_data;
+      return _cur->m_data;
   }
 
   T *operator->() { return &_cur->m_data; }
@@ -252,16 +252,16 @@ private:
 
 template <typename _Iterator, typename _Container>
 typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator-(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+operator-(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() - __rhs.base();
 }
 
 template <typename _Iterator, typename _IteratorR, typename _Container>
 typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator+(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+operator+(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() + __rhs.base();
 }

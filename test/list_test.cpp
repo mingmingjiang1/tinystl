@@ -218,7 +218,7 @@ void testAssign(T *a, int size)
     }
 }
 
-TYPED_TEST_P(ListTest, CONSTRUCTOR)
+TYPED_TEST_P(ListTest, Constructor)
 {
 
     TypeParam n = 0;
@@ -231,14 +231,14 @@ TYPED_TEST_P(ListTest, CONSTRUCTOR)
     delete[] tmp;
 }
 
-REGISTER_TYPED_TEST_CASE_P(ListTest, CONSTRUCTOR);
+REGISTER_TYPED_TEST_CASE_P(ListTest, Constructor);
 
 typedef testing::Types<char, int, unsigned int, const char *> ListTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(tinystl, ListTest, ListTypes);
 
 // 测试自定义string类型
-TEST(ListTests, TestLIST_MYSTRING)
+TEST(ListTests, Test_List_String)
 {
     tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
     tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
@@ -252,7 +252,7 @@ TEST(ListTests, TestLIST_MYSTRING)
 }
 
 // 测试嵌套类型
-TEST(ListTests, TestLIST_INILIALIZE_LIST)
+TEST(ListTests, Test_Lits_Inilialize_List)
 {
     tinystl::List<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
@@ -291,10 +291,11 @@ TEST(ListTests, TestLIST_INILIALIZE_LIST)
     }
 
     tinystl::List<tinystl::String> l5;
-    l3 = l2;
+    l5 = l4;
     i = 0;
     for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
     {
+        std::cout << "#####" << std::to_string(i + 1).c_str() << std::endl;
         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
         i++;
     }

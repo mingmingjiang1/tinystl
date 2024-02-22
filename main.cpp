@@ -72,7 +72,7 @@ int main()
   bool r1 = s1 == s2;
   bool r2 = s1 != s2;
   cout << "boolean测试：" << r1 << endl;
-  cout << "boolean测试："  << r2 << endl;
+  cout << "boolean测试：" << r2 << endl;
   tinystl::String s3 = s1 + s2;
   cout << s3 << endl;
   cout << s3.size() << endl;
@@ -123,7 +123,7 @@ int main()
   printf("s3.addr = %p\n", s3.strAddr());
   cout << "s3.size = " << s2.size() << endl;
 
-  Vector<tinystl::String> vs{tinystl::String("aaa"), tinystl::String("bbb"), tinystl::String("ccc"), tinystl::String("ddd"), tinystl::String("eee")};
+  tinystl::Vector<tinystl::String> vs{tinystl::String("aaa"), tinystl::String("bbb"), tinystl::String("ccc"), tinystl::String("ddd"), tinystl::String("eee")};
 
   tinystl::String ss = tinystl::accumulate(vs.begin(), vs.end(), tinystl::String("receive"), dash_fold);
 
@@ -133,7 +133,7 @@ int main()
 
   cout << "********************** Test Array **********************" << endl;
 
-  Array<int, 10> arr;
+  tinystl::Array<int, 10> arr;
   for (int i = 0; i < 10; i++)
   {
     arr[i] = i;
@@ -275,45 +275,45 @@ int main()
 
   cout << "********************** Test Vector **********************" << endl;
 
-  Vector<int>::iterator it_tmp_vec; // 声明一个迭代器
-  Vector<int> v2(5);
+  tinystl::Vector<int>::iterator it_tmp_vec; // 声明一个迭代器
+  tinystl::Vector<int> v2(5);
   cout << "v2: >>>>>" << endl;
   for (it_tmp_vec = v2.begin(); it_tmp_vec != v2.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v3: >>>>>" << endl;
-  Vector<int> v3(5, 1);
+  tinystl::Vector<int> v3(5, 1);
   for (it_tmp_vec = v3.begin(); it_tmp_vec != v3.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v4: >>>>>" << endl;
-  Vector<int> v4(a22, a22 + 5);
+  tinystl::Vector<int> v4(a22, a22 + 5);
   for (it_tmp_vec = v4.begin(); it_tmp_vec != v4.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v5: >>>>>" << endl;
-  Vector<int> v5(v2);
+  tinystl::Vector<int> v5(v2);
   for (it_tmp_vec = v5.begin(); it_tmp_vec != v5.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v6: >>>>>" << endl;
-  Vector<int> v6(std::move(v4));
+  tinystl::Vector<int> v6(std::move(v4));
   for (it_tmp_vec = v6.begin(); it_tmp_vec != v6.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v7: >>>>>" << endl;
-  Vector<int> v7{1, 2, 3, 4, 5, 6, 7, 8, 9};
+  tinystl::Vector<int> v7{1, 2, 3, 4, 5, 6, 7, 8, 9};
   for (it_tmp_vec = v7.begin(); it_tmp_vec != v7.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
   cout << "v8: >>>>>" << endl;
-  Vector<int> v8;
+  tinystl::Vector<int> v8;
   for (it_tmp_vec = v8.begin(); it_tmp_vec != v8.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
@@ -324,14 +324,14 @@ int main()
   {
     cout << *it_tmp_vec << endl;
   }
-  Vector<int> v9;
+  tinystl::Vector<int> v9;
   v9 = std::move(v3);
   cout << "v9: >>>>>" << endl;
   for (it_tmp_vec = v9.begin(); it_tmp_vec != v9.end(); it_tmp_vec++)
   {
     cout << *it_tmp_vec << endl;
   }
-  Vector<int> v10;
+  tinystl::Vector<int> v10;
   v10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
   cout << "v10: >>>>>" << endl;
   for (it_tmp_vec = v10.begin(); it_tmp_vec != v10.end(); it_tmp_vec++)
@@ -422,7 +422,7 @@ int main()
   cout << "********************** Test accumulate **********************" << endl;
 
   srand((unsigned)time(NULL));
-  Vector<unsigned int> v(10, 0);
+  tinystl::Vector<unsigned int> v(10, 0);
   for (int i = 0; i < v.size(); i++)
   {
     v[i] = (rand() % (100 + 1));
@@ -443,7 +443,7 @@ int main()
 
   cout << "********************** Test Array get **********************" << endl;
 
-  Array<int, 3> arr1{1, 2, 3};
+  tinystl::Array<int, 3> arr1{1, 2, 3};
 
   for (auto ele : arr1)
   {
@@ -479,10 +479,10 @@ int main()
   tinystl::for_each(l1.begin(), l1.end(), Play());
   tinystl::for_each(l1.begin(), l1.end(), Play1("Element:"));
 
-  Vector<int> v1{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  tinystl::Vector<int> v1{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   for (int i = 0; i < 10; i++)
     v1.push_back(i * 10);
-  Vector<int>::iterator it_vector = v1.begin();
+  tinystl::Vector<int>::iterator it_vector = v1.begin();
   tinystl::advance(it_vector, 5);
   std::cout << "The sixth element in mylist is: " << *it_vector << '\n';
 
