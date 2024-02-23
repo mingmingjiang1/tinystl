@@ -144,6 +144,38 @@ struct node
 
 template <typename _Iterator, typename _Container>
 typename Random_Access_Iterator<_Iterator, _Container>::difference_type
+operator>=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base() >= 0;
+}
+
+template <typename _Iterator, typename _Container>
+typename Random_Access_Iterator<_Iterator, _Container>::difference_type
+operator>(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base() > 0;
+}
+
+template <typename _Iterator, typename _Container>
+typename Random_Access_Iterator<_Iterator, _Container>::difference_type
+operator<=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base() <= 0;
+}
+
+template <typename _Iterator, typename _Container>
+typename Random_Access_Iterator<_Iterator, _Container>::difference_type
+operator<(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base() < 0;
+}
+
+template <typename _Iterator, typename _Container>
+typename Random_Access_Iterator<_Iterator, _Container>::difference_type
 operator-(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
           const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
@@ -264,6 +296,39 @@ operator+(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
           const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() + __rhs.base();
+}
+
+
+template <typename _Iterator, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator>=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() >= __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator>(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() > __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator<=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() <= __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
+operator<(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() < __rhs.base();
 }
 
 template <class T>

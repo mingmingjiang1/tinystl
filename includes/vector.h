@@ -14,19 +14,17 @@ namespace tinystl
     typedef T value_type; // alias for T
     // typedef T* iterator;
 
-    typedef Random_Access_Iterator<T*, Vector> iterator;
+    typedef Random_Access_Iterator<T *, Vector> iterator;
 
-    /* 
+    /*
       另一种写法：
       typedef T* iterator;
       typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
      */
 
-
     // typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
 
     typedef Reverse_Iterator<T *> reverse_iterator;
-    // typedef Iterator_Traits<T*> __traits_type;
     Vector(size_t size)
     {
       _size = _capacity = size;
@@ -97,30 +95,16 @@ namespace tinystl
     //   _size = vec._size;
     // }
 
-    void push_back(const value_type &vec)
-    {
-      if (_capacity == 0)
-      {
-        _capacity = 1;
-        m_data = new T[_capacity];
-      }
-      else if (_size == _capacity)
-      {
-        T *new_data = new T[_capacity * 2];
-        for (int i = 0; i < _size; i++)
-        {
-          new_data[i] = m_data[i];
-        }
-        delete[] m_data;
-        m_data = new_data;
-        _capacity *= 2;
-      }
-      m_data[_size++] = vec;
+    void push_back(const value_type &vec);
+
+    void clear() {
+      _size = 0;
     }
+
     void pop_back() { --_size; }
     void erase(const iterator it)
     {
-      if (it >= m_data + _size)
+      if (it >= iterator(m_data + _size))
       {
         return;
       }
@@ -132,36 +116,6 @@ namespace tinystl
       --_size;
     }
 
-    // void insert(random_access_iterator it, value_type &&val) {
-    //   // value_type tmp = move(val);
-    //   const size_t index = it - begin();
-    //   if (0 == _capacity) {
-    //     // 不涉及shallow copy
-    //     _capacity = 1;
-    //     m_data = new value_type[1];
-    //     m_data[0] = move(val);
-    //   } else if (_size + 1 > _capacity) {
-    //     _capacity *= 2;
-    //     value_type *temp = new value_type[_capacity];
-    //     for (int i = 0; i < index; ++i) {
-    //       temp[i] = m_data[i];
-    //     }
-    //     temp[index] = val;
-    //     for (int i = index; i < _size; i++) {
-    //       temp[i + 1] = m_data[i];
-    //     }
-    //     delete[] m_data;
-    //     m_data = temp;
-    //   } else {
-    //     // shallow copy
-    //     for (int i = _size - 1; i >= index; --i) {
-    //       m_data[i + 1] = m_data[i]; // move semantics
-    //     }
-    //     m_data[index] = val;
-    //   }
-    //   ++_size;
-    // }
-
     void rinser(reverse_iterator it, value_type val)
     {
       const size_t index = it - rbegin();
@@ -172,45 +126,7 @@ namespace tinystl
       return reverse_iterator(m_data + _size);
     }
 
-    void insert(iterator it, value_type val)
-    {
-      // int index = it - m_data;
-      const size_t index = it - begin();
-      if (0 == _capacity)
-      {
-        _capacity = 1;
-        m_data = new value_type[1];
-        m_data[0] = val;
-      }
-      else if (_size + 1 > _capacity)
-      {
-        _capacity *= 2;
-        value_type *temp = new value_type[_capacity];
-        for (int i = 0; i < index; ++i)
-        {
-          temp[i] = m_data[i];
-        }
-        temp[index] = val;
-        for (int i = index; i < _size; i++)
-        {
-          std::cout << m_data[i] << _size << i << "insert" << std::endl;
-          temp[i + 1] = m_data[i];
-        }
-        delete[] m_data;
-        m_data = temp;
-      }
-      else
-      {
-        std::cout << index << "index" << std::endl;
-        for (int i = _size - 1; i >= index; --i)
-        {
-          // std::cout << m_data[i] << _size << i << "insert" << std::endl;
-          m_data[i + 1] = m_data[i];
-        }
-        m_data[index] = val;
-      }
-      ++_size;
-    }
+    void insert(iterator it, value_type val);
 
     value_type front() { return m_data[0]; }
 
@@ -235,17 +151,7 @@ namespace tinystl
       return m_data[index];
     }
 
-    bool operator==(value_type &vec)
-    {
-      if (_size != vec._size)
-        return false;
-      for (int i = 0; i < _size; ++i)
-      {
-        if (m_data[i] != vec._data[i])
-          return false;
-      }
-      return true;
-    }
+    bool operator==(value_type &vec);
 
   private:
     size_t _size;
@@ -253,15 +159,31 @@ namespace tinystl
     T *m_data;
   };
 
+  template <typename T>
+  void Vector<T>::push_back(const value_type &vec)
+  {
+    if (_capacity == 0)
+    {
+      _capacity = 1;
+      m_data = new T[_capacity];
+    }
+    else if (_size == _capacity)
+    {
+      T *new_data = new T[_capacity * 2];
+      for (int i = 0; i < _size; i++)
+      {
+        new_data[i] = m_data[i];
+      }
+      delete[] m_data;
+      m_data = new_data;
+      _capacity *= 2;
+    }
+    m_data[_size++] = vec;
+  }
+
   /*
     初始化列表的初始化顺序并不是由构造函数后的变量顺序决定的，而是由类中成员变量的定义顺序决定的
    */
-
-  // template <typename T> Vector<T>::Vector(int size) {
-  //   size = size;
-  //   capacity = size;
-  //   m_data = new Vector::value_type[size];
-  // }
 
   template <typename T>
   Vector<T>::~Vector()
@@ -273,6 +195,60 @@ namespace tinystl
       _size = 0;
       _capacity = 0;
     }
+  }
+
+  template <typename T>
+  void Vector<T>::insert(iterator it, value_type val)
+  {
+    // int index = it - m_data;
+    const size_t index = it - begin();
+    if (0 == _capacity)
+    {
+      _capacity = 1;
+      m_data = new value_type[1];
+      m_data[0] = val;
+    }
+    else if (_size + 1 > _capacity)
+    {
+      _capacity *= 2;
+      value_type *temp = new value_type[_capacity];
+      for (int i = 0; i < index; ++i)
+      {
+        temp[i] = m_data[i];
+      }
+      temp[index] = val;
+      for (int i = index; i < _size; i++)
+      {
+        std::cout << m_data[i] << _size << i << "insert" << std::endl;
+        temp[i + 1] = m_data[i];
+      }
+      delete[] m_data;
+      m_data = temp;
+    }
+    else
+    {
+      std::cout << index << "index" << std::endl;
+      for (int i = _size - 1; i >= index; --i)
+      {
+        // std::cout << m_data[i] << _size << i << "insert" << std::endl;
+        m_data[i + 1] = m_data[i];
+      }
+      m_data[index] = val;
+    }
+    ++_size;
+  }
+
+  template <typename T>
+  bool Vector<T>::operator==(value_type &vec)
+  {
+    if (_size != vec._size)
+      return false;
+    for (int i = 0; i < _size; ++i)
+    {
+      if (m_data[i] != vec._data[i])
+        return false;
+    }
+    return true;
   }
 
   // deep copy
@@ -301,7 +277,8 @@ namespace tinystl
     {
       return *this;
     }
-    if (m_data != nullptr) delete[] m_data;
+    if (m_data != nullptr)
+      delete[] m_data;
     _size = vec._size;
     _capacity = vec._capacity;
     m_data = new Vector::value_type[_size];

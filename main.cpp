@@ -9,6 +9,7 @@
 #include "./includes/pair.h"
 #include "./includes/array.h"
 #include "./includes/algorithm.h"
+#include "./includes/global.h"
 #include <stdlib.h>
 #include <time.h>
 

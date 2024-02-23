@@ -8,6 +8,24 @@
 #include <string>
 
 template <typename T>
+bool compare(tinystl::Vector<T> &a, tinystl::Vector<T> b)
+{
+    if (a.size() != b.size())
+    {
+        return false;
+    }
+    for (int i = 0; i < a.size(); i++)
+    {
+        if (a[i] != b[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template <typename T>
 class VectorTest : public testing::Test
 {
 public:
@@ -300,7 +318,52 @@ TEST(VectorTests, Test_Vector_Initialize_List)
     }
 }
 
-// 明天给list测试一些常见方法
+TEST(VectorTests, Test_Vector_Member_Function)
+{
+    tinystl::Vector<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    tinystl::Vector<int>::iterator it_tmp; // 声明一个迭代器
+    int i = 0;
+    int back = l1.back();
+    // back
+    ASSERT_EQ(9, back);
+    // front
+    int front = l1.front();
+    ASSERT_EQ(1, front);
+    // size
+    ASSERT_EQ(l1.size(), 9);
+    // push_back
+    l1.push_back(10);
+    // size
+    ASSERT_EQ(l1.size(), 10);
+    compare(l1, tinystl::Vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+    // pop_back
+    l1.pop_back();
+    // size
+    ASSERT_EQ(l1.size(), 9);
+    compare(l1, tinystl::Vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+    // insert
+    l1.insert(l1.begin() + 1, 10);
+    // size
+    ASSERT_EQ(l1.size(), 10);
+    compare(l1, tinystl::Vector<int>{1, 10, 2, 3, 4, 5, 6, 7, 8, 9});
+
+    // erase
+    l1.erase(l1.begin() + 1);
+    compare(l1, tinystl::Vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
+    // size
+    ASSERT_EQ(l1.size(), 9);
+    // compare
+
+    // capacity
+
+    // clear
+    l1.clear();
+
+    // empty
+    ASSERT_EQ(l1.empty(), true);
+}
 
 int main(int argc, char **argv)
 {

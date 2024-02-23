@@ -22,7 +22,7 @@ include(CTest)
 enable_testing()
 
 # add_subdirectory(includes)
-add_subdirectory(test)
+add_subdirectory(tests)
 
 add_executable(${PROJECT_NAME} main.cpp)
 

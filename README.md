@@ -23,8 +23,27 @@
 8. 单元测试(ctest & gtest)
 
 约定：
-私有变量：下划线开头
-静态类成员：双下划线开头？
+私有变量：m_size_
+静态类成员：s_
+
+前缀	意义	前缀	意义
+属性部分			
+g_	全局变量	c_	常量
+m_	C++ 类成员变量	s_	静态变量
+类型部分			
+p	指针	i	整型
+fn	函数	n	短整型
+v	无效	s/sz/str	字符串
+h	句柄	c/ch	字符
+l	长整型	u	无符号
+b	布尔	by	字节
+f	浮点型	w	字
+d	双精度浮点	dw	双字
+描述部分			
+Max	最大	Cnt	基数
+Min	最小	Src	源对象
+Init	初始化	Dst	目标对象
+Tmp	临时变量		
 
 
 ## 支持
@@ -51,6 +70,9 @@ $ make
 $ cd ../bin && ./stltest
 
 mingw on window
+
+
+https://wangjii.github.io/article/25e9/
 
 
 
