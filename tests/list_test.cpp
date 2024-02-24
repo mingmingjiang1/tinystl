@@ -3,10 +3,11 @@
 
 #include <gtest/gtest.h>
 
-#include "../includes/list.h"
-#include "../includes/string.h"
+#include "list.h"
+#include "String.h"
 #include <string>
 #include <list>
+#pragma GCC diagnostic ignored "-Wunused-parameter" // disable warning: unused variable 'i' [-Wunused-variable]
 
 template <typename T>
 class ListTest : public testing::Test
@@ -168,7 +169,6 @@ void testDeclareWithNoInit(int size)
     typename tinystl::List<T>::iterator it_tmp; // 声明一个迭代器
     tinystl::List<T> l1(size);
     ASSERT_EQ(l1.size(), size);
-    int i = 0;
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, static_cast<T>(0));

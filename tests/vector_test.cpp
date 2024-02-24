@@ -3,8 +3,8 @@
 
 #include <gtest/gtest.h>
 
-#include "../includes/vector.h"
-#include "../includes/string.h"
+#include "vector.h"
+#include "String.h"
 #include <string>
 
 template <typename T>

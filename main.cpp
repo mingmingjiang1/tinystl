@@ -1,15 +1,15 @@
-#include "./includes/list.h"
-#include "./includes/string.h"
-#include "./includes/vector.h"
+#include "list.h"
+#include "String.h"
+#include "vector.h"
 #include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "./includes/tuple.h"
-#include "./includes/pair.h"
-#include "./includes/array.h"
-#include "./includes/algorithm.h"
-#include "./includes/global.h"
+#include "tuple.h"
+#include "pair.h"
+#include "array.h"
+#include "algorithm.h"
+#include "global.h"
 #include <stdlib.h>
 #include <time.h>
 

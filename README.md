@@ -47,6 +47,7 @@ cmake 3.15 或以上
 ## 运行测试
 
 gcc on linux
+` shell
 克隆仓库
 $ git clone git@github.com:mingmingjiang1/tinystl.git
 $ cd tinystl
@@ -55,6 +56,7 @@ $ mkdir build && cd build
 $ cmake ..
 $ make
 $ cd ../bin && ./stltest
+`
 
 mingw on window
 
