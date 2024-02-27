@@ -12,7 +12,7 @@ class ArrayTest : public testing::Test
 {
 public:
     T *value_;
-    void fillVal(unsigned int val, int size)
+    void fillVal(unsigned int, int size)
     {
         value_ = new unsigned int[size];
         srand((unsigned)time(NULL));
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    void fillVal(char val, int size)
+    void fillVal(char, int size)
     {
         // 随机生成string
 
@@ -49,7 +49,7 @@ public:
         }
     }
 
-    void fillVal(const char *val, int size)
+    void fillVal(const char *, int size)
     {
         // 随机生成string
         value_ = new const char *[size];
@@ -123,7 +123,7 @@ void testDeclareWithNoInit(int size)
     typename tinystl::Array<T, 5>::iterator it_tmp; // 声明一个迭代器
     tinystl::Array<T, 5> l1(size);
     ASSERT_EQ(l1.size(), size);
-    int i = 0;
+
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, static_cast<T>(0));

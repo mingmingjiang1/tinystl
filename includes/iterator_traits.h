@@ -38,40 +38,34 @@ namespace tinystl
   };
 }
 
-template <typename _Tp, typename _Tag>
+template <typename _Tp>
 struct Iterator_Traits
 {
-  typedef _Tag iterator_category;
-  typedef _Tp value_type;
-  typedef ptrdiff_t difference_type;
-  typedef _Tp *pointer;
-  typedef _Tp &reference;
-  // typedef typename _Tp::iterator_category iterator_category;
-  // typedef typename _Tp::value_type value_type;
-  // typedef typename _Tp::difference_type difference_type;
-
-  // typedef typename _Tp::pointer pointer;
-  // typedef typename _Tp::reference reference;
+  typedef typename _Tp::iterator_category iterator_category;
+  typedef typename _Tp::value_type value_type;
+  typedef typename _Tp::pointer pointer;
+  typedef typename _Tp::reference reference;
+  typedef typename _Tp::difference_type difference_type;
 };
 
 template <typename _Tp>
-struct Iterator_Traits<_Tp *, tinystl::random_access_iterator_tag>
+struct Iterator_Traits<_Tp *>
 {
-  typedef _Tp value_type;
-  typedef _Tp *pointer;
-  typedef ptrdiff_t difference_type;
-  typedef tinystl::random_access_iterator_tag iterator_category;
-  typedef _Tp &reference;
+  typedef tinystl::random_access_iterator_tag           iterator_category;
+  typedef _Tp                                    value_type;
+  typedef _Tp*                                   pointer;
+  typedef _Tp&                                   reference;
+  typedef ptrdiff_t                            difference_type;
 };
 
 template <typename _Tp>
-struct Iterator_Traits<const _Tp *, tinystl::random_access_iterator_tag>
+struct Iterator_Traits<const _Tp *>
 {
-  typedef _Tp value_type;
-  typedef tinystl::random_access_iterator_tag iterator_category;
-  typedef ptrdiff_t difference_type;
-  typedef const _Tp *pointer;
-  typedef const _Tp &reference;
+  typedef tinystl::random_access_iterator_tag           iterator_category;
+  typedef _Tp                                    value_type;
+  typedef const _Tp*                             pointer;
+  typedef const _Tp&                             reference;
+  typedef ptrdiff_t                            difference_type;
 };
 
 #endif

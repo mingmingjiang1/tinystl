@@ -5,138 +5,12 @@
  * @brief List Iterator Base Class
  *      Random_Access_Iterator
  * Base
- *      Sequence_Access_Iterator
+ *      Bidirectional_Access_Iterator
  */
 #include "iterator_traits.h"
 #include <cstddef>
 #include <iostream>
 #include <assert.h>
-
-// iterator 模板
-template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T *, class Reference = T &>
-struct iterator
-{
-public:
-  typedef Category iterator_category;
-  typedef T value_type;
-  typedef Pointer pointer;
-  typedef Reference reference;
-  typedef Distance difference_type;
-};
-
-/*
-
-  typedef _Tag iterator_category;
-  typedef _Tp value_type;
-  typedef ptrdiff_t difference_type;
-  typedef _Tp *pointer;
-  typedef _Tp &reference;
-
- */
-
-// T是迭代器
-template <typename T, typename Container>
-class Random_Access_Iterator
-{
-
-private:
-  T _M_current;
-
-public:
-  typedef Random_Access_Iterator<T, Container> self;
-  typedef Iterator_Traits<T, tinystl::random_access_iterator_tag> __traits_type;
-
-  typedef typename __traits_type::iterator_category iterator_category;
-  typedef typename __traits_type::value_type value_type;
-  typedef typename __traits_type::difference_type difference_type;
-  typedef typename __traits_type::reference reference;
-  typedef typename __traits_type::pointer pointer;
-
-  typedef T iterator_type;
-
-  Random_Access_Iterator() = default;
-
-  explicit Random_Access_Iterator(T __i) : _M_current(__i) {}
-
-  self &operator++()
-  {
-    // std::cout << _M_current << "   heeee-----" << std::endl;
-    ++_M_current;
-    // std::cout << _M_current << "   heeee++++" << std::endl;
-    return *this;
-  }
-
-  self &operator--()
-  {
-    --_M_current;
-    return *this;
-  }
-
-  pointer getAddr()
-  {
-    return _M_current;
-  }
-
-  self operator-(difference_type __n) { return self(_M_current - __n); }
-
-  self operator+(difference_type __n) { return self(_M_current + __n); }
-
-  self operator++(int)
-  {
-    self temp = *this;
-    ++_M_current;
-    return temp;
-  }
-  self operator--(int)
-  {
-    self temp(_M_current);
-    --_M_current;
-    return temp;
-  }
-  bool operator==(const Random_Access_Iterator &it) const
-  {
-    return _M_current == it._M_current;
-  }
-  bool operator!=(const Random_Access_Iterator &it) const
-  {
-    // it.current是end
-    // std::cout << "end:>>>>> " << it._M_current << "   begin:>>>>>>   " << _M_current << std::endl;
-    return it._M_current != _M_current;
-  }
-
-  reference operator[](difference_type __n) const _GLIBCXX_NOEXCEPT
-  {
-    return _M_current[__n];
-  }
-
-  // +=操作符 跳跃n个difference_type
-  self &operator+=(difference_type __n) _GLIBCXX_NOEXCEPT
-  {
-    _M_current += __n;
-    return *this;
-  }
-
-  // -=操作符 后退n个difference_type
-  self &operator-=(difference_type __n) _GLIBCXX_NOEXCEPT
-  {
-    _M_current -= __n;
-    return *this;
-  }
-
-  reference operator*()
-  {
-    assert(_M_current == nullptr); // segment fault
-    return *_M_current;
-  }
-
-  pointer operator->()
-  {
-    return _M_current;
-    ;
-  }
-
-  iterator_type base() const { return _M_current; }
-};
 
 template <typename T>
 struct node
@@ -145,9 +19,374 @@ struct node
   node *prev;
   node *next;
   node(T val) : m_data(val), prev(nullptr), next(nullptr) {}
-  node(): prev(nullptr), next(nullptr) {
-    
+  node() = default;
+};
+
+template <typename T>
+class Node
+{
+public:
+	T m_data;
+	Node *prev;
+	Node *next;
+
+public:
+	Node() : prev(NULL), next(NULL) {}
+	Node(T data, Node *prev = NULL, Node *next = NULL) : m_data(data), prev(prev), next(next) {}
+};
+
+// iterator 模板
+template <typename T>
+struct iterator_base
+{
+
+public:
+  typedef T value_type;
+  typedef T *pointer;
+  typedef T &reference;
+  typedef ptrdiff_t difference_type;
+  typedef tinystl::random_access_iterator_tag iterator_category;
+
+  iterator_base() = default;
+  explicit iterator_base(pointer __i, size_t size = 0) : _M_current(__i), m_start(__i), m_finish(__i + size) {}
+  // explicit iterator_base(pointer __i) : _M_current(__i) {}
+  pointer __get_current() const
+  {
+    return this->_M_current;
   }
+
+protected:
+  pointer _M_current, m_start, m_finish;
+
+  // virtual operator* operator-> operator+ operator++ operator== operator !=
+  virtual bool operator==(const iterator_base &) const = 0;
+  virtual bool operator!=(const iterator_base &) const = 0;
+};
+
+template <typename T>
+struct iterator_base<Node<T>>
+{
+
+public:
+  typedef Node<T> value_type;
+  typedef Node<T> *pointer;
+  typedef Node<T> &reference;
+  typedef ptrdiff_t difference_type;
+  typedef tinystl::random_access_iterator_tag iterator_category;
+
+  iterator_base() = default;
+  explicit iterator_base(pointer __i, size_t size = 0) : _M_current(__i), m_start(__i), m_finish(__i + size) {}
+  // explicit iterator_base(pointer __i) : _M_current(__i) {}
+  pointer __get_current() const
+  {
+    return this->_M_current;
+  }
+
+protected:
+  pointer _M_current, m_start, m_finish;
+
+  virtual bool operator==(const iterator_base<Node<T>> &) const = 0;
+  virtual bool operator!=(const iterator_base<Node<T>> &) const = 0;
+};
+
+template <typename T, typename Container>
+class Output_Iterator : public iterator_base<T>
+{
+
+public:
+  typedef Output_Iterator<T, Container> self;
+
+  typedef iterator_base<T> self_base;
+  typedef typename self_base::value_type value_type;
+  typedef typename self_base::pointer pointer;
+  typedef typename self_base::reference reference;
+  typedef typename self_base::difference_type difference_type;
+
+  Output_Iterator() : iterator_base<T>() {}
+
+  explicit Output_Iterator(pointer __i, size_t size = 0) : iterator_base<T>(__i, size) {}
+
+  self &operator++()
+  {
+    // if (this->_M_current >= this->m_finish)
+    // {
+    //   pointer tmp = new T();
+    //   *tmp = T();
+    //   return *tmp;
+    // }
+    ++this->_M_current;
+    return *this;
+  }
+
+  self operator+(difference_type __n) { return self(this->_M_current + __n); }
+
+  self operator++(int)
+  {
+    self temp = *this;
+    ++this->_M_current;
+    return temp;
+  }
+
+  bool operator==(const self_base &it) const override
+  {
+    return this->_M_current == it.__get_current();
+  }
+  bool operator!=(const self_base &it) const override
+  {
+    return it.__get_current() != this->_M_current;
+  }
+
+  reference operator*() const
+  {
+    if (this->_M_current >= this->m_finish)
+    {
+      pointer tmp = new T();
+      *tmp = T();
+      return *tmp;
+    }
+    return *this->_M_current;
+  }
+
+  pointer operator->()
+  {
+    return this->_M_current;
+    ;
+  }
+
+  self &operator=(const value_type &it) const
+  {
+    this->_M_current = &it;
+    return *this;
+  }
+
+  pointer base() const { return this->_M_current; }
+};
+
+template <typename T, typename Container>
+class Input_Iterator : public iterator_base<T>
+{
+
+public:
+  typedef Input_Iterator<T, Container> self;
+
+  typedef iterator_base<T> self_base;
+  typedef typename self_base::value_type value_type;
+  typedef typename self_base::pointer pointer;
+  typedef typename self_base::reference reference;
+  typedef typename self_base::difference_type difference_type;
+
+  Input_Iterator() : iterator_base<T>() {}
+
+  explicit Input_Iterator(pointer __i, size_t size = 0) : iterator_base<T>(__i, size) {}
+
+  self &operator++()
+  {
+    if (this->_M_current >= this->m_finish)
+    {
+      pointer tmp = new T();
+      *tmp = T();
+      return *tmp;
+    }
+    ++this->_M_current;
+    return *this;
+  }
+
+  self &operator--()
+  {
+    if (this->_M_current == this->m_start)
+    {
+      throw std::out_of_range("Negative distance");
+    }
+    --this->_M_current;
+    return *this;
+  }
+
+  self operator-(difference_type __n) { return self(this->_M_current - __n); }
+
+  self operator+(difference_type __n) { return self(this->_M_current + __n); }
+
+  self operator++(int)
+  {
+    self temp = *this;
+    ++this->_M_current;
+    return temp;
+  }
+  self_base &operator--(int)
+  {
+    self temp(this->_M_current);
+    --this->_M_current;
+    return temp;
+  }
+  bool operator==(const self_base &it) const override
+  {
+    return this->_M_current == it.__get_current();
+  }
+  bool operator!=(const self_base &it) const override
+  {
+    return it.__get_current() != this->_M_current;
+  }
+
+  self &operator=(const self &it) const
+  { // const 不允许修改
+    this->_M_current = it.__get_current();
+    return *this;
+  }
+
+  reference operator[](difference_type __n) const _GLIBCXX_NOEXCEPT
+  {
+    return this->m_start[__n];
+  }
+
+  // +=操作符 跳跃n个difference_type
+  self &operator+=(difference_type __n) _GLIBCXX_NOEXCEPT
+  {
+    this->_M_current += __n;
+    return *this;
+  }
+
+  // -=操作符 后退n个difference_type
+  self &operator-=(difference_type __n) _GLIBCXX_NOEXCEPT
+  {
+    this->_M_current -= __n;
+    return *this;
+  }
+
+  reference operator*()
+  {
+    if (this->_M_current >= this->m_finish)
+    {
+      pointer tmp = new T();
+      *tmp = T();
+      return *tmp;
+    }
+    return *this->_M_current;
+  }
+
+  pointer operator->()
+  {
+    return this->_M_current;
+    ;
+  }
+
+  pointer base() const { return this->_M_current; }
+};
+
+// T是迭代器
+template <typename T, typename Container>
+class Random_Access_Iterator : public Output_Iterator<T, Container>
+{
+
+public:
+  typedef Random_Access_Iterator<T, Container> self;
+
+  typedef iterator_base<T> self_base;
+  typedef typename self_base::value_type value_type;
+  typedef typename self_base::pointer pointer;
+  typedef typename self_base::reference reference;
+  typedef typename self_base::difference_type difference_type;
+
+  typedef Iterator_Traits<self> __traits_type;
+
+  Random_Access_Iterator() : Output_Iterator<T, Container>() {}
+
+  explicit Random_Access_Iterator(pointer __i, size_t size = 0) : Output_Iterator<T, Container>(__i, size) {}
+
+  self &operator=(const self &it)
+  {
+    this->_M_current = it._M_current;
+    this->m_finish = it.m_finish;
+    this->m_start = it.m_start;
+    return *this;
+  }
+
+  self &operator++()
+  {
+    // if (this->_M_current >= this->m_finish)
+    // {
+    //   self* tmp = new self();
+    //   *tmp = self();
+    //   return *tmp;
+    // }
+    ++this->_M_current;
+    return *this;
+  }
+
+  self &operator--()
+  {
+    if (this->_M_current == this->m_start)
+    {
+      throw std::out_of_range("Negative distance");
+    }
+    --this->_M_current;
+    return *this;
+  }
+
+  self operator-(difference_type __n) { return self(this->_M_current - __n); }
+
+  self operator+(difference_type __n) { return self(this->_M_current + __n); }
+
+  self &operator++(int)
+  {
+    ++this->_M_current;
+    return *this;
+  }
+  self operator--(int)
+  {
+    self temp = *this;
+    --this->_M_current;
+    return temp;
+  }
+  bool operator==(const self_base &it) const override
+  {
+    return this->_M_current == it.__get_current();
+  }
+  bool operator!=(const self_base &it) const override
+  {
+    // it.current是end
+    // std::cout << "end:>>>>> " << it._M_current << "   begin:>>>>>>   " << _M_current << std::endl;
+    return it.__get_current() != this->_M_current;
+  }
+
+  reference operator[](difference_type __n) const _GLIBCXX_NOEXCEPT
+  {
+    return this->m_start[__n];
+  }
+
+  // +=操作符 跳跃n个difference_type
+  self &operator+=(difference_type __n) _GLIBCXX_NOEXCEPT
+  {
+    this->_M_current += __n;
+    return *this;
+  }
+
+  // -=操作符 后退n个difference_type
+  self &operator-=(difference_type __n) _GLIBCXX_NOEXCEPT
+  {
+    this->_M_current -= __n;
+    return *this;
+  }
+
+  reference operator*()
+  {
+    if (this->_M_current >= this->m_finish)
+    {
+      pointer tmp = new T();
+      *tmp = T();
+      return *tmp;
+    }
+    return *this->_M_current;
+  }
+
+  pointer operator->()
+  {
+    return this->_M_current;
+    ;
+  }
+
+  pointer base() const { return this->_M_current; }
+
+private:
+  // pointer _M_current, m_start, m_finish;
 };
 
 template <typename _Iterator, typename _Container>
@@ -198,37 +437,96 @@ operator+(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
   return __lhs.base() + __rhs.base();
 }
 
-template <typename _Iterator, typename _IteratorR, typename _Container>
-bool operator!=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
-                const Random_Access_Iterator<_Iterator, _Container> &__rhs)
-{
-  return !(__lhs == __rhs);
-}
+// template <typename _Iterator, typename _IteratorR, typename _Container>
+// bool operator!=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+//                 const Random_Access_Iterator<_Iterator, _Container> &__rhs)
+// {
+//   return !(__lhs.base() == __rhs.base());
+// }
 
-/**
- * @brief List Node Class
- *
- */
+// template <typename _Iterator, typename _IteratorR, typename _Container>
+// bool operator==(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
+//                 const Random_Access_Iterator<_Iterator, _Container> &__rhs)
+// {
+//   return (__lhs.base() == __rhs.base());
+// }
+
 template <typename T, typename Container>
-class Sequence_Access_Iterator
+class Forward_Access_Iterator : public iterator_base<Node<T>>
 {
 public:
-  // typedef node<T> self;
-  typedef Sequence_Access_Iterator<T, Container> self;
-  typedef Iterator_Traits<self, tinystl::forward_iterator_tag> __traits_type;
-  typedef Container node;
-  typedef T value_type;
-  typedef ptrdiff_t difference_type;
-  typedef T &reference;
-  typedef T *pointer;
+  typedef iterator_base<Node<T>> self_base;
+  typedef typename self_base::value_type value_type;
+  typedef typename self_base::pointer pointer;
+  typedef typename self_base::reference reference;
+  typedef typename self_base::difference_type difference_type;
+  typedef Forward_Access_Iterator<T, Container> self;
 
-  Sequence_Access_Iterator() = default;
+  Forward_Access_Iterator() : iterator_base<Node<T>>() {}
 
-  Sequence_Access_Iterator(node *cur) : _cur(cur){};
+  Forward_Access_Iterator(Node<T> *cur) : iterator_base<Node<T>>(cur){};
 
-  self operator++()
+  self &operator++()
   {
-    _cur = _cur->next;
+    this->_M_current = this->_M_current->next;
+    return *this;
+  }
+
+  self operator+(difference_type __n)
+  {
+    while (-__n)
+    {
+      this->_M_current = this->_M_current->next;
+      --__n;
+    }
+    self tmp(this->_M_current);
+    return tmp;
+  }
+
+  self operator++(int)
+  {
+    self temp(this->_M_current);
+    this->_M_current = this->_M_current->next;
+    return temp;
+  }
+
+  bool operator==(const self_base &it) const override
+  {
+    return this->_M_current == it.__get_current();
+  }
+  bool operator!=(const self_base &it) const override
+  {
+    return this->_M_current != it.__get_current();
+  }
+
+  T &operator*()
+  {
+    return this->_M_current->m_data;
+  }
+
+  T *operator->() { return &this->_M_current->m_data; }
+
+};
+
+template <typename T, typename Container>
+class Bidirectional_Access_Iterator : public iterator_base<Node<T>>
+{
+public:
+  typedef iterator_base<Node<T>> self_base;
+  typedef typename self_base::value_type value_type;
+  typedef typename self_base::pointer pointer;
+  typedef typename self_base::reference reference;
+  typedef typename self_base::difference_type difference_type;
+  typedef Bidirectional_Access_Iterator<T, Container> self;
+
+  // Bidirectional_Access_Iterator() = default;
+  Bidirectional_Access_Iterator() : iterator_base<Node<T>>() {}
+
+  Bidirectional_Access_Iterator(Node<T> *cur) : iterator_base<Node<T>>(cur){};
+
+  self &operator++()
+  {
+    this->_M_current = this->_M_current->next;
     return *this;
   }
 
@@ -236,107 +534,116 @@ public:
   {
     while (-__n)
     {
-      _cur = _cur->prev;
+      this->_M_current = this->_M_current->prev;
       --__n;
     }
-    return self(_cur);
+    self tmp(this->_M_current);
+    return tmp;
   }
 
   self operator+(difference_type __n)
   {
     while (-__n)
     {
-      _cur = _cur->next;
+      this->_M_current = this->_M_current->next;
       --__n;
     }
-    return self(_cur);
+    self tmp(this->_M_current);
+    return tmp;
   }
 
-  self operator--()
+  self &operator--()
   {
-    _cur = _cur->prev;
+    this->_M_current = this->_M_current->prev;
     return *this;
   }
 
   self operator++(int)
   {
-    self temp(_cur);
-    _cur = _cur->next;
+    self temp(this->_M_current);
+    this->_M_current = this->_M_current->next;
     return temp;
   }
   self operator--(int)
   {
-    self temp(_cur);
-    _cur = _cur->prev;
+    self temp(this->_M_current);
+    this->_M_current = this->_M_current->prev;
     return temp;
   }
-  bool operator==(const self &it) const
+  bool operator==(const self_base &it) const override
   {
-    return _cur == it._cur;
+    return this->_M_current == it.__get_current();
   }
-  bool operator!=(const self &it) const
+  bool operator!=(const self_base &it) const override
   {
-    return _cur != it._cur;
+    return this->_M_current != it.__get_current();
   }
 
   T &operator*()
   {
-    assert(_M_current == nullptr); // segment fault "call null pointer will call segment fault
-    return _cur->m_data;
+    return this->_M_current->m_data;
   }
 
-  T *operator->() { return &_cur->m_data; }
+  T *operator->() { return &this->_M_current->m_data; }
 
-private:
-  node *_cur;
+  // private:
+  //   node *_M_current;
 };
 
 template <typename _Iterator, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator-(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator-(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() - __rhs.base();
 }
 
 template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator+(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator+(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() + __rhs.base();
 }
 
 template <typename _Iterator, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator>=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-           const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator>=(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() >= __rhs.base();
 }
 
 template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator>(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator>(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() > __rhs.base();
 }
 
 template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator<=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-           const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator<=(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() <= __rhs.base();
 }
 
 template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
-operator<(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator<(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() < __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
+operator==(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() == __rhs.base();
 }
 
 template <class T>
@@ -379,12 +686,18 @@ private:
   Iterator current; // 记录对应的正向迭代器
 
 public:
-  typedef Iterator_Traits<Iterator, tinystl::random_access_iterator_tag> __traits_type;
+  typedef Iterator_Traits<Iterator> __traits_type;
+  typedef tinystl::bidirectional_iterator_tag iterator_category;
+  typedef Iterator value_type;
+  typedef Iterator *pointer;
+  typedef Iterator &reference;
+  typedef Iterator difference_type;
+
   // 反向迭代器的五种相应型别
-  typedef typename __traits_type::value_type value_type;
-  typedef typename __traits_type::difference_type difference_type;
-  typedef typename __traits_type::reference reference;
-  typedef typename __traits_type::pointer pointer;
+  // typedef typename __traits_type::value_type value_type;
+  // typedef typename __traits_type::difference_type difference_type;
+  // typedef typename __traits_type::reference reference;
+  // typedef typename __traits_type::pointer pointer;
 
   typedef Iterator iterator_type;
   typedef Reverse_Iterator<Iterator> self;

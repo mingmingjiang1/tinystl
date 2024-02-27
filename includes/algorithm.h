@@ -136,7 +136,7 @@ namespace tinystl
   }
 
   template <typename Iterator>
-  typename Iterator_Traits<Iterator, tinystl::random_access_iterator_tag>::pointer min_element(Iterator begin, Iterator end)
+  Iterator min_element(Iterator begin, Iterator end)
   {
     Iterator min_iter = begin;
     for (Iterator it = begin; it != end; ++it)
@@ -146,8 +146,7 @@ namespace tinystl
         min_iter = it;
       }
     }
-    return min_iter.getAddr();
-    ;
+    return min_iter;
   }
 
   template <typename Iterator, typename Function>
@@ -171,11 +170,14 @@ namespace tinystl
   template <typename Iterator, typename Compare>
   Iterator find_if(Iterator start, Iterator end, Compare comp)
   {
+      std::cout << *start << "fvgggt";
     while (start != end)
+    {
       if (comp(*start))
         return start;
       else
         ++start;
+    }
     return end;
   }
 
@@ -233,8 +235,62 @@ namespace tinystl
 
   // 比如 双向迭代器的函数 。重载doAdvance，实现不同的迭代器类型的具体操作。
   // 可以看到迭代器类型仅仅是个重载的作用,使得重载机制得以运行，都不需要变量名。
+  /**
+   * @brief random / bidirection
+   *
+   * @tparam Iterator
+   * @tparam DistT
+   * @param iter
+   * @param d
+   */
   template <typename Iterator, typename DistT>
-  void doAdvance(Iterator &iter, DistT d)
+  void doAdvance(Iterator &iter, DistT d, tinystl::random_access_iterator_tag)
+  {
+    if (d < 0)
+    {
+      while (d++)
+      {
+        --iter;
+      }
+    }
+    else
+    {
+      while (d--)
+      {
+        ++iter;
+      }
+    }
+  }
+
+  template <typename Iterator, typename DistT>
+  void doAdvance(Iterator &iter, DistT d, tinystl::bidirectional_iterator_tag)
+  {
+    if (d < 0)
+    {
+      while (d++)
+      {
+        --iter;
+      }
+    }
+    else
+    {
+      while (d--)
+      {
+        ++iter;
+      }
+    }
+  }
+
+  /**
+   * @brief forward
+   *
+   * @tparam Iterator
+   * @tparam DistT
+   * @param iter
+   * @param d
+   */
+  template <typename Iterator, typename DistT>
+  void doAdvance(Iterator &iter, DistT d, tinystl::forward_iterator_tag)
   {
     if (d < 0)
     {
@@ -250,7 +306,7 @@ namespace tinystl
   template <typename Iterator, typename DistT>
   void advance(Iterator &iter, DistT d)
   {
-    doAdvance(iter, d);
+    doAdvance(iter, d, typename Iterator_Traits<Iterator>::iterator_category());
   }
 
   template <typename _Operation>
@@ -312,7 +368,7 @@ namespace tinystl
     }; */
 
   template <class Arg, class Result>
-  class pointer_to_unary_function: unary_function<Arg, Result>
+  class pointer_to_unary_function : unary_function<Arg, Result>
   {
   protected:
     // ptr是函数指针，相当于int (*ptr)(int),ptr指向的是函数LESS。前面那个int是返回值类型，后面那个是形参

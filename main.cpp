@@ -1,4 +1,5 @@
 #include "list.h"
+// #include "cow_string.h"
 #include "String.h"
 #include "vector.h"
 #include <cstddef>
@@ -66,7 +67,7 @@ int main()
 {
 
   /* 测试String */
-  cout << "********************** Test String **********************" << endl;
+  cout << "********************** Test CowString **********************" << endl;
 
   tinystl::String s1 = "hello";
   tinystl::String s2 = "hello";
@@ -80,48 +81,48 @@ int main()
   s2 = s1;
   cout << s2 << endl;
 
-  cout << "s1 = " << s1 << endl;
-  cout << "s1.refcount = " << s1.refCount() << endl;
-  printf("s1.addr = %p\n", s1.strAddr());
+  // cout << "s1 = " << s1 << endl;
+  // cout << "s1.refcount = " << s1.refCount() << endl;
+  // printf("s1.addr = %p\n", s1.strAddr());
 
-  cout << endl;
-  cout << "拷贝操作String s_2 = s1" << endl;
-  tinystl::String s_2 = s1;
-  cout << "s1 = " << s1 << endl;
-  cout << "s_2 = " << s_2 << endl;
-  cout << "s1.refcount = " << s1.refCount() << endl;
-  printf("s1.addr = %p\n", s1.strAddr());
-  cout << "s_2.refcount = " << s_2.refCount() << endl;
-  printf("s_2.addr = %p\n", s_2.strAddr());
-  s2.strAddr();
+  // cout << endl;
+  // cout << "拷贝操作String s_2 = s1" << endl;
+  // tinystl::CowString s_2 = s1;
+  // cout << "s1 = " << s1 << endl;
+  // cout << "s_2 = " << s_2 << endl;
+  // cout << "s1.refcount = " << s1.refCount() << endl;
+  // printf("s1.addr = %p\n", s1.strAddr());
+  // cout << "s_2.refcount = " << s_2.refCount() << endl;
+  // printf("s_2.addr = %p\n", s_2.strAddr());
+  // s2.strAddr();
 
-  cout << endl;
-  cout << "赋值操作s3 = s2" << endl;
-  s3 = s2;
-  cout << "s2.refcount = " << s2.refCount() << endl;
-  printf("s2.addr = %p\n", s2.strAddr());
-  cout << "s3.refcount = " << s3.refCount() << endl;
-  printf("s3.addr = %p\n", s3.strAddr());
+  // cout << endl;
+  // cout << "赋值操作s3 = s2" << endl;
+  // s3 = s2;
+  // cout << "s2.refcount = " << s2.refCount() << endl;
+  // printf("s2.addr = %p\n", s2.strAddr());
+  // cout << "s3.refcount = " << s3.refCount() << endl;
+  // printf("s3.addr = %p\n", s3.strAddr());
 
-  cout << endl;
-  cout << "读下标操作" << endl;
-  cout << "s_2[0] = " << s_2[0] << ", s1 = " << s1 << endl;
-  cout << "s1.refcount = " << s1.refCount() << endl;
-  printf("s1.addr = %p\n", s1.strAddr());
-  cout << "s_2.refcount = " << s_2.refCount() << endl;
-  printf("s_2.addr = %p\n", s_2.strAddr());
-  cout << "s.size = " << s_2.size() << endl;
+  // cout << endl;
+  // cout << "读下标操作" << endl;
+  // cout << "s_2[0] = " << s_2[0] << ", s1 = " << s1 << endl;
+  // cout << "s1.refcount = " << s1.refCount() << endl;
+  // printf("s1.addr = %p\n", s1.strAddr());
+  // cout << "s_2.refcount = " << s_2.refCount() << endl;
+  // printf("s_2.addr = %p\n", s_2.strAddr());
+  // cout << "s.size = " << s_2.size() << endl;
 
-  cout << endl;
-  cout << "对数据写操作,将会触发写时复制技术！" << endl;
-  s2[0] = '0';
-  cout << "s2[0] = " << s2[0] << ", s2 = " << s2 << endl;
-  cout << "s1.refcount = " << s1.refCount() << endl;
-  printf("s1.addr = %p\n", s1.strAddr());
-  cout << "s2.refcount = " << s2.refCount() << endl;
-  printf("s2.addr = %p\n", s2.strAddr());
-  cout << "s3.refcount = " << s3.refCount() << endl;
-  printf("s3.addr = %p\n", s3.strAddr());
+  // cout << endl;
+  // cout << "对数据写操作,将会触发写时复制技术！" << endl;
+  // s2[0] = '0';
+  // cout << "s2[0] = " << s2[0] << ", s2 = " << s2 << endl;
+  // cout << "s1.refcount = " << s1.refCount() << endl;
+  // printf("s1.addr = %p\n", s1.strAddr());
+  // cout << "s2.refcount = " << s2.refCount() << endl;
+  // printf("s2.addr = %p\n", s2.strAddr());
+  // cout << "s3.refcount = " << s3.refCount() << endl;
+  // printf("s3.addr = %p\n", s3.strAddr());
   cout << "s3.size = " << s2.size() << endl;
   tinystl::Vector<std::string> vs(1, "aaa5566");
 
@@ -129,7 +130,7 @@ int main()
 
   // std::cout << "dash-separated string : " << ss << std::endl;
 
-  cout << "********************** Test String **********************" << endl;
+  cout << "********************** Test CowString **********************" << endl;
 
   cout << "********************** Test Array **********************" << endl;
 
@@ -241,6 +242,7 @@ int main()
 
   // for (it = l1.begin(); it != l1.end(); it++)
   // {
+  //   *it = 10;
   //   cout << *it << endl;
   // }
 
@@ -466,11 +468,10 @@ int main()
   // cout << "********************** Test ptr_func **********************" << endl;
   // tinystl::List<int>::iterator it1 = l1.begin(); // 声明一个迭代器
 
-  // // for (it = l1.begin(); it != l1.end(); it++)
-  // // {
-  // //   cout << *it << endl;
-  // // }
-  // tinystl::advance(it1, 2);
+  // cout << "sum: " << sum << std::endl;
+
+  cout << "********************** Test accumulate **********************" << endl;
+  cout << "********************** Test CowString **********************" << endl;
 
   // std::cout << "The xxx element in mylist is: " << *it1 << '\n';
 

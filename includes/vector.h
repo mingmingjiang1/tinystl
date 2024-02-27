@@ -13,9 +13,9 @@ namespace tinystl
   {
   public:
     typedef T value_type; // alias for T
-    // typedef T* iterator;
+    typedef T* iterator;
 
-    typedef Random_Access_Iterator<T *, Vector> iterator;
+    // typedef Random_Access_Iterator<T, Vector> iterator;
 
     /*
       另一种写法：
@@ -23,7 +23,6 @@ namespace tinystl
       typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
      */
 
-    // typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
 
     typedef Reverse_Iterator<T *> reverse_iterator;
     Vector(size_t size)
@@ -35,7 +34,6 @@ namespace tinystl
       {
         m_data[i] = static_cast<T>(0);
       }
-      std::cout << "Vector"  << m_data << std::endl;
     }
     Vector(T *first, T *last)
     {
@@ -48,16 +46,16 @@ namespace tinystl
       }
     }
 
-    Vector(iterator first, iterator last)
-    {
-      _size = _capacity = last - first;
-      m_data = new value_type[_size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
-      for (int i = 0; i < _size; i++)
-      {
-        m_data[i] = first[i];
-      }
-    }
+    // Vector(iterator first, iterator last)
+    // {
+    //   _size = _capacity = last - first;
+    //   m_data = new value_type[_size];
+    //   // m_data = tinystl::Allocator<T>::allocate(_size);
+    //   for (int i = 0; i < _size; i++)
+    //   {
+    //     m_data[i] = first[i];
+    //   }
+    // }
 
     Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     {
@@ -79,9 +77,7 @@ namespace tinystl
       int i = 0;
       for (auto it = arr.begin(); it != arr.end(); ++it)
       {
-        std::cout << "frrg ---- start << " << _size << std::endl;
         m_data[i++] = *it;
-        std::cout << "frrg ----- ending" << std::endl;
       }
     }
     Vector() : m_data(nullptr), _size(0), _capacity(0) {}
@@ -238,7 +234,6 @@ namespace tinystl
       temp[index] = val;
       for (int i = index; i < _size; i++)
       {
-        std::cout << m_data[i] << _size << i << "insert" << std::endl;
         temp[i + 1] = m_data[i];
       }
       // delete[] m_data;
@@ -247,10 +242,8 @@ namespace tinystl
     }
     else
     {
-      std::cout << index << "index" << std::endl;
       for (int i = _size - 1; i >= index; --i)
       {
-        // std::cout << m_data[i] << _size << i << "insert" << std::endl;
         m_data[i + 1] = m_data[i];
       }
       m_data[index] = val;
@@ -277,7 +270,6 @@ namespace tinystl
   {
     _size = vec._size;
     _capacity = vec._capacity;
-    std::cout << "Vector<T>::Vector(const Vector &vec)" << _size  << " " << std::endl;
     m_data = new Vector<T>::value_type[_size];
     // m_data = tinystl::Allocator<T>::allocate(_size);
     for (int i = 0; i < _size; i++)

@@ -1,4 +1,5 @@
 # SET(LLVM_SRC /usr/bin/llvm-config)
+add_definitions("-Wall -g")
 SET(CMAKE_C_COMPILER /usr/bin/gcc)
 SET(CMAKE_CXX_COMPILER /usr/bin/g++)
 cmake_minimum_required(VERSION 3.0.0)
@@ -13,6 +14,7 @@ message(STATUS "The version of this project is: ${MyTinySTL_VERSION}")
 
 
 include_directories(${PROJECT_SOURCE_DIR}/includes)
+# set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # build type
 set(CMAKE_BUILD_TYPE release)
@@ -43,6 +45,14 @@ message(">>> include_dirs=${dirs}") #打印一下目录情况
 
 message(">>> GCC=${CMAKE_CXX_COMPILER_VERSION}") #打印一下目录情况
 
+message(">>> CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+
+message(">>> CMAKE_INSTALL_SO_NO_EXE=${CMAKE_INSTALL_SO_NO_EXE}")
+
+message(">>>CMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_INCLUDEDIR}")
+
+message(">>>CMAKE_RUNTIME_OUTPUT_DIRECTORY=${CMAKE_BINARY_DIR}")
+
 
 include(CTest)
 enable_testing()
@@ -58,4 +68,10 @@ add_executable(${PROJECT_NAME} main.cpp)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+set(INSTALL_HEAD_FILES ${PROJECT_SOURCE_DIR}/includes)
+
+
+install(DIRECTORY ${INSTALL_HEAD_FILES} DESTINATION  ${CMAKE_INSTALL_PREFIX}/include USE_SOURCE_PERMISSIONS)
+
 

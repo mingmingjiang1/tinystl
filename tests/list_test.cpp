@@ -242,18 +242,18 @@ using ListTypes = ::testing::Types<int, unsigned int, const char *>;
 INSTANTIATE_TYPED_TEST_SUITE_P(tinystl1, ListTest, ListTypes);
 
 // 测试自定义string类型
-// TEST(ListTests, Test_List_String)
-// {
-//     tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
-//     tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
-//     tinystl::List<tinystl::String> l1(a, a + 5);
-//     int i = 0;
-//     ASSERT_EQ(l1.size(), 5);
-//     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-//     {
-//         ASSERT_EQ(*it_tmp, a[i++]);
-//     }
-// }
+TEST(ListTests, Test_List_String)
+{
+    // tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
+    // tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
+    // tinystl::List<tinystl::String> l1(a, a + 5);
+    // int i = 0;
+    // ASSERT_EQ(l1.size(), 5);
+    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    // {
+    //     ASSERT_EQ(*it_tmp, a[i++]);
+    // }
+}
 
 // 测试嵌套类型
 TEST(ListTests, Test_Lits_Inilialize_List)
@@ -264,17 +264,17 @@ TEST(ListTests, Test_Lits_Inilialize_List)
     {
         cout << *it << " frtggtmn";
     }
-    // tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
-    // int i = 0;
-    // tinystl::List<std::string> l4{"1", "2", "3"};
-    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, i + 1);
-    //     i++;
-    // }
+    tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
+    int i = 0;
+    tinystl::List<std::string> l4{"1", "2", "3"};
+    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, i + 1);
+        i++;
+    }
 
     // tinystl::List<std::string> l2(2, std::string("1"));
-    // // tinystl::List<tinystl::String> l4{"1", "2", "3"};
+    // tinystl::List<tinystl::String> l4{"1", "2", "3"};
     // tinystl::List<std::string>::iterator it_tmp_2; // 声明一个迭代器
     // i = 0;
     // for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)

@@ -3,6 +3,7 @@
 
 #include "iterator.h"
 #include "adapter.h"
+#include "allocator_copy.h"
 #include <string>
 #include <iostream>
 
@@ -45,32 +46,24 @@ namespace tinystl
 	template <typename T>
 	class List
 	{
-	private:
-		class Node
-		{
-		public:
-			T data;
-			Node *prev;
-			Node *next;
-
-		public:
-			Node() : prev(NULL), next(NULL) {}
-			Node(T data, Node *prev = NULL, Node *next = NULL) : data(data), prev(prev), next(next) {}
-		};
-		Node *head;
-		Node *tail;
 
 	public:
+		typedef Bidirectional_Access_Iterator<T, List> iterator;
+		typedef Node<T> node_type;
+		// typedef tinystl::allocator<node_type> allocator_type;
+		// typedef tinystl::Allocator<node_type> allocator_type;
+		// typedef new node_type();
+
 		List()
 		{
-			head = tinystl::Allocator<Node>::allocate(1);
-			tail = tinystl::Allocator<Node>::allocate(1);
+			head = new node_type();
+			tail = new node_type();
 			head->next = tail;
 			tail->prev = head;
 		}
 		size_t size()
 		{
-			Node *node = head->next;
+			node_type *node = head->next;
 			size_t s = 0;
 			while (node != tail)
 			{
@@ -85,12 +78,12 @@ namespace tinystl
 		}
 		void clear()
 		{
-			Node *node = head->next;
+			node_type *node = head->next;
 			while (node != tail)
 			{
-				Node *next = node->next;
-				// delete node;
-				tinystl::Allocator<Node>::deallocate(node);
+				node_type *next = node->next;
+				delete node;
+				// allocator_type::deallocate(node);
 				node = next;
 			}
 			head->next = tail;
@@ -99,32 +92,32 @@ namespace tinystl
 		~List()
 		{
 			clear();
-			tinystl::Allocator<Node>::deallocate(head);
-			tinystl::Allocator<Node>::deallocate(tail);
-			// delete head;
-			// delete tail;
+			// allocator_type::deallocate(head);
+			// allocator_type::deallocate(tail);
+			delete head;
+			delete tail;
 			head = NULL;
 			tail = NULL;
 		}
 		void push_front(T data)
 		{
-			Node *node = new Node(data, head, head->next);
+			node_type *node = new node_type(data, head, head->next);
 			head->next->prev = node;
 			head->next = node;
 		}
 		void push_back(T data)
 		{
-			Node *node = new Node(data, tail->prev, tail);
+			node_type *node = new node_type(data, tail->prev, tail);
 			tail->prev->next = node;
 			tail->prev = node;
 		}
 		List(const List &lt)
 		{
-			head = tinystl::Allocator<Node>::allocate(1);
-			tail = tinystl::Allocator<Node>::allocate(1);
+			head = new node_type();
+			tail = new node_type();
 			head->next = tail;
 			tail->prev = head;
-			Node *node = (lt.head)->next;
+			node_type *node = (lt.head)->next;
 			while (node != lt.tail)
 			{
 				push_back(node->data);
@@ -134,21 +127,20 @@ namespace tinystl
 
 		List(std::initializer_list<T> lt)
 		{
-			head = tinystl::Allocator<Node>::allocate(1);
-			tail = tinystl::Allocator<Node>::allocate(1);
+			head = new node_type();
+			tail = new node_type();
 			head->next = tail;
 			tail->prev = head;
 
-			Node *pre = head;
+			node_type *pre = head;
 			for (auto &cur : lt)
 			{
-				Node *node = new Node(cur, pre, tail);
+				node_type *node = new node_type(cur, pre, tail);
 				pre->next = node;
 				tail->prev = node;
 				pre = node;
 			}
 		}
-		
 
 		// l1 = l2;
 		List &operator=(const List &lt)
@@ -156,7 +148,7 @@ namespace tinystl
 			if (this != &lt)
 			{
 				clear(); // 清空自己
-				Node *node = (lt.head)->next;
+				node_type *node = (lt.head)->next;
 				while (node != lt.tail)
 				{ // 遍历lt
 					push_back(node->data);
@@ -166,48 +158,48 @@ namespace tinystl
 			return *this;
 		}
 
-		class iterator
-		{
-		public:
-			Node *node;
+		// class iterator
+		// {
+		// public:
+		// 	node_type *node;
 
-		public:
-			iterator(Node *node) : node(node){};
-			iterator &operator++()
-			{
-				node = node->next;
-				return *this;
-			}
-			iterator operator++(int)
-			{
-				iterator it(*this);
-				node = node->next;
-				return it;
-			}
-			iterator &operator--()
-			{
-				node = node->prev;
-				return *this;
-			}
-			iterator operator--(int)
-			{
-				iterator it(*this);
-				node = node->prev;
-				return it;
-			}
-			bool operator==(const iterator &it) const
-			{
-				return node == it.node;
-			};
-			bool operator!=(const iterator &it) const
-			{
-				return node != it.node;
-			}
-			T &operator*(void)
-			{
-				return node->data;
-			}
-		};
+		// public:
+		// 	iterator(node_type *node) : node(node){};
+		// 	iterator &operator++()
+		// 	{
+		// 		node = node->next;
+		// 		return *this;
+		// 	}
+		// 	iterator operator++(int)
+		// 	{
+		// 		iterator it(*this);
+		// 		node = node->next;
+		// 		return it;
+		// 	}
+		// 	iterator &operator--()
+		// 	{
+		// 		node = node->prev;
+		// 		return *this;
+		// 	}
+		// 	iterator operator--(int)
+		// 	{
+		// 		iterator it(*this);
+		// 		node = node->prev;
+		// 		return it;
+		// 	}
+		// 	bool operator==(const iterator &it) const
+		// 	{
+		// 		return node == it.node;
+		// 	};
+		// 	bool operator!=(const iterator &it) const
+		// 	{
+		// 		return node != it.node;
+		// 	}
+		// 	T &operator*(void)
+		// 	{
+		// 		return node->data;
+		// 	}
+		// };
 
 		iterator begin()
 		{
@@ -223,11 +215,11 @@ namespace tinystl
 			{
 				throw NotElementException();
 			}
-			Node *node = head->next;
+			node_type *node = head->next;
 			head->next->next->prev = head;
 			head->next = head->next->next;
-			// delete node;
-			tinystl::Allocator<Node>::deallocate(node);
+			delete node;
+			// allocator_type::deallocate(node);
 		}
 		void pop_back()
 		{
@@ -235,11 +227,11 @@ namespace tinystl
 			{
 				throw NotElementException();
 			}
-			Node *node = tail->prev;
+			node_type *node = tail->prev;
 			tail->prev->prev->next = tail;
 			tail->prev = tail->prev->prev;
-			// delete node;
-			tinystl::Allocator<Node>::deallocate(node);
+			delete node;
+			// allocator_type::deallocate(node);
 		}
 		// 删除it所指向的节点
 		iterator erase(iterator &it)
@@ -248,11 +240,11 @@ namespace tinystl
 			{
 				throw InvalidIteratorException();
 			}
-			Node *next = it.node->next;
+			node_type *next = it.node->next;
 			it.node->prev->next = it.node->next;
 			it.node->next->prev = it.node->prev;
-			// delete it.node;
-			tinystl::Allocator<Node>::deallocate(it.node);
+			delete it.node;
+			// allocator_type::deallocate(it.node);
 			it.node = next;
 			return it;
 		}
@@ -263,12 +255,16 @@ namespace tinystl
 			{
 				throw InvalidIteratorException();
 			}
-			Node *node = new Node(data, it.node->prev, it.node);
+			node_type *node = new node_type(data, it.node->prev, it.node);
 			it.node->prev->next = node;
 			it.node->prev = node;
 			it.node = node;
 			return it;
 		}
+
+	private:
+		node_type *head;
+		node_type *tail;
 	};
 
 	// int main()

@@ -14,14 +14,14 @@ template <typename Head, typename... Tail>
 class Tuple<Head, Tail...> : Tuple<Tail...>
 {
 private:
-  Head value_;
   template <typename...>
   friend class Tuple;
+  Head value_;
   using Next = Tuple<Tail...>;
 
 public:
   Tuple() = default;
-  Tuple(const Head value, const Tail... tail) : value_(value), Tuple<Tail...>(tail...)
+  Tuple(const Head value, const Tail... tail) : Tuple<Tail...>(tail...), value_(value)
   {
     cout << "addring: " << this << value << endl;
   }

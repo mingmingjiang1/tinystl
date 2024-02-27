@@ -60,7 +60,7 @@ namespace tinystl
             m_data = new value_type[N];
             std::cout << "jnfrjnjn" << sizeof(T) << N << m_data;
             _size = N;
-                        for (int i = 0; i < _size; i++)
+            for (int i = 0; i < _size; i++)
             {
                 m_data[i] = T();
             }
@@ -175,7 +175,7 @@ namespace tinystl
     };
 }
 
-/* 
+/*
 线性的可以直接delete [] arr，非线性的需要遍历一个一个delete
 赋值的时候记得被赋值的要滞空指针
  */

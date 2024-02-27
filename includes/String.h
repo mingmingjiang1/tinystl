@@ -1,5 +1,5 @@
-#ifndef STRING
-#define STRING
+#ifndef STRING_H
+#define STRING_H
 
 /**
  * @brief String Class

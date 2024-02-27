@@ -47,7 +47,6 @@ public:
     {
         // if (p == nullptr)
         //     return;
-        
     }
 
     template <class U, class... Args>
