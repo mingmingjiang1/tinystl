@@ -162,7 +162,7 @@ namespace tinystl
                     }
                 }
                 end_free = nullptr;
-                start_free = (char *)::operator new(bytes_to_get);
+                start_free = new char[bytes_to_get];
             }
             heap_size += bytes_to_get;
             end_free = start_free + bytes_to_get;

@@ -48,7 +48,7 @@ namespace tinystl
     template <class T>
     T *allocator<T>::allocate()
     {
-        return new T[1];
+        return new T();
     }
 
     /**
