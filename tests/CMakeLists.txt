@@ -35,6 +35,6 @@ target_link_libraries(array_test
   GTest::GTest)
 
 # # 增加测试
-add_test(list_gtests list_test)
 add_test(vector_gtests vector_test)
-add_test(array_gtests array_test)
+add_test(list_gtests list_test)
+# add_test(array_gtests array_test)

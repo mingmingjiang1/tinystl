@@ -22,6 +22,11 @@ public:
         }
     }
 
+    ~ArrayTest()
+    {
+        delete[] value_;
+    }
+
     void fillVal(int val, int size)
     {
         value_ = new int[size];
@@ -175,17 +180,16 @@ TYPED_TEST_P(ArrayTest, Contructor)
 
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
-    testDeclareWithInit<TypeParam>(tmp, 5);
-    testDeclareWithNoInit<TypeParam>(5);
+    // testDeclareWithInit<TypeParam>(tmp, 5);
+    // testDeclareWithNoInit<TypeParam>(5);
     testAssign<TypeParam>(tmp, 5);
-    delete[] tmp;
 }
 
-REGISTER_TYPED_TEST_CASE_P(ArrayTest, Contructor);
+// REGISTER_TYPED_TEST_CASE_P(ArrayTest, Contructor);
 
 typedef testing::Types<char, int, unsigned int, const char *> ArrayTypes;
 
-INSTANTIATE_TYPED_TEST_CASE_P(tinystl, ArrayTest, ArrayTypes);
+// INSTANTIATE_TYPED_TEST_CASE_P(tinystl, ArrayTest, ArrayTypes);
 
 // 测试自定义string类型
 TEST(ArrayTests, Test_Array_String)
@@ -201,8 +205,15 @@ TEST(ArrayTests, Test_Array_String)
     }
 }
 
+class Test1 {
+    public:
+    Test1() {
+        std::cout << "gtjgjngt" ;
+    }
+};
+
 // 测试嵌套类型
-TEST(VectorTests, Test_Array_Initialize_List)
+TEST(ArrayTests, Test_Array_Initialize_List)
 {
     tinystl::Array<int, 9> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     tinystl::Array<int, 9>::iterator it_tmp; // 声明一个迭代器

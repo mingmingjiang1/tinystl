@@ -49,14 +49,22 @@ namespace tinystl
         {
             m_data = new T[size];
             _size = size;
-            memset(m_data, 0, sizeof(T) * size);
+            for (int i = 0; i < _size; i++)
+            {
+                m_data[i] = T();
+            }
         }
 
         Array()
         {
-            m_data = new T[N];
+            m_data = new value_type[N];
+            std::cout << "jnfrjnjn" << sizeof(T) << N << m_data;
             _size = N;
-            memset(m_data, 0, sizeof(T) * N);
+                        for (int i = 0; i < _size; i++)
+            {
+                m_data[i] = T();
+            }
+            // memset(m_data, 0, sizeof(T) * N);
         }
 
         iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
@@ -68,10 +76,11 @@ namespace tinystl
 
         ~Array()
         {
-            if (this->m_data != NULL)
+            std::cout << "frnnrf" << m_data;
+            if (m_data)
             {
                 delete[] m_data;
-                m_data = NULL;
+                m_data = nullptr;
             }
         }
 
@@ -149,12 +158,11 @@ namespace tinystl
             if (this == &arr)
                 return *this;
             int i;
-            if (m_data != NULL)
+            if (m_data)
             {
                 delete[] m_data;
             }
             _size = arr._size;
-            m_data = new T[arr._size];
 
             // memset(m_data, 0, sizeof(T) * arr._size);
             m_data = new value_type[_size];

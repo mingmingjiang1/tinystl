@@ -240,10 +240,10 @@ namespace tinystl
     {
       throw std::out_of_range("Negative distance");
     }
-    // while (d--)
-    // {
-    //   ++iter;
-    // }
+    while (d--)
+    {
+      ++iter;
+    }
   }
 
   // advance编译器确定使用哪种迭代器类型版本

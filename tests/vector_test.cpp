@@ -30,9 +30,24 @@ class VectorTest : public testing::Test
 {
 public:
     T *value_;
+
+    ~VectorTest() {
+        delete[] value_;
+    }
+
     void fillVal(unsigned int val, int size)
     {
         value_ = new unsigned int[size];
+        srand((unsigned)time(NULL));
+        for (int i = 0; i < size; i++)
+        {
+            value_[i] = rand() % (100 + 1);
+        }
+    }
+
+    void fillVal(double val, int size)
+    {
+        value_ = new double[size];
         srand((unsigned)time(NULL));
         for (int i = 0; i < size; i++)
         {
@@ -74,57 +89,8 @@ public:
     }
 };
 
-unsigned int *fillVal(unsigned int val, int size)
-{
-    unsigned int *a = new unsigned int[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-    return a;
-}
 
-int *fillVal(int val, int size)
-{
-    int *a = new int[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-
-    return a;
-}
-
-char *fillVal(char val, int size)
-{
-    // 随机生成string
-
-    char *a = new char[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-
-    return a;
-}
-
-const char **fillVal(const char *val, int size)
-{
-    // 随机生成string
-    const char **a = new const char *[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = std::to_string(rand() % (100 + 1)).c_str();
-    }
-
-    return a;
-}
-
-TYPED_TEST_CASE_P(VectorTest);
+TYPED_TEST_SUITE_P(VectorTest);
 
 // 测试所有的声明
 template <typename T>
@@ -215,8 +181,13 @@ void testAssign(T *a, int size)
     {
         ASSERT_EQ(*it_tmp, a[i++]);
     }
+    std::cout << "l4.size() = " << std::endl;
+    for (auto i : l1)
+    {
+        std::cout << i << " " << std::endl;
+    }
 
-    // test for iterator
+    // // test for iterator
     tinystl::Vector<T> lt(l1.begin() + 1, l1.end());
     l5 = lt;
     i = 1;
@@ -246,14 +217,17 @@ TYPED_TEST_P(VectorTest, Constructor)
     testDeclareWithInit<TypeParam>(tmp, 5);
     testDeclareWithNoInit<TypeParam>(5);
     testAssign<TypeParam>(tmp, 5);
-    delete[] tmp;
+
 }
 
-REGISTER_TYPED_TEST_CASE_P(VectorTest, Constructor);
+// REGISTER_TYPED_TEST_CASE_P(VectorTest, Constructor);
 
-typedef testing::Types<char, int, unsigned int, const char *> VectorTypes;
+REGISTER_TYPED_TEST_SUITE_P(VectorTest, Constructor);
+using VectorTypes = ::testing::Types<int, unsigned int, char, const char*, double>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(tinystl, VectorTest, VectorTypes);
+
+INSTANTIATE_TYPED_TEST_SUITE_P(tinystl, VectorTest, VectorTypes);
+// INSTANTIATE_TYPED_TEST_SUITE_P(tinystl2, VectorTest, char);
 
 // 测试自定义string类型
 TEST(VectorTests, Test_Vector_String)
@@ -261,6 +235,16 @@ TEST(VectorTests, Test_Vector_String)
     tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
     tinystl::Vector<tinystl::String>::iterator it_tmp; // 声明一个迭代器
     tinystl::Vector<tinystl::String> l1(a, a + 5);
+
+    const char *a2[5] = {"aa", "bb", "cc", "dd", "ee"};
+    tinystl::Vector<const char *> lun(a2, a2 + 5);
+
+    unsigned int arr[5] = {1, 2, 3, 4, 5};
+
+    testAssign<const char *>(a2, 5);
+
+    // // test for iterator
+    tinystl::Vector<const char *> lt(lun.begin() + 3, lun.end());
     int i = 0;
     ASSERT_EQ(l1.size(), 5);
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)

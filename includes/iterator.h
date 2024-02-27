@@ -10,6 +10,7 @@
 #include "iterator_traits.h"
 #include <cstddef>
 #include <iostream>
+#include <assert.h>
 
 // iterator 模板
 template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T *, class Reference = T &>
@@ -23,7 +24,7 @@ public:
   typedef Distance difference_type;
 };
 
-/* 
+/*
 
   typedef _Tag iterator_category;
   typedef _Tp value_type;
@@ -46,10 +47,10 @@ public:
   typedef Iterator_Traits<T, tinystl::random_access_iterator_tag> __traits_type;
 
   typedef typename __traits_type::iterator_category iterator_category;
-  typedef typename __traits_type::value_type  	value_type;
-  typedef typename __traits_type::difference_type 	difference_type;
-  typedef typename __traits_type::reference 	reference;
-  typedef typename __traits_type::pointer   	pointer;
+  typedef typename __traits_type::value_type value_type;
+  typedef typename __traits_type::difference_type difference_type;
+  typedef typename __traits_type::reference reference;
+  typedef typename __traits_type::pointer pointer;
 
   typedef T iterator_type;
 
@@ -122,7 +123,11 @@ public:
     return *this;
   }
 
-  reference operator*() { return *_M_current; }
+  reference operator*()
+  {
+    assert(_M_current == nullptr); // segment fault
+    return *_M_current;
+  }
 
   pointer operator->()
   {
@@ -139,13 +144,16 @@ struct node
   T m_data;
   node *prev;
   node *next;
-  node() : prev(nullptr), next(nullptr) {}
+  node(T val) : m_data(val), prev(nullptr), next(nullptr) {}
+  node(): prev(nullptr), next(nullptr) {
+    
+  }
 };
 
 template <typename _Iterator, typename _Container>
 typename Random_Access_Iterator<_Iterator, _Container>::difference_type
 operator>=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+           const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() - __rhs.base() >= 0;
 }
@@ -161,7 +169,7 @@ operator>(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
 template <typename _Iterator, typename _Container>
 typename Random_Access_Iterator<_Iterator, _Container>::difference_type
 operator<=(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+           const Random_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() - __rhs.base() <= 0;
 }
@@ -273,7 +281,8 @@ public:
 
   T &operator*()
   {
-      return _cur->m_data;
+    assert(_M_current == nullptr); // segment fault "call null pointer will call segment fault
+    return _cur->m_data;
   }
 
   T *operator->() { return &_cur->m_data; }
@@ -298,11 +307,10 @@ operator+(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
   return __lhs.base() + __rhs.base();
 }
 
-
 template <typename _Iterator, typename _Container>
 typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
 operator>=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+           const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() >= __rhs.base();
 }
@@ -318,7 +326,7 @@ operator>(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
 template <typename _Iterator, typename _IteratorR, typename _Container>
 typename Sequence_Access_Iterator<_Iterator, _Container>::difference_type
 operator<=(const Sequence_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+           const Sequence_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() <= __rhs.base();
 }

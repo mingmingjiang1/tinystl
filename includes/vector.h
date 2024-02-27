@@ -4,6 +4,7 @@
 #include "iterator.h"
 #include "iterator_traits.h"
 #include <iostream>
+#include "adapter.h"
 
 namespace tinystl
 {
@@ -29,15 +30,18 @@ namespace tinystl
     {
       _size = _capacity = size;
       m_data = new value_type[size];
+      // m_data = tinystl::Allocator<T>::allocate(_size);
       for (int i = 0; i < size; i++)
       {
         m_data[i] = static_cast<T>(0);
       }
+      std::cout << "Vector"  << m_data << std::endl;
     }
     Vector(T *first, T *last)
     {
       _size = _capacity = last - first;
       m_data = new value_type[_size];
+      // m_data = tinystl::Allocator<T>::allocate(_size);
       for (int i = 0; i < _size; i++)
       {
         m_data[i] = first[i];
@@ -48,6 +52,7 @@ namespace tinystl
     {
       _size = _capacity = last - first;
       m_data = new value_type[_size];
+      // m_data = tinystl::Allocator<T>::allocate(_size);
       for (int i = 0; i < _size; i++)
       {
         m_data[i] = first[i];
@@ -58,6 +63,7 @@ namespace tinystl
     {
       _size = _capacity = size;
       m_data = new value_type[size];
+      // m_data = tinystl::Allocator<T>::allocate(_size);
       for (int i = 0; i < size; i++)
       {
         m_data[i] = value;
@@ -68,11 +74,14 @@ namespace tinystl
     {
       _size = _capacity = arr.size();
       m_data = new T[_size];
+      // m_data = tinystl::Allocator<T>::allocate(_size);
       // typename initializer_list<T>::iterator it;
       int i = 0;
       for (auto it = arr.begin(); it != arr.end(); ++it)
       {
+        std::cout << "frrg ---- start << " << _size << std::endl;
         m_data[i++] = *it;
+        std::cout << "frrg ----- ending" << std::endl;
       }
     }
     Vector() : m_data(nullptr), _size(0), _capacity(0) {}
@@ -97,7 +106,8 @@ namespace tinystl
 
     void push_back(const value_type &vec);
 
-    void clear() {
+    void clear()
+    {
       _size = 0;
     }
 
@@ -165,16 +175,19 @@ namespace tinystl
     if (_capacity == 0)
     {
       _capacity = 1;
-      m_data = new T[_capacity];
+      m_data = new value_type[_capacity];
+      // m_data = tinystl::Allocator<T>::allocate(_capacity);
     }
     else if (_size == _capacity)
     {
-      T *new_data = new T[_capacity * 2];
+      T *new_data = new value_type[_capacity * 2];
+      // T *new_data = tinystl::Allocator<T>::allocate(_capacity * 2);
       for (int i = 0; i < _size; i++)
       {
         new_data[i] = m_data[i];
       }
       delete[] m_data;
+      // tinystl::Allocator<T>::deallocate(m_data);
       m_data = new_data;
       _capacity *= 2;
     }
@@ -188,13 +201,17 @@ namespace tinystl
   template <typename T>
   Vector<T>::~Vector()
   {
+    // for (int i = 0; i < _size; i++) {
+    //   m_data[i].~T();
+    // }
     if (m_data)
     {
+      // tinystl::Allocator<T>::deallocate(m_data, _size);
       delete[] m_data;
-      m_data = nullptr;
-      _size = 0;
-      _capacity = 0;
     }
+    m_data = nullptr;
+    _size = 0;
+    _capacity = 0;
   }
 
   template <typename T>
@@ -205,13 +222,15 @@ namespace tinystl
     if (0 == _capacity)
     {
       _capacity = 1;
-      m_data = new value_type[1];
+      // m_data = new value_type[1];
+      m_data = tinystl::Allocator<T>::allocate(1);
       m_data[0] = val;
     }
     else if (_size + 1 > _capacity)
     {
       _capacity *= 2;
-      value_type *temp = new value_type[_capacity];
+      // value_type *temp = new value_type[_capacity];
+      value_type *temp = tinystl::Allocator<T>::allocate(_capacity);
       for (int i = 0; i < index; ++i)
       {
         temp[i] = m_data[i];
@@ -222,7 +241,8 @@ namespace tinystl
         std::cout << m_data[i] << _size << i << "insert" << std::endl;
         temp[i + 1] = m_data[i];
       }
-      delete[] m_data;
+      // delete[] m_data;
+      tinystl::Allocator<T>::deallocate(m_data);
       m_data = temp;
     }
     else
@@ -253,11 +273,13 @@ namespace tinystl
 
   // deep copy
   template <typename T>
-  Vector<T>::Vector(const Vector &vec)
+  Vector<T>::Vector(const Vector<T> &vec)
   {
     _size = vec._size;
     _capacity = vec._capacity;
-    m_data = new Vector::value_type[_size];
+    std::cout << "Vector<T>::Vector(const Vector &vec)" << _size  << " " << std::endl;
+    m_data = new Vector<T>::value_type[_size];
+    // m_data = tinystl::Allocator<T>::allocate(_size);
     for (int i = 0; i < _size; i++)
     {
       m_data[i] = vec.m_data[i];
@@ -278,10 +300,15 @@ namespace tinystl
       return *this;
     }
     if (m_data != nullptr)
+    {
       delete[] m_data;
+      // tinystl::Allocator<T>::deallocate(m_data);
+      m_data = nullptr;
+    }
     _size = vec._size;
     _capacity = vec._capacity;
     m_data = new Vector::value_type[_size];
+    // m_data = tinystl::Allocator<T>::allocate(_size);
     for (int i = 0; i < _size; i++)
     {
       m_data[i] = vec.m_data[i];

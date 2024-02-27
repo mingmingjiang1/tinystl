@@ -2,6 +2,8 @@
 #define LIST_H
 
 #include "iterator.h"
+#include "adapter.h"
+#include <string>
 #include <iostream>
 
 /**
@@ -9,313 +11,297 @@
  *
  */
 
+class NotElementException : public std::exception
+{
+public:
+	NotElementException(const char *info = "没有元素") : errinfo(info) {}
+	~NotElementException() throw() {}
+	const char *what() throw()
+	{
+		return errinfo.c_str();
+	}
+
+private:
+	std::string errinfo;
+};
+
+class InvalidIteratorException : public std::exception
+{
+public:
+	InvalidIteratorException(const char *info = "无效迭代器指针") : errinfo(info) {}
+	~InvalidIteratorException() throw() {}
+	const char *what() throw()
+	{
+		return errinfo.c_str();
+	}
+
+private:
+	std::string errinfo;
+};
+
 namespace tinystl
 {
-  template <typename T>
-  class List
-  {
-  public:
-    typedef T value_type;
-    typedef T &refernce;
-    typedef T *pointer;
-    typedef const T &const_reference;
-    typedef const T *const_pointer;
-    typedef node<T> _node;
-    typedef Sequence_Access_Iterator<T, _node> iterator;
 
-    /**
-     * default ctor
-     */
-    List() : _size(0) { head = tail = new _node(); };
+	template <typename T>
+	class List
+	{
+	private:
+		class Node
+		{
+		public:
+			T data;
+			Node *prev;
+			Node *next;
 
-    /**
-     * ctor like List(5, 0)
-     */
-    List(size_t size, T init_val) : _size(size)
-    {
-      _node *p = new _node();
-      head = tail = p;
-      for (size_t i = 0; i < size; ++i)
-      {
-        p->next = new _node();
-        p->next->prev = p;
-        p->next->m_data = init_val;
-        p = p->next;
-        tail = p;
-      };
-    };
+		public:
+			Node() : prev(NULL), next(NULL) {}
+			Node(T data, Node *prev = NULL, Node *next = NULL) : data(data), prev(prev), next(next) {}
+		};
+		Node *head;
+		Node *tail;
 
-    /**
-     * ctor like List(5)
-     */
-    List(size_t size) : _size(size)
-    {
-      _node *p = new _node();
-      head = tail = p;
-      for (size_t i = 0; i < size; ++i)
-      {
-        p->next = new _node();
-        p->next->prev = p;
-        p->next->m_data = static_cast<T>(0); // 赋值 nullptr可能会有问题
-        p = p->next;
-        tail = p;
-      };
-      tail->next = nullptr;
-    };
+	public:
+		List()
+		{
+			head = tinystl::Allocator<Node>::allocate(1);
+			tail = tinystl::Allocator<Node>::allocate(1);
+			head->next = tail;
+			tail->prev = head;
+		}
+		size_t size()
+		{
+			Node *node = head->next;
+			size_t s = 0;
+			while (node != tail)
+			{
+				node = node->next;
+				++s;
+			}
+			return s;
+		}
+		bool empty()
+		{
+			return head->next == tail && tail->prev == head;
+		}
+		void clear()
+		{
+			Node *node = head->next;
+			while (node != tail)
+			{
+				Node *next = node->next;
+				// delete node;
+				tinystl::Allocator<Node>::deallocate(node);
+				node = next;
+			}
+			head->next = tail;
+			tail->prev = head;
+		}
+		~List()
+		{
+			clear();
+			tinystl::Allocator<Node>::deallocate(head);
+			tinystl::Allocator<Node>::deallocate(tail);
+			// delete head;
+			// delete tail;
+			head = NULL;
+			tail = NULL;
+		}
+		void push_front(T data)
+		{
+			Node *node = new Node(data, head, head->next);
+			head->next->prev = node;
+			head->next = node;
+		}
+		void push_back(T data)
+		{
+			Node *node = new Node(data, tail->prev, tail);
+			tail->prev->next = node;
+			tail->prev = node;
+		}
+		List(const List &lt)
+		{
+			head = tinystl::Allocator<Node>::allocate(1);
+			tail = tinystl::Allocator<Node>::allocate(1);
+			head->next = tail;
+			tail->prev = head;
+			Node *node = (lt.head)->next;
+			while (node != lt.tail)
+			{
+				push_back(node->data);
+				node = node->next;
+			}
+		}
 
-    /**
-     * ctor like List(a, a + 1)
-     */
-    List(T *first, T *last)
-    {
-      if (first == last)
-      {
-        head = tail = new _node();
-        return;
-      }
-      _size = 0;
-      _node *p = new _node();
-      head = tail = p;
-      for (T *it = first; it != last; ++it)
-      {
-        p->next = new _node();
-        p->next->prev = p;
-        p->next->m_data = *it; // 赋值 nullptr可能会有问题
-        p = p->next;
-        tail = p;
-        _size += 1;
-      };
-    }
+		List(std::initializer_list<T> lt)
+		{
+			head = tinystl::Allocator<Node>::allocate(1);
+			tail = tinystl::Allocator<Node>::allocate(1);
+			head->next = tail;
+			tail->prev = head;
 
-    /**
-     * ctor like List(list.begin(), list.end())
-     */
-    List(iterator first, iterator last)
-    {
-      if (first == last)
-      {
-        head = tail = new _node();
-        return;
-      }
-      _size = 0;
-      _node *p = new _node();
-      head = tail = p;
-      for (iterator it = first; it != last; ++it)
-      {
-        p->next = new _node();
-        p->next->prev = p;
-        p->next->m_data = *it; // 赋值 nullptr可能会有问题
-        p = p->next;
-        tail = p;
-        _size += 1;
-      }
-    }
+			Node *pre = head;
+			for (auto &cur : lt)
+			{
+				Node *node = new Node(cur, pre, tail);
+				pre->next = node;
+				tail->prev = node;
+				pre = node;
+			}
+		}
+		
 
-    /**
-     * ctor like List = {}
-     */
-    List(std::initializer_list<T> args)
-    {
-      if (args.size() == 0 && head == nullptr)
-      {
-        head = tail = new _node();
-        return;
-      }
-      _node *p = new _node();
-      head = tail = p;
-      for (auto it = args.begin(); it != args.end(); ++it)
-      {
-        p->next = new _node();
-        p->next->prev = p;
-        p->next->m_data = *it;
-        p = p->next;
-        tail = p;
-        _size += 1;
-      };
-      _size = args.size();
-    }
+		// l1 = l2;
+		List &operator=(const List &lt)
+		{
+			if (this != &lt)
+			{
+				clear(); // 清空自己
+				Node *node = (lt.head)->next;
+				while (node != lt.tail)
+				{ // 遍历lt
+					push_back(node->data);
+					node = node->next;
+				}
+			}
+			return *this;
+		}
 
-    /**
-     * copy ctor like List(5, 0)
-     */
-    List(const List<T> &list)
-    {
-      head = tail = new _node();
-      _node *p = list.head->next;
-      while (p != nullptr)
-      {
-        push_back(p->m_data);
-        p = p->next;
-      }
-      _size = list._size;
-    }
+		class iterator
+		{
+		public:
+			Node *node;
 
-    ~List()
-    {
-      _node *p = head;
-      while (p != nullptr)
-      {
-        _node *tmp = p;
-        p = p->next;
-        delete tmp;
-      }
-    }
+		public:
+			iterator(Node *node) : node(node){};
+			iterator &operator++()
+			{
+				node = node->next;
+				return *this;
+			}
+			iterator operator++(int)
+			{
+				iterator it(*this);
+				node = node->next;
+				return it;
+			}
+			iterator &operator--()
+			{
+				node = node->prev;
+				return *this;
+			}
+			iterator operator--(int)
+			{
+				iterator it(*this);
+				node = node->prev;
+				return it;
+			}
+			bool operator==(const iterator &it) const
+			{
+				return node == it.node;
+			};
+			bool operator!=(const iterator &it) const
+			{
+				return node != it.node;
+			}
+			T &operator*(void)
+			{
+				return node->data;
+			}
+		};
 
-    iterator begin() { return iterator(head->next); }
+		iterator begin()
+		{
+			return iterator(head->next);
+		}
+		iterator end()
+		{
+			return iterator(tail);
+		}
+		void pop_front()
+		{
+			if (empty())
+			{
+				throw NotElementException();
+			}
+			Node *node = head->next;
+			head->next->next->prev = head;
+			head->next = head->next->next;
+			// delete node;
+			tinystl::Allocator<Node>::deallocate(node);
+		}
+		void pop_back()
+		{
+			if (empty())
+			{
+				throw NotElementException();
+			}
+			Node *node = tail->prev;
+			tail->prev->prev->next = tail;
+			tail->prev = tail->prev->prev;
+			// delete node;
+			tinystl::Allocator<Node>::deallocate(node);
+		}
+		// 删除it所指向的节点
+		iterator erase(iterator &it)
+		{
+			if (it == head || it == tail)
+			{
+				throw InvalidIteratorException();
+			}
+			Node *next = it.node->next;
+			it.node->prev->next = it.node->next;
+			it.node->next->prev = it.node->prev;
+			// delete it.node;
+			tinystl::Allocator<Node>::deallocate(it.node);
+			it.node = next;
+			return it;
+		}
+		// it之前插入
+		iterator insert(iterator &it, T data)
+		{
+			if (it.node == head)
+			{
+				throw InvalidIteratorException();
+			}
+			Node *node = new Node(data, it.node->prev, it.node);
+			it.node->prev->next = node;
+			it.node->prev = node;
+			it.node = node;
+			return it;
+		}
+	};
 
-    iterator end() { return iterator(tail->next); }
+	// int main()
+	// {
+	// 	List<int> l1;
+	// 	l1.push_back(1);
+	// 	l1.push_back(3);
+	// 	l1.push_back(5);
+	// 	l1.push_back(7);
+	// 	l1.push_back(9);
+	// 	l1.push_front(2);
+	// 	l1.push_front(4);
+	// 	l1.push_front(6);
+	// 	l1.push_front(8);
+	// 	l1.push_front(10);
+	// 	l1.push_front(0);
+	// 	List<int>::iterator it = l1.begin();
+	// 	for (; it != l1.end(); ++it)
+	// 	{
+	// 		cout << *it << " ";
+	// 	}
+	// 	l1.pop_front();
+	// 	l1.pop_back();
+	// 	print(l1.begin(), l1.end());
+	// 	it = l1.begin();
+	// 	++it;
+	// 	++it;
+	// 	++it;
+	// 	l1.insert(it, 100);
+	// 	print(l1.begin(), l1.end());
+	// 	return 0;
+	// }
 
-    value_type& front() { return head->next->m_data; }
-
-    value_type& back() { return tail->m_data; }
-
-    void push_front(const_reference val);
-
-    void push_back(const_reference val);
-
-    void pop_front();
-
-    void pop_back();
-
-    bool empty() { return _size == 0; }
-
-    size_t size();
-
-    List<T> &operator=(const List<T> &list);
-
-  private:
-    _node *head;
-    _node *tail;
-    size_t _size;
-  };
-
-  // --------------------------------------------------------------------------- split ---------------------------------------------------------------------------
-
-  /**
-   * @brief size of list
-   *
-   * @tparam T
-   * @return size_t
-   */
-  template <typename T>
-  size_t List<T>::size() { return _size; }
-
-  /**
-   * @brief push element `val` ahead of list
-   *
-   * @param val
-   */
-
-  template <typename T>
-  void List<T>::push_front(const_reference val)
-  {
-    _node *cur = new _node(); // T* cur = new node; // 泛型会报错
-    cur->next = head->next;
-    cur->prev = head;
-    cur->m_data = val;
-    if (nullptr == head->next)
-      tail = cur;
-    else
-      // cur->next->prev = cur;
-      head->next->prev = cur;
-    head->next = cur;
-    ++_size;
-  }
-
-  /**
-   * @brief push element `val` back of list
-   *
-   * @param val
-   */
-  template <typename T>
-  void List<T>::push_back(const_reference val)
-  {
-    _node *cur = new _node();
-    cur->next = nullptr;
-    cur->m_data = val;
-    if (nullptr == head->next)
-    {
-      head->next = tail->next = cur;
-    }
-    else
-    {
-      tail->next = cur;
-    }
-    cur->prev = tail;
-    tail = cur;
-    // tail->next = nullptr;
-    ++_size;
-  }
-
-  /**
-   * @brief pop element ahead of list
-   *
-   * @tparam T
-   */
-  template <typename T>
-  void List<T>::pop_front()
-  {
-    if (empty())
-      return;
-    _node *tmp = head->next;
-    head->next = tmp->next;
-    // only one element
-    if (nullptr == tmp->next)
-      tail = head;
-    else
-      tmp->next->prev = head;
-    delete tmp;
-    --_size;
-  }
-
-  /**
-   * @brief pop element back of list
-   *
-   * @tparam T
-   */
-  template <typename T>
-  void List<T>::pop_back()
-  {
-    if (empty())
-      return;
-    _node *tmp = tail->prev;
-    delete tail;
-    tail = tmp;
-    tail->next = nullptr;
-    --_size;
-  }
-
-  /**
-   * @brief operator= for list, like: l = list;
-   *
-   * @tparam T
-   * @param list
-   * @return List<T>&
-   */
-  template <typename T>
-  List<T> &List<T>::operator=(const List<T> &list)
-  {
-    if (&list == this)
-      return *this;
-
-    _node *p = head->next;
-    while (p != nullptr)
-    {
-      _node *tmp = p;
-      p = p->next;
-      delete tmp;
-    }
-
-    _node *cur = list.head->next;
-    while (cur != nullptr)
-    {
-      push_back(cur->m_data);
-      cur = cur->next;
-    }
-
-    _size = list._size;
-    return *this;
-  }
 }
 
 #endif
