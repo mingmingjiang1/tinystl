@@ -230,10 +230,9 @@ TYPED_TEST_P(ListTest, Constructor)
 
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
-    // testDeclareWithInit<TypeParam>(tmp, 5);
-    // testDeclareWithNoInit<TypeParam>(5);
-    // testAssign<TypeParam>(tmp, 5);
-    // delete[] tmp;
+    testDeclareWithInit<TypeParam>(tmp, 5);
+    testDeclareWithNoInit<TypeParam>(5);
+    testAssign<TypeParam>(tmp, 5);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(ListTest, Constructor);
@@ -244,9 +243,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(tinystl1, ListTest, ListTypes);
 // 测试自定义string类型
 TEST(ListTests, Test_List_String)
 {
-    // tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
-    // tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
-    // tinystl::List<tinystl::String> l1(a, a + 5);
+    tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
+    tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
+    tinystl::List<tinystl::String> l1(a, a + 5);
     // int i = 0;
     // ASSERT_EQ(l1.size(), 5);
     // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
@@ -260,10 +259,6 @@ TEST(ListTests, Test_Lits_Inilialize_List)
 {
     tinystl::List<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     tinystl::List<int>::iterator it = l1.begin();
-    for (; it != l1.end(); ++it)
-    {
-        cout << *it << " frtggtmn";
-    }
     tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
     int i = 0;
     tinystl::List<std::string> l4{"1", "2", "3"};

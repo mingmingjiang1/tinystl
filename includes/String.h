@@ -19,8 +19,9 @@ namespace tinystl
     {
     public:
         // constructor
-        String() {
-            std::cout << "String(const char *str = nullptr)99999"   << std::endl;
+        String()
+        {
+            std::cout << "String(const char *str = nullptr)99999" << std::endl;
             m_data = new char[5]() + 4;
             *(int *)(m_data - 4) = 1;
             _size = 0;
@@ -28,10 +29,10 @@ namespace tinystl
         }
         String(const char *str)
         {
-                _size = strlen(str);
-                m_data = new char[_size + 5]() + 4;
-                *(int *)(m_data - 4) = 1;
-                strcpy(m_data, str);
+            _size = strlen(str);
+            m_data = new char[_size + 5]() + 4;
+            *(int *)(m_data - 4) = 1;
+            strcpy(m_data, str);
         }
         // copy ctor
         String(const String &str)
@@ -72,7 +73,7 @@ namespace tinystl
 
             // if (m_data)
             // {
-                *(int *)(m_data - 4) -= 1;
+            *(int *)(m_data - 4) -= 1;
             // }
         }
 
@@ -200,7 +201,6 @@ namespace tinystl
         //   return *this;
         // }
 
-
         size_t size() const { return _size; }
 
         // ostream的friend function
@@ -294,6 +294,12 @@ namespace tinystl
             }
 
             return false;
+        }
+
+        friend bool operator!(const String& s)
+        {
+            std::cout << "operator!" << s._size << std::endl;
+            return s._size == 0;
         }
 
     private:

@@ -77,7 +77,7 @@ namespace tinystl
     {
         if (ptr == nullptr)
             return;
-        ::operator delete(ptr);
+        delete(ptr);
     }
 
     /**

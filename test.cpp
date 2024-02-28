@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include "./includes/adapter.h"
+#include "./includes/String.h"
+#include "./includes/list.h"
 #include <vector>
+#include <list>
 
 class Pool
 {
@@ -55,9 +58,10 @@ int main()
     // arr[0] = new FreeList();
 
         // Test Container
-    std::vector<int, tinystl::Allocator<int>> vec;
-    vec.push_back(3);
-    vec.push_back(5);
-
+    // std::list<tinystl::String, tinystl::Allocator<tinystl::String>> vec;
+    tinystl::List<tinystl::String> vec;
+    // vec.push_back(tinystl::String("Hello"));
+    // vec.push_back(tinystl::String("World!"));
+    // std::cout << vec.back() << "frfggt";
     return 0;
 }
