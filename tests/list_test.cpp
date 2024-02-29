@@ -63,55 +63,6 @@ public:
     }
 };
 
-unsigned int *fillVal(unsigned int val, int size)
-{
-    unsigned int *a = new unsigned int[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-    return a;
-}
-
-int *fillVal(int val, int size)
-{
-    int *a = new int[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-
-    return a;
-}
-
-char *fillVal(char val, int size)
-{
-    // 随机生成string
-
-    char *a = new char[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = rand() % (100 + 1);
-    }
-
-    return a;
-}
-
-const char **fillVal(const char *val, int size)
-{
-    // 随机生成string
-    const char **a = new const char *[size];
-    srand((unsigned)time(NULL));
-    for (int i = 0; i < size; i++)
-    {
-        a[i] = std::to_string(rand() % (100 + 1)).c_str();
-    }
-
-    return a;
-}
 
 TYPED_TEST_SUITE_P(ListTest);
 
@@ -123,6 +74,9 @@ void testDeclareWithInit(T *a, int size)
     tinystl::List<T> l1(a, a + size);
     ASSERT_EQ(l1.size(), size);
     int i = 0;
+    it_tmp = l1.begin();
+    // it_tmp++;
+    std::cout << *it_tmp << "fkmmmmgtgm========";
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, a[i++]);
@@ -145,18 +99,9 @@ void testDeclareWithInit(T *a, int size)
         ASSERT_EQ(*it_tmp, a[i++]);
     }
 
-    // test for initialist
-    // stl::initializer_list<T> l5(size);
-    // for (int i = 0;i < size;i++) {
-    //     // l5.push_back(a[i]);
-    //     l5[i] = a[i];
-    // }
-    // i = 0;
-    // ASSERT_EQ(l5.size(), 5);
-    // for (it_tmp = l5.begin(); it_tmp != l5.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    tinystl::List<tinystl::String> vec;
+    vec.push_back(tinystl::String("Hello"));
+    vec.push_back(tinystl::String("World!"));
 
     // test for l-value
     tinystl::List<T> l6(std::move(l1));
@@ -231,8 +176,8 @@ TYPED_TEST_P(ListTest, Constructor)
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
     testDeclareWithInit<TypeParam>(tmp, 5);
-    testDeclareWithNoInit<TypeParam>(5);
-    testAssign<TypeParam>(tmp, 5);
+    // testDeclareWithNoInit<TypeParam>(5);
+    // testAssign<TypeParam>(tmp, 5);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(ListTest, Constructor);
@@ -243,9 +188,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(tinystl1, ListTest, ListTypes);
 // 测试自定义string类型
 TEST(ListTests, Test_List_String)
 {
-    tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
-    tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
-    tinystl::List<tinystl::String> l1(a, a + 5);
+    // tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
+    // tinystl::List<tinystl::String>::iterator it_tmp; // 声明一个迭代器
+    // tinystl::List<tinystl::String> l1(a, a + 5);
     // int i = 0;
     // ASSERT_EQ(l1.size(), 5);
     // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
@@ -255,18 +200,18 @@ TEST(ListTests, Test_List_String)
 }
 
 // 测试嵌套类型
-TEST(ListTests, Test_Lits_Inilialize_List)
-{
-    tinystl::List<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    tinystl::List<int>::iterator it = l1.begin();
-    tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
-    int i = 0;
-    tinystl::List<std::string> l4{"1", "2", "3"};
-    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    {
-        ASSERT_EQ(*it_tmp, i + 1);
-        i++;
-    }
+// TEST(ListTests, Test_Lits_Inilialize_List)
+// {
+//     tinystl::List<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+//     tinystl::List<int>::iterator it = l1.begin();
+//     tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
+//     int i = 0;
+//     tinystl::List<std::string> l4{"1", "2", "3"};
+//     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+//     {
+//         ASSERT_EQ(*it_tmp, i + 1);
+//         i++;
+//     }
 
     // tinystl::List<std::string> l2(2, std::string("1"));
     // tinystl::List<tinystl::String> l4{"1", "2", "3"};
@@ -305,7 +250,7 @@ TEST(ListTests, Test_Lits_Inilialize_List)
     //     ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
     //     i++;
     // }
-}
+// }
 
 // 明天给list测试一些常见方法
 

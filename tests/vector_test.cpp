@@ -123,19 +123,6 @@ void testDeclareWithInit(T *a, int size)
         ASSERT_EQ(*it_tmp, a[i++]);
     }
 
-    // test for initialist
-    // stl::initializer_list<T> l5(size);
-    // for (int i = 0;i < size;i++) {
-    //     // l5.push_back(a[i]);
-    //     l5[i] = a[i];
-    // }
-    // i = 0;
-    // ASSERT_EQ(l5.size(), 5);
-    // for (it_tmp = l5.begin(); it_tmp != l5.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
-
     // test for l-value
     tinystl::Vector<T> l6(std::move(l1));
     i = 0;
@@ -216,18 +203,16 @@ TYPED_TEST_P(VectorTest, Constructor)
     TypeParam *tmp = this->value_;
     testDeclareWithInit<TypeParam>(tmp, 5);
     testDeclareWithNoInit<TypeParam>(5);
-    // testAssign<TypeParam>(tmp, 5);
+    testAssign<TypeParam>(tmp, 5);
 
 }
 
-// REGISTER_TYPED_TEST_CASE_P(VectorTest, Constructor);
 
 REGISTER_TYPED_TEST_SUITE_P(VectorTest, Constructor);
 using VectorTypes = ::testing::Types<int, unsigned int, char, const char*, double>;
 
 
 INSTANTIATE_TYPED_TEST_SUITE_P(tinystl, VectorTest, VectorTypes);
-// INSTANTIATE_TYPED_TEST_SUITE_P(tinystl2, VectorTest, char);
 
 // 测试自定义string类型
 TEST(VectorTests, Test_Vector_String)
@@ -239,18 +224,15 @@ TEST(VectorTests, Test_Vector_String)
     const char *a2[5] = {"aa", "bb", "cc", "dd", "ee"};
     tinystl::Vector<const char *> lun(a2, a2 + 5);
 
-    unsigned int arr[5] = {1, 2, 3, 4, 5};
-
-    testAssign<const char *>(a2, 5);
 
     // // test for iterator
-    // tinystl::Vector<const char *> lt(lun.begin() + 3, lun.end());
-    // int i = 0;
-    // ASSERT_EQ(l1.size(), 5);
-    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    tinystl::Vector<const char *> lt(lun.begin() + 3, lun.end());
+    int i = 0;
+    ASSERT_EQ(l1.size(), 5);
+    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, a[i++]);
+    }
 }
 
 // 测试嵌套类型
@@ -259,47 +241,47 @@ TEST(VectorTests, Test_Vector_Initialize_List)
     tinystl::Vector<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     tinystl::Vector<int>::iterator it_tmp; // 声明一个迭代器
     int i = 0;
-    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, i + 1);
-    //     i++;
-    // }
+    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, i + 1);
+        i++;
+    }
 
-    // tinystl::Vector<std::string> l2{"1", "2", "3"};
-    // tinystl::Vector<std::string>::iterator it_tmp_2; // 声明一个迭代器
-    // i = 0;
-    // for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
-    // {
-    //     ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::Vector<std::string> l2{"1", "2", "3"};
+    tinystl::Vector<std::string>::iterator it_tmp_2; // 声明一个迭代器
+    i = 0;
+    for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
+    {
+        ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::Vector<std::string> l3;
-    // l3 = l2;
-    // i = 0;
-    // for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
-    // {
-    //     ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::Vector<std::string> l3;
+    l3 = l2;
+    i = 0;
+    for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
+    {
+        ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::Vector<tinystl::String> l4{"1", "2", "3"};
-    // tinystl::Vector<tinystl::String>::iterator it_tmp_3; // 声明一个迭代器
-    // i = 0;
-    // for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
-    // {
-    //     ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::Vector<tinystl::String> l4{"1", "2", "3"};
+    tinystl::Vector<tinystl::String>::iterator it_tmp_3; // 声明一个迭代器
+    i = 0;
+    for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
+    {
+        ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::Vector<tinystl::String> l5;
-    // l5 = l4;
-    // i = 0;
-    // for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
-    // {
-    //     ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::Vector<tinystl::String> l5;
+    l5 = l4;
+    i = 0;
+    for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
+    {
+        ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+        i++;
+    }
 }
 
 TEST(VectorTests, Test_Vector_Member_Function)

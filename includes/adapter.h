@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdlib.h>
+#include "construct.h"
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
@@ -28,10 +29,13 @@ namespace tinystl
                 void *r = refill(ROUND_UP(n));
                 return r;
             }
-            try {
+            try
+            {
                 // std::cout << " Alloc::allocate(size_t n) " << *my_free_list << " "  << result << std::endl; // *my_free_list是给用户的
                 *my_free_list = result->next;
-            } catch (...) {
+            }
+            catch (...)
+            {
                 // std::cout << " catch branch " << std::endl;
             }
             return result;
@@ -162,7 +166,7 @@ namespace tinystl
                     }
                 }
                 end_free = nullptr;
-                start_free = new char[bytes_to_get];
+                start_free = (char *)::operator new(bytes_to_get);
             }
             heap_size += bytes_to_get;
             end_free = start_free + bytes_to_get;
@@ -202,8 +206,29 @@ namespace tinystl
         }
         static void deallocate(T *p)
         {
-            // p[0].~T();
+            // p->~T();
             Alloc::deallocate(p, sizeof(T));
+        }
+
+        static void construct(T *ptr)
+        {
+            tinystl::construct(ptr);
+        }
+
+        static void construct(T *ptr, const T &value)
+        {
+            tinystl::construct(ptr, value);
+        }
+
+        static void construct(T *ptr, T &&value)
+        {
+            tinystl::construct(ptr, tinystl::move(value));
+        }
+
+        template <class... Args>
+        static void construct(T *ptr, Args &&...args)
+        {
+            tinystl::construct(ptr, tinystl::forward<Args>(args)...);
         }
     };
 }
@@ -216,16 +241,6 @@ namespace tinystl
 
 
     auxiliary 0
- */
-
-/*
-    iterator adapter
- */
-
-/*
-    algorithm adapter
-
-/* 
     iterator adapter (1)
 
     插入迭代器：front_insert_iterator，back_insert_iterator，insert_iterator
@@ -235,18 +250,16 @@ namespace tinystl
     back_insert_iterator：在容器的头部插入新元素，底层调用push_front()
     insert_iterator：在容器指定位置插入新元素，底层调用insert()
 
-    
+
  */
 
-/* 
+/*
     allocator(1)
  */
 
-
-/* 
+/*
     algorithm adapter (0)
     bind
  */
-
 
 #endif

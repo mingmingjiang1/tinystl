@@ -71,10 +71,7 @@ namespace tinystl
                 return;
             }
 
-            // if (m_data)
-            // {
             *(int *)(m_data - 4) -= 1;
-            // }
         }
 
         class StringProxy

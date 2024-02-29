@@ -5,6 +5,7 @@
 #include "adapter.h"
 #include "allocator_copy.h"
 #include <string>
+#include <memory>
 #include <iostream>
 
 /**
@@ -48,13 +49,15 @@ namespace tinystl
 	public:
 		static T *allocate()
 		{
-			T *p = new T();
-			return p;
+			return static_cast<T *>(::operator new(sizeof(T)));
+			;
 		}
 
-		static void deallocate(T *p)
+		static void deallocate(T *ptr)
 		{
-			delete p;
+			if (ptr == nullptr)
+				return;
+			::operator delete(ptr); // 一定要用这个，用new T()，会调用构造函数，会自动初始化所有数据成员
 		}
 	};
 
@@ -64,21 +67,45 @@ namespace tinystl
 
 	public:
 		typedef Bidirectional_Access_Iterator<T, List> iterator;
-		typedef Node<T> node_type;
-		typedef tinystl::Allocator<node_type> allocator_type;
+		// typedef tinystl::Allocator<node_type> allocator_type;
 		// typedef tinystl::allocator<node_type> allocator_type;
 		// typedef tinystl::NodeAlloc<node_type> allocator_type;
+		// typedef tinystl::NodeAlloc<T> data_allocator;
+
+		/** allocator */
+		typedef tinystl::Allocator<list_node_base<T>> base_allocator;
+		typedef tinystl::Allocator<list_node<T>> node_allocator;
+		typedef tinystl::Allocator<T> data_allocator;
+
+		typedef typename node_traits<T>::base_ptr base_ptr;
+		typedef typename node_traits<T>::node_ptr node_ptr;
+
+		/** constructor */
+		typedef tinystl::Construct<node_ptr, node_allocator> constructor;
 
 		List()
 		{
-			head = allocator_type::allocate();
-			tail = allocator_type::allocate();
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
 			head->next = tail;
 			tail->prev = head;
 		}
+
+		List(size_t size)
+		{
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
+			head->next = tail;
+			tail->prev = head;
+			for (int i = 0; i < size; i++)
+			{
+				push_back(T());
+			}
+		}
+
 		size_t size()
 		{
-			node_type *node = head->next;
+			auto node = head->next;
 			size_t s = 0;
 			while (node != tail)
 			{
@@ -91,14 +118,30 @@ namespace tinystl
 		{
 			return head->next == tail && tail->prev == head;
 		}
+		void destroy_node(node_ptr p)
+		{
+			// data_allocator::destroy(mystl::address_of(p->value));
+			T *ptr = std::addressof(p->m_data);
+
+			if (ptr)
+			{
+				ptr->~T();
+			}
+
+			node_allocator::deallocate(p);
+		}
+
 		void clear()
 		{
-			node_type *node = head->next;
+			auto node = head->next;
 			while (node != tail)
 			{
-				node_type *next = node->next;
+				auto next = node->next;
 				// delete node;
-				allocator_type::deallocate(node);
+				// data_allocator::destroy(mystl::address_of(p->value));
+
+				// allocator_type::deallocate(node);
+				destroy_node(node->as_node());
 				node = next;
 			}
 			head->next = tail;
@@ -107,50 +150,161 @@ namespace tinystl
 		~List()
 		{
 			clear();
-			allocator_type::deallocate(head);
-			allocator_type::deallocate(tail);
+			base_allocator::deallocate(head);
+			base_allocator::deallocate(tail);
+
+			/*
+				因为我们的list头和尾巴也有数据，所有也要主动调用析构
+			*/
+
 			// delete head;
 			// delete tail;
 			head = NULL;
 			tail = NULL;
 		}
+
 		void push_front(T data)
 		{
-			node_type *node = new node_type(data, head, head->next);
+			// node_ptr node = new node_type(data, head, head->next);
+			node_ptr node = node_allocator::allocate();
+			T *ptr = std::addressof(node->m_data);
+			new ((void *)ptr) T(data);
+			node->next = head->next;
+			node->prev = head;
+			
 			head->next->prev = node;
 			head->next = node;
 		}
-		void push_back(T data)
+
+		void push_back(T &data)
 		{
-			node_type *node = new node_type(data, tail->prev, tail);
+			node_ptr node = node_allocator::allocate();
+			T *ptr = std::addressof(node->m_data);
+			new ((void *)ptr) T(data);
+
+			// node_ptr node = constructor::construct(ptr, data);
+
+			node->prev = tail->prev;
+			node->next = tail;
 			tail->prev->next = node;
 			tail->prev = node;
 		}
+		void push_back(T &&data)
+		{
+			// node_ptr node = new node_type(data, tail->prev, tail);
+			node_ptr node = node_allocator::allocate(); // 这里又调用一次String
+			// auto node = create_node(data);
+
+			// 构造
+			T *ptr = std::addressof(node->m_data);
+			new ((void *)ptr) T(data);
+
+			node->prev = tail->prev;
+			node->next = tail;
+			tail->prev->next = node;
+			tail->prev = node;
+		}
+
 		List(const List &lt)
 		{
-			head = allocator_type::allocate();
-			tail = allocator_type::allocate();
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
 			head->next = tail;
 			tail->prev = head;
-			node_type *node = (lt.head)->next;
+			node_ptr node = static_cast<node_ptr>((lt.head)->next);
 			while (node != lt.tail)
 			{
-				push_back(node->data);
-				node = node->next;
+				push_back(node->m_data);
+				node = static_cast<node_ptr>(node->next);
+			}
+		}
+
+		// template<typename Args>
+		// node_type* create_node(Args &&...args)
+		// {
+		// 	node_type p = allocator_type::allocate(1);
+		// 	try
+		// 	{
+		// 		data_allocator::construct(std::address_of(p->value), std::forward<Args>(args)...);
+		// 		p->prev = nullptr;
+		// 		p->next = nullptr;
+		// 	}
+		// 	catch (...)
+		// 	{
+		// 		allocator_type::deallocate(p);
+		// 		throw;
+		// 	}
+		// 	return p;
+		// }
+
+		List(T *from, T *to)
+		{
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
+			head->next = tail;
+			tail->prev = head;
+
+			base_ptr pre = head;
+			while (from != to)
+			{
+				node_ptr node = node_allocator::allocate();
+				T *ptr = std::addressof(node->m_data);
+				new ((void *)ptr) T(*from);
+
+				node->prev = pre;
+				node->next = tail;
+
+				pre->next = node;
+				tail->prev = node;
+				pre = node;
+				++from;
+			}
+		}
+
+		List(iterator from, iterator to)
+		{
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
+			head->next = tail;
+			tail->prev = head;
+
+			base_ptr pre = head;
+			while (from != to)
+			{
+				node_ptr node = node_allocator::allocate();
+				T *ptr = std::addressof(node->m_data);
+				new ((void *)ptr) T(*from);
+
+				// node->m_data = *from; // ****直接赋值有问题：
+
+				node->prev = pre;
+				node->next = tail;
+
+				pre->next = node;
+				tail->prev = node;
+				pre = node;
+				++from;
 			}
 		}
 
 		List(std::initializer_list<T> lt)
 		{
-			head = allocator_type::allocate();
-			tail = allocator_type::allocate();
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
 			head->next = tail;
 			tail->prev = head;
 
-			node_type *pre = head;
+			node_ptr pre = head;
 			for (auto &cur : lt)
 			{
-				node_type *node = new node_type(cur, pre, tail);
+				// node_ptr node = new node_type(cur, pre, tail);
+				node_ptr node = node_allocator::allocate();
+				T *ptr = std::addressof(node->value);
+				new ((void *)ptr) T(cur);
+
+				node->prev = pre;
+				node->next = tail;
+
 				pre->next = node;
 				tail->prev = node;
 				pre = node;
@@ -163,10 +317,10 @@ namespace tinystl
 			if (this != &lt)
 			{
 				clear(); // 清空自己
-				node_type *node = (lt.head)->next;
+				node_ptr node = (lt.head)->next;
 				while (node != lt.tail)
 				{ // 遍历lt
-					push_back(node->data);
+					push_back(node->m_data);
 					node = node->next;
 				}
 			}
@@ -176,10 +330,10 @@ namespace tinystl
 		// class iterator
 		// {
 		// public:
-		// 	node_type *node;
+		// 	node_ptr node;
 
 		// public:
-		// 	iterator(node_type *node) : node(node){};
+		// 	iterator(node_ptr node) : node(node){};
 		// 	iterator &operator++()
 		// 	{
 		// 		node = node->next;
@@ -218,11 +372,11 @@ namespace tinystl
 
 		iterator begin()
 		{
-			return iterator(head->next);
+			return iterator(static_cast<node_ptr>(head->next));
 		}
 		iterator end()
 		{
-			return iterator(tail);
+			return iterator(static_cast<node_ptr>(tail));
 		}
 		void pop_front()
 		{
@@ -230,11 +384,11 @@ namespace tinystl
 			{
 				throw NotElementException();
 			}
-			node_type *node = head->next;
+			node_ptr node = static_cast<node_ptr>(head->next);
 			head->next->next->prev = head;
 			head->next = head->next->next;
 			// delete node;
-			allocator_type::deallocate(node);
+			node_allocator::deallocate(node);
 		}
 		void pop_back()
 		{
@@ -242,11 +396,11 @@ namespace tinystl
 			{
 				throw NotElementException();
 			}
-			node_type *node = tail->prev;
+			node_ptr node = static_cast<node_ptr>(tail->prev);
 			tail->prev->prev->next = tail;
 			tail->prev = tail->prev->prev;
 			// delete node;
-			allocator_type::deallocate(node);
+			node_allocator::deallocate(node);
 		}
 		// 删除it所指向的节点
 		iterator erase(iterator &it)
@@ -255,31 +409,31 @@ namespace tinystl
 			{
 				throw InvalidIteratorException();
 			}
-			node_type *next = it.node->next;
+			node_ptr next = it.node->next;
 			it.node->prev->next = it.node->next;
 			it.node->next->prev = it.node->prev;
 			// delete it.node;
-			allocator_type::deallocate(it.node);
+			node_allocator::deallocate(it.node);
 			it.node = next;
 			return it;
 		}
 		// it之前插入
-		iterator insert(iterator &it, T data)
-		{
-			if (it.node == head)
-			{
-				throw InvalidIteratorException();
-			}
-			node_type *node = new node_type(data, it.node->prev, it.node);
-			it.node->prev->next = node;
-			it.node->prev = node;
-			it.node = node;
-			return it;
-		}
+		// iterator insert(iterator &it, T data)
+		// {
+		// 	if (it.node == head)
+		// 	{
+		// 		throw InvalidIteratorException();
+		// 	}
+		// 	node_ptr node = new node_type(data, it.node->prev, it.node);
+		// 	it.node->prev->next = node;
+		// 	it.node->prev = node;
+		// 	it.node = node;
+		// 	return it;
+		// }
 
 	private:
-		node_type *head;
-		node_type *tail;
+		base_ptr head;
+		base_ptr tail;
 	};
 
 }

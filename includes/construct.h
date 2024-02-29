@@ -9,11 +9,31 @@
 
 namespace tinystl
 {
+
+    template <typename T, typename Alloc>
+    class Construct
+    {
+    public:
+        typedef Alloc alloc;
+        // type
+
+        template <class Ty, typename Val>
+        static T construct(Ty *ptr, const Val &val)
+        {
+            T addr = alloc::allocate();
+            new ((void *)ptr) Ty(val);
+            return addr;
+        }
+        
+    };
+
+    
+
     /**
      * @brief 构造Ty类型对象，ptr指向该对象，
-     * 
-     * @tparam Ty 
-     * @param ptr 
+     *
+     * @tparam Ty
+     * @param ptr
      */
     template <class Ty>
     void construct(Ty *ptr)
@@ -23,11 +43,11 @@ namespace tinystl
 
     /**
      * @brief 构造Ty类型对象，ptr指向该对象，带初始值
-     * 
-     * @tparam Ty1 
-     * @tparam Ty2 
-     * @param ptr 
-     * @param value 
+     *
+     * @tparam Ty1
+     * @tparam Ty2
+     * @param ptr
+     * @param value
      */
     template <class Ty1, class Ty2>
     void construct(Ty1 *ptr, const Ty2 &value)
@@ -37,11 +57,11 @@ namespace tinystl
 
     /**
      * @brief 构造Ty类型对象，ptr指向该对象，右值
-     * 
-     * @tparam Ty 
-     * @tparam Args 
-     * @param ptr 
-     * @param args 
+     *
+     * @tparam Ty
+     * @tparam Args
+     * @param ptr
+     * @param args
      */
     template <class Ty, class... Args>
     void construct(Ty *ptr, Args &&...args)
@@ -56,9 +76,9 @@ namespace tinystl
 
     /**
      * @brief 析构
-     * 
-     * @tparam Ty 
-     * @param pointer 
+     *
+     * @tparam Ty
+     * @param pointer
      */
     template <class Ty>
     void destroy_one(Ty *pointer, std::false_type)

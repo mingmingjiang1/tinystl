@@ -48,7 +48,8 @@ namespace tinystl
     template <class T>
     T *allocator<T>::allocate()
     {
-        return new T();
+        // return new T();
+        return static_cast<T*>(::operator new(sizeof(T)));
     }
 
     /**
@@ -63,7 +64,8 @@ namespace tinystl
     {
         if (n == 0)
             return nullptr;
-        return new T[n];
+        // return new T[n];
+        return static_cast<T*>(::operator new(sizeof(T) * n));
     }
 
     /**
@@ -77,7 +79,8 @@ namespace tinystl
     {
         if (ptr == nullptr)
             return;
-        delete(ptr);
+        // delete(ptr);
+        ::operator delete(ptr);
     }
 
     /**
@@ -90,7 +93,8 @@ namespace tinystl
     {
         if (ptr == nullptr)
             return;
-        delete []ptr;
+        // delete []ptr;
+        ::operator delete(ptr);
     }
 
     

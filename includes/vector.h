@@ -3,8 +3,9 @@
 
 #include "iterator.h"
 #include "iterator_traits.h"
-#include <iostream>
 #include "adapter.h"
+#include "allocator_copy.h"
+#include <iostream>
 
 namespace tinystl
 {
@@ -16,6 +17,8 @@ namespace tinystl
     // typedef T* iterator;
 
     typedef Random_Access_Iterator<T, Vector> iterator;
+    /** allocator */
+    typedef tinystl::allocator<T> data_allocator;
 
     /*
       另一种写法：
@@ -23,61 +26,65 @@ namespace tinystl
       typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
      */
 
-
     typedef Reverse_Iterator<T *> reverse_iterator;
     Vector(size_t size)
     {
       _size = _capacity = size;
-      m_data = new value_type[size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
+      m_data = data_allocator::allocate(_size);
       for (int i = 0; i < size; i++)
       {
         m_data[i] = static_cast<T>(0);
       }
     }
+
     Vector(T *first, T *last)
     {
       _size = _capacity = last - first;
-      m_data = new value_type[_size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
+      m_data = data_allocator::allocate(_size);
+      std::cout << "hgfhhghghg " << _size << std::endl;
       for (int i = 0; i < _size; i++)
       {
-        m_data[i] = first[i];
+        // node_ptr node = data_allocator::allocate();
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(first[i]);
+        // m_data[i] = first[i];
       }
     }
 
     Vector(iterator first, iterator last)
     {
       _size = _capacity = last - first;
-      m_data = new value_type[_size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
+      m_data = data_allocator::allocate(_size);
       for (int i = 0; i < _size; i++)
       {
-        m_data[i] = first[i];
+        // m_data[i] = first[i];
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(first[i]);
       }
     }
 
     Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     {
       _size = _capacity = size;
-      m_data = new value_type[size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
+      m_data = data_allocator::allocate(_size);
       for (int i = 0; i < size; i++)
       {
-        m_data[i] = value;
+        // m_data[i] = value;
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(value);
       }
     }
 
     Vector(std::initializer_list<T> arr)
     {
       _size = _capacity = arr.size();
-      m_data = new T[_size];
-      // m_data = tinystl::Allocator<T>::allocate(_size);
-      // typename initializer_list<T>::iterator it;
+      m_data = data_allocator::allocate(_size);
       int i = 0;
       for (auto it = arr.begin(); it != arr.end(); ++it)
       {
-        m_data[i++] = *it;
+        // m_data[i++] = *it;
+        T *ptr = std::addressof(m_data[i++]);
+        new ((void *)ptr) T(*it);
       }
     }
     Vector() : m_data(nullptr), _size(0), _capacity(0) {}
@@ -127,6 +134,19 @@ namespace tinystl
       const size_t index = it - rbegin();
     }
 
+    void destroy_one()
+    {
+      for (int i = 0; i < _size; i++)
+      {
+
+        T *ptr = std::addressof(m_data[i]);
+        if (ptr)
+        {
+          ptr->~T();
+        }
+      }
+    }
+
     reverse_iterator rbegin()
     {
       return reverse_iterator(m_data + _size);
@@ -171,19 +191,16 @@ namespace tinystl
     if (_capacity == 0)
     {
       _capacity = 1;
-      m_data = new value_type[_capacity];
-      // m_data = tinystl::Allocator<T>::allocate(_capacity);
+      m_data = data_allocator::allocate(_capacity);
     }
     else if (_size == _capacity)
     {
-      T *new_data = new value_type[_capacity * 2];
-      // T *new_data = tinystl::Allocator<T>::allocate(_capacity * 2);
+      T *new_data = data_allocator::allocate(_capacity * 2);
       for (int i = 0; i < _size; i++)
       {
         new_data[i] = m_data[i];
       }
-      delete[] m_data;
-      // tinystl::Allocator<T>::deallocate(m_data);
+      data_allocator::deallocate(m_data);
       m_data = new_data;
       _capacity *= 2;
     }
@@ -197,13 +214,10 @@ namespace tinystl
   template <typename T>
   Vector<T>::~Vector()
   {
-    // for (int i = 0; i < _size; i++) {
-    //   m_data[i].~T();
-    // }
+    destroy_one();
     if (m_data)
     {
-      // tinystl::Allocator<T>::deallocate(m_data, _size);
-      delete[] m_data;
+      data_allocator::deallocate(m_data);
     }
     m_data = nullptr;
     _size = 0;
@@ -218,15 +232,13 @@ namespace tinystl
     if (0 == _capacity)
     {
       _capacity = 1;
-      // m_data = new value_type[1];
-      m_data = tinystl::Allocator<T>::allocate(1);
+      m_data = data_allocator::allocate();
       m_data[0] = val;
     }
     else if (_size + 1 > _capacity)
     {
       _capacity *= 2;
-      // value_type *temp = new value_type[_capacity];
-      value_type *temp = tinystl::Allocator<T>::allocate(_capacity);
+      value_type *temp = data_allocator::allocate(_capacity);
       for (int i = 0; i < index; ++i)
       {
         temp[i] = m_data[i];
@@ -236,8 +248,7 @@ namespace tinystl
       {
         temp[i + 1] = m_data[i];
       }
-      // delete[] m_data;
-      tinystl::Allocator<T>::deallocate(m_data);
+      data_allocator::deallocate(m_data);
       m_data = temp;
     }
     else
@@ -270,8 +281,7 @@ namespace tinystl
   {
     _size = vec._size;
     _capacity = vec._capacity;
-    m_data = new Vector<T>::value_type[_size];
-    // m_data = tinystl::Allocator<T>::allocate(_size);
+    m_data = data_allocator::allocate(_size);
     for (int i = 0; i < _size; i++)
     {
       m_data[i] = vec.m_data[i];
@@ -293,17 +303,17 @@ namespace tinystl
     }
     if (m_data != nullptr)
     {
-      delete[] m_data;
-      // tinystl::Allocator<T>::deallocate(m_data);
+      data_allocator::deallocate(m_data);
       m_data = nullptr;
     }
     _size = vec._size;
     _capacity = vec._capacity;
-    m_data = new Vector::value_type[_size];
-    // m_data = tinystl::Allocator<T>::allocate(_size);
+    m_data = data_allocator::allocate(_size);
     for (int i = 0; i < _size; i++)
     {
-      m_data[i] = vec.m_data[i];
+      // m_data[i] = vec.m_data[i];
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(vec.m_data[i]);
     }
     return *this;
   }
