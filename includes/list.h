@@ -81,7 +81,7 @@ namespace tinystl
 		typedef typename node_traits<T>::node_ptr node_ptr;
 
 		/** constructor */
-		typedef tinystl::Construct<node_ptr, node_allocator> constructor;
+		typedef tinystl::Construct<T> constructor;
 
 		List()
 		{
@@ -103,6 +103,18 @@ namespace tinystl
 			}
 		}
 
+		List(size_t size, const T& val)
+		{
+			head = base_allocator::allocate();
+			tail = base_allocator::allocate();
+			head->next = tail;
+			tail->prev = head;
+			for (int i = 0; i < size; i++)
+			{
+				push_back(val);
+			}
+		}
+
 		size_t size()
 		{
 			auto node = head->next;
@@ -121,12 +133,14 @@ namespace tinystl
 		void destroy_node(node_ptr p)
 		{
 			// data_allocator::destroy(mystl::address_of(p->value));
-			T *ptr = std::addressof(p->m_data);
+			// T *ptr = std::addressof(p->m_data);
 
-			if (ptr)
-			{
-				ptr->~T();
-			}
+			// if (ptr)
+			// {
+			// 	ptr->~T();
+			// }
+
+			constructor::destroy(p->m_data);
 
 			node_allocator::deallocate(p);
 		}
@@ -172,18 +186,18 @@ namespace tinystl
 
 			node->next = head->next;
 			node->prev = head;
-			
+
 			head->next->prev = node;
 			head->next = node;
 		}
 
-		void push_back(T &data)
+		void push_back(const T &data)
 		{
 			node_ptr node = node_allocator::allocate();
-			T *ptr = std::addressof(node->m_data);
-			new ((void *)ptr) T(data);
+			// T *ptr = std::addressof(node->m_data);
+			// new ((void *)ptr) T(data);
 
-			// node_ptr node = constructor::construct(ptr, data);
+			constructor::construct(node->m_data, data);
 
 			node->prev = tail->prev;
 			node->next = tail;
@@ -295,12 +309,12 @@ namespace tinystl
 			head->next = tail;
 			tail->prev = head;
 
-			node_ptr pre = head;
+			base_ptr pre = head;
 			for (auto &cur : lt)
 			{
 				// node_ptr node = new node_type(cur, pre, tail);
 				node_ptr node = node_allocator::allocate();
-				T *ptr = std::addressof(node->value);
+				T *ptr = std::addressof(node->m_data);
 				new ((void *)ptr) T(cur);
 
 				node->prev = pre;
@@ -318,11 +332,11 @@ namespace tinystl
 			if (this != &lt)
 			{
 				clear(); // 清空自己
-				node_ptr node = (lt.head)->next;
+				node_ptr node = static_cast<node_ptr>((lt.head)->next);
 				while (node != lt.tail)
 				{ // 遍历lt
 					push_back(node->m_data);
-					node = node->next;
+					node = static_cast<node_ptr>(node->next);
 				}
 			}
 			return *this;

@@ -116,16 +116,16 @@ public:
     return it.__get_current() != this->_M_current;
   }
 
-  reference operator*() const
-  {
-    if (this->_M_current >= this->m_finish)
-    {
-      pointer tmp = new T();
-      *tmp = T();
-      return *tmp;
-    }
-    return *this->_M_current;
-  }
+  // reference operator*() const
+  // {
+  //   if (this->_M_current >= this->m_finish)
+  //   {
+  //     pointer tmp = new T();
+  //     *tmp = T();
+  //     return *tmp;
+  //   }
+  //   return *this->_M_current;
+  // }
 
   pointer operator->()
   {
@@ -163,9 +163,9 @@ public:
   {
     if (this->_M_current >= this->m_finish)
     {
-      pointer tmp = new T();
-      *tmp = T();
-      return *tmp;
+
+      T tmp = T();
+      return tmp;
     }
     ++this->_M_current;
     return *this;
@@ -235,9 +235,8 @@ public:
   {
     if (this->_M_current >= this->m_finish)
     {
-      pointer tmp = new T();
-      *tmp = T();
-      return *tmp;
+      T tmp = T();
+      return tmp;
     }
     return *this->_M_current;
   }
@@ -350,9 +349,9 @@ public:
   {
     if (this->_M_current >= this->m_finish)
     {
-      pointer tmp = new T();
-      *tmp = T();
-      return *tmp;
+
+      T tmp = T();
+      return tmp;
     }
     return *this->_M_current;
   }

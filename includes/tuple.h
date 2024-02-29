@@ -4,7 +4,8 @@
 #include "pair.h"
 #include <iostream>
 
-template <typename... Arg>
+namespace tinystl {
+  template <typename... Arg>
 class Tuple;
 template <>
 class Tuple<>
@@ -89,6 +90,7 @@ struct get_helper<0, Tuple<>>
   using value_type = void;
   using next_type = Tuple<>;
 };
+}
 
 
 #endif

@@ -14,9 +14,9 @@ namespace tinystl
   {
   public:
     typedef T value_type; // alias for T
-    // typedef T* iterator;
+    typedef T* iterator;
 
-    typedef Random_Access_Iterator<T, Vector> iterator;
+    // typedef Random_Access_Iterator<T, Vector> iterator;
     /** allocator */
     typedef tinystl::allocator<T> data_allocator;
 
@@ -51,17 +51,17 @@ namespace tinystl
       }
     }
 
-    Vector(iterator first, iterator last)
-    {
-      _size = _capacity = last - first;
-      m_data = data_allocator::allocate(_size);
-      for (int i = 0; i < _size; i++)
-      {
-        // m_data[i] = first[i];
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(first[i]);
-      }
-    }
+    // Vector(iterator first, iterator last)
+    // {
+    //   _size = _capacity = last - first;
+    //   m_data = data_allocator::allocate(_size);
+    //   for (int i = 0; i < _size; i++)
+    //   {
+    //     // m_data[i] = first[i];
+    //     T *ptr = std::addressof(m_data[i]);
+    //     new ((void *)ptr) T(first[i]);
+    //   }
+    // }
 
     Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     {
@@ -117,7 +117,7 @@ namespace tinystl
     void pop_back() { --_size; }
     void erase(const iterator it)
     {
-      if (it >= iterator(m_data + _size, _size))
+      if (it >= iterator(m_data + _size))
       {
         return;
       }
@@ -158,12 +158,12 @@ namespace tinystl
 
     value_type back() { return m_data[_size - 1]; }
 
-    iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data, _size); }
+    iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
 
     iterator end() _GLIBCXX_NOEXCEPT
     {
 
-      return iterator(m_data + _size, _size);
+      return iterator(m_data + _size);
     }
 
     size_t capacity() { return _capacity; }

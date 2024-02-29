@@ -5,19 +5,16 @@
 #include "./array.h"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations" // 静默 warning: warning: 'template<class _Operation> class tinystl::binder2nd' is deprecated [-Wdeprecated-declarations]...
 
-template <size_t idx, typename Head, typename... Tail>
+
+namespace tinystl
+{
+  template <size_t idx, typename Head, typename... Tail>
 typename get_helper<idx, Tuple<Head, Tail...>>::value_type
 get(Tuple<Head, Tail...> &tup)
 {
   using next_type = typename get_helper<idx, Tuple<Head, Tail...>>::next_type;
   // cout << "addr: " << ((next_type *)(&tup)) << "  " << sizeof(tup) << "  " << &tup << ((next_type *)(&tup))->value_ << endl;
   return ((next_type *)(&tup))->get_value();
-}
-
-template <typename... Types>
-Tuple<Types &...> tie(Types &...args) noexcept
-{
-  return Tuple<Types &...>(args...);
 }
 
 // Array<int, 2UL>
@@ -27,13 +24,11 @@ Tp get(tinystl::Array<Tp, idx> &arr)
   return arr[id];
 }
 
-template <typename T>
-constexpr const T &max(const T &a, const T &b)
-{
-}
-
-namespace tinystl
-{
+  template <typename... Types>
+  Tuple<Types &...> tie(Types &...args) noexcept
+  {
+    return Tuple<Types &...>(args...);
+  }
 
   template <typename Arg, typename Result>
   struct unary_function
@@ -170,7 +165,7 @@ namespace tinystl
   template <typename Iterator, typename Compare>
   Iterator find_if(Iterator start, Iterator end, Compare comp)
   {
-      std::cout << *start << "fvgggt";
+    std::cout << *start << "fvgggt";
     while (start != end)
     {
       if (comp(*start))

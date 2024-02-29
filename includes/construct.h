@@ -10,23 +10,29 @@
 namespace tinystl
 {
 
-    template <typename T, typename Alloc>
+    template <typename T>
     class Construct
     {
     public:
-        typedef Alloc alloc;
-        // type
-
         template <typename Val>
-        static void construct(T val, const Val &arg) // std::addressof(node->m_data), data ===> new ((void *)ptr) T(data);
+        static void construct(T &val, const Val &arg) // std::addressof(node->m_data), data ===> new ((void *)ptr) T(data);
         {
+            // T *ptr = std::addressof(node->m_data);
+            // new ((void *)ptr) T(data);
             T *ptr = std::addressof(val); // 获取val的指针
             new ((void *)ptr) T(arg);
         }
-        
-    };
 
-    
+        static void destroy(T &val)
+        {
+            T *ptr = std::addressof(val);
+
+            if (ptr)
+            {
+                ptr->~T();
+            }
+        }
+    };
 
     /**
      * @brief 构造Ty类型对象，ptr指向该对象，

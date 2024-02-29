@@ -213,26 +213,32 @@ namespace tinystl
 
         void append(const String &str)
         {
-            // String tmp;
-            // str.m_data
             *(int *)(m_data - 4) -= 1;
             _size = _size + str._size;
             char *origin = m_data;
+
             m_data = new char[_size + 5]() + 4;
             *(int *)(m_data - 4) = 1;
             strcpy(m_data, origin);
             strcat(m_data, str.m_data);
         }
+                void append(const char *str)
+        {
+            *(int *)(m_data - 4) -= 1;
+            _size = _size + strlen(str);
+            char *origin = m_data;
+
+            m_data = new char[_size + 5]() + 4;
+            *(int *)(m_data - 4) = 1;
+            strcpy(m_data, origin);
+            strcat(m_data, str);
+        }
 
         String operator+(const char *str)
         {
-            String tmp;
-            *(int *)(m_data - 4) -= 1;
-            tmp._size = _size + strlen(str);
-            tmp.m_data = new char[tmp._size + 5]() + 4;
-            *(int *)(tmp.m_data - 4) = 1;
-            strcpy(tmp.m_data, m_data);
-            strcat(tmp.m_data, str);
+
+            String tmp(*this);
+            tmp.append(str);
             return tmp;
         }
 
