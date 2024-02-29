@@ -11,29 +11,9 @@
 #include <cstddef>
 #include <iostream>
 #include <assert.h>
+#include "./list/node.h"
 
-template <typename T>
-struct node
-{
-  T m_data;
-  node *prev;
-  node *next;
-  node(T val) : m_data(val), prev(nullptr), next(nullptr) {}
-  node() = default;
-};
 
-template <typename T>
-class Node
-{
-public:
-	T m_data;
-	Node *prev;
-	Node *next;
-
-public:
-	Node() : prev(NULL), next(NULL) {}
-	Node(T data, Node *prev = NULL, Node *next = NULL) : m_data(data), prev(prev), next(next) {}
-};
 
 // iterator 模板
 template <typename T>
@@ -64,13 +44,13 @@ protected:
 };
 
 template <typename T>
-struct iterator_base<Node<T>>
+struct iterator_base<tinystl::list_node_base<T>>
 {
 
 public:
-  typedef Node<T> value_type;
-  typedef Node<T> *pointer;
-  typedef Node<T> &reference;
+  typedef tinystl::list_node_base<T> value_type;
+  typedef tinystl::list_node_base<T> *pointer;
+  typedef tinystl::list_node_base<T> &reference;
   typedef ptrdiff_t difference_type;
   typedef tinystl::random_access_iterator_tag iterator_category;
 
@@ -85,8 +65,8 @@ public:
 protected:
   pointer _M_current, m_start, m_finish;
 
-  virtual bool operator==(const iterator_base<Node<T>> &) const = 0;
-  virtual bool operator!=(const iterator_base<Node<T>> &) const = 0;
+  virtual bool operator==(const iterator_base<tinystl::list_node_base<T>> &) const = 0;
+  virtual bool operator!=(const iterator_base<tinystl::list_node_base<T>> &) const = 0;
 };
 
 template <typename T, typename Container>
@@ -452,19 +432,19 @@ operator+(const Random_Access_Iterator<_Iterator, _Container> &__lhs,
 // }
 
 template <typename T, typename Container>
-class Forward_Access_Iterator : public iterator_base<Node<T>>
+class Forward_Access_Iterator : public iterator_base<tinystl::list_node_base<T>>
 {
 public:
-  typedef iterator_base<Node<T>> self_base;
+  typedef iterator_base<tinystl::list_node_base<T>> self_base;
   typedef typename self_base::value_type value_type;
   typedef typename self_base::pointer pointer;
   typedef typename self_base::reference reference;
   typedef typename self_base::difference_type difference_type;
   typedef Forward_Access_Iterator<T, Container> self;
 
-  Forward_Access_Iterator() : iterator_base<Node<T>>() {}
+  Forward_Access_Iterator() : iterator_base<tinystl::list_node_base<T>>() {}
 
-  Forward_Access_Iterator(Node<T> *cur) : iterator_base<Node<T>>(cur){};
+  Forward_Access_Iterator(tinystl::list_node_base<T> *cur) : iterator_base<tinystl::list_node_base<T>>(cur){};
 
   self &operator++()
   {
@@ -505,14 +485,13 @@ public:
   }
 
   T *operator->() { return &this->_M_current->m_data; }
-
 };
 
 template <typename T, typename Container>
-class Bidirectional_Access_Iterator : public iterator_base<Node<T>>
+class Bidirectional_Access_Iterator : public iterator_base<tinystl::list_node_base<T>>
 {
 public:
-  typedef iterator_base<Node<T>> self_base;
+  typedef iterator_base<tinystl::list_node_base<T>> self_base;
   typedef typename self_base::value_type value_type;
   typedef typename self_base::pointer pointer;
   typedef typename self_base::reference reference;
@@ -520,9 +499,9 @@ public:
   typedef Bidirectional_Access_Iterator<T, Container> self;
 
   // Bidirectional_Access_Iterator() = default;
-  Bidirectional_Access_Iterator() : iterator_base<Node<T>>() {}
+  Bidirectional_Access_Iterator() : iterator_base<tinystl::list_node_base<T>>() {}
 
-  Bidirectional_Access_Iterator(Node<T> *cur) : iterator_base<Node<T>>(cur){};
+  Bidirectional_Access_Iterator(tinystl::list_node_base<T> *cur) : iterator_base<tinystl::list_node_base<T>>(cur){};
 
   self &operator++()
   {
@@ -561,13 +540,17 @@ public:
   self operator++(int)
   {
     self temp(this->_M_current);
-    this->_M_current = this->_M_current->next;
+    // this->_M_current = this->_M_current->next;
+    ++*this;
     return temp;
   }
   self operator--(int)
   {
     self temp(this->_M_current);
-    this->_M_current = this->_M_current->prev;
+    // this->_M_current = this->_M_current->prev;
+    --*this;
+        // self tmp = *this;
+    // ++*this;
     return temp;
   }
   bool operator==(const self_base &it) const override
@@ -581,10 +564,12 @@ public:
 
   T &operator*()
   {
-    return this->_M_current->m_data;
+    // this->_M_current->m_data
+    tinystl::list_node<T>* p = static_cast<tinystl::list_node<T>*>(this->_M_current);
+    return this->_M_current->as_node()->m_data;;
   }
 
-  T *operator->() { return &this->_M_current->m_data; }
+  T *operator->() { return &(operator*()); }
 
   // private:
   //   node *_M_current;

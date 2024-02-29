@@ -17,12 +17,11 @@ namespace tinystl
         typedef Alloc alloc;
         // type
 
-        template <class Ty, typename Val>
-        static T construct(Ty *ptr, const Val &val)
+        template <typename Val>
+        static void construct(T val, const Val &arg) // std::addressof(node->m_data), data ===> new ((void *)ptr) T(data);
         {
-            T addr = alloc::allocate();
-            new ((void *)ptr) Ty(val);
-            return addr;
+            T *ptr = std::addressof(val); // 获取val的指针
+            new ((void *)ptr) T(arg);
         }
         
     };

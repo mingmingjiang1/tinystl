@@ -165,10 +165,11 @@ namespace tinystl
 
 		void push_front(T data)
 		{
-			// node_ptr node = new node_type(data, head, head->next);
 			node_ptr node = node_allocator::allocate();
 			T *ptr = std::addressof(node->m_data);
 			new ((void *)ptr) T(data);
+			// construct(std::addressof(node->m_data), arg)
+
 			node->next = head->next;
 			node->prev = head;
 			
