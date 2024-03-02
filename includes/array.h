@@ -2,9 +2,12 @@
 #define ARRAY
 
 #include <iostream>
+#include <cstring>
+
 #include "iterator.h"
 #include "iterator_traits.h"
-#include <cstring>
+#include "adapter.h"
+#include "allocator_copy.h"
 
 namespace tinystl
 {
@@ -16,6 +19,8 @@ namespace tinystl
     private:
         T *m_data;
         size_t _size;
+        /** allocator */
+        typedef tinystl::allocator<T> data_allocator;
 
     public:
         typedef T value_type; // alias for T
@@ -24,45 +29,71 @@ namespace tinystl
         typedef Reverse_Iterator<T *> reverse_iterator;
         Array(std::initializer_list<T> arr)
         {
-            m_data = new T[arr.size()];
+            /*
+
+                  _size = _capacity = arr.size();
+                  m_data = data_allocator::allocate(_size);
+                  int i = 0;
+                  for (auto it = arr.begin(); it != arr.end(); ++it)
+                  {
+                    // m_data[i++] = *it;
+                    T *ptr = std::addressof(m_data[i++]);
+                    new ((void *)ptr) T(*it);
+                  }
+             */
+            std::cout << "size: ===> " << arr.size() << std::endl;
+            // m_data = new T[arr.size()];
             _size = arr.size();
-            typename std::initializer_list<T>::iterator it;
+            m_data = data_allocator::allocate(_size);
             int i = 0;
-            for (it = arr.begin(); it != arr.end(); ++it)
+            for (auto it = arr.begin(); it != arr.end(); ++it)
             {
-                *(m_data + i++) = *it;
+                // *(m_data + i++) = *it;
+                T *ptr = std::addressof(m_data[i++]);
+                new ((void *)ptr) T(*it);
             }
-            // memset(this->m_data, 0, sizeof(T) * N);
         }
 
         Array(iterator first, iterator last)
         {
             _size = last - first;
-            m_data = new T[_size];
+            // m_data = new T[_size];
+            m_data = data_allocator::allocate(_size);
             for (int i = 0; i < _size; i++)
             {
-                m_data[i] = first[i];
+                T *ptr = std::addressof(m_data[i]);
+                new ((void *)ptr) T(first[i]);
+
+                // T *ptr = std::addressof(m_data[i]);
+                // new ((void *)ptr) T(first[i]);
+                // m_data[i] = first[i];
             }
         }
 
         Array(size_t size)
         {
-            m_data = new T[size];
+            // m_data = new T[size];
+            m_data = data_allocator::allocate(size);
             _size = size;
             for (int i = 0; i < _size; i++)
             {
-                m_data[i] = T();
+                // m_data[i] = T();
+                T *ptr = std::addressof(m_data[i]);
+                new ((void *)ptr) T(T());
             }
         }
 
         Array()
         {
-            m_data = new value_type[N];
+            // m_data = new value_type[N];
+            m_data = data_allocator::allocate(N);
             std::cout << "jnfrjnjn" << sizeof(T) << N << m_data;
             _size = N;
             for (int i = 0; i < _size; i++)
             {
-                m_data[i] = T();
+                // m_data[i] = T();
+                T *ptr = std::addressof(m_data[i]);
+                new ((void *)ptr) T(T());
             }
             // memset(m_data, 0, sizeof(T) * N);
         }
@@ -74,25 +105,45 @@ namespace tinystl
             return iterator(m_data + _size);
         }
 
+        void destroy_one()
+        {
+            for (int i = 0; i < _size; i++)
+            {
+
+                T *ptr = std::addressof(m_data[i]);
+                if (ptr)
+                {
+                    ptr->~T();
+                }
+            }
+        }
+
         ~Array()
         {
-            std::cout << "frnnrf" << m_data;
+            std::cout << "调用析构函数" << m_data;
+            destroy_one();
             if (m_data)
             {
-                delete[] m_data;
-                m_data = nullptr;
+                data_allocator::deallocate(m_data);
             }
+            // delete[] m_data;
+            m_data = nullptr;
+            _size = 0;
+            // }
         }
 
         Array(const Array &arr)
         {
             int i;
             _size = arr._size;
-            m_data = new T[arr._size];
+            // m_data = new T[arr._size];
+            m_data = data_allocator::allocate(arr._size);
             memset(m_data, 0, sizeof(T) * arr._size);
             for (i = 0; i < arr._size; i++)
             {
-                *(m_data + i) = *(arr.m_data + i);
+                // *(m_data + i) = *(arr.m_data + i);
+                T *ptr = std::addressof(m_data[i]);
+                new ((void *)ptr) T(arr.m_data[i]);
             }
         }
 
@@ -158,17 +209,25 @@ namespace tinystl
             if (this == &arr)
                 return *this;
             int i;
+            // if (m_data)
+            // {
+            //     delete[] m_data;
+            // }
             if (m_data)
             {
-                delete[] m_data;
+                destroy_one();
+                data_allocator::deallocate(m_data);
             }
             _size = arr._size;
 
             // memset(m_data, 0, sizeof(T) * arr._size);
-            m_data = new value_type[_size];
+            // m_data = new value_type[_size];
+            m_data = data_allocator::allocate(_size);
             for (i = 0; i < _size; i++)
             {
-                m_data[i] = arr.m_data[i];
+                // m_data[i] = arr.m_data[i];
+                T *ptr = std::addressof(m_data[i]);
+                new ((void *)ptr) T(arr[i]);
             }
             return *this;
         }

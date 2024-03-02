@@ -180,8 +180,8 @@ TYPED_TEST_P(ArrayTest, Contructor)
 
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
-    // testDeclareWithInit<TypeParam>(tmp, 5);
-    // testDeclareWithNoInit<TypeParam>(5);
+    testDeclareWithInit<TypeParam>(tmp, 5);
+    testDeclareWithNoInit<TypeParam>(5);
     testAssign<TypeParam>(tmp, 5);
 }
 
