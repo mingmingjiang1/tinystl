@@ -13,11 +13,15 @@ namespace tinystl
   {
   public:
     typedef T value_type; // alias for T
-    typedef T* iterator;
+    typedef T *iterator;
 
     // typedef Random_Access_Iterator<T, Vector> iterator;
+
     /** allocator */
     typedef tinystl::allocator<T> data_allocator;
+
+    /** constructor */
+    typedef tinystl::Construct<T> constructor;
 
     /*
       另一种写法：
@@ -25,7 +29,13 @@ namespace tinystl
       typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
      */
 
-    typedef Reverse_Iterator<T *> reverse_iterator;
+    // typedef Reverse_Iterator<T *> reverse_iterator;
+
+    typedef const value_type *const_iterator;
+    typedef tinystl::reverse_iterator<iterator> reverse_iterator;
+
+    typedef tinystl::reverse_iterator<const_iterator> const_reverse_iterator;
+
     Vector(size_t size)
     {
       _size = _capacity = size;
@@ -132,22 +142,41 @@ namespace tinystl
       const size_t index = it - rbegin();
     }
 
-    void destroy_one()
+    void destroy()
     {
       for (int i = 0; i < _size; i++)
       {
-
-        T *ptr = std::addressof(m_data[i]);
-        if (ptr)
-        {
-          ptr->~T();
-        }
+        constructor::destroy(m_data[i]);
       }
     }
 
-    reverse_iterator rbegin()
+    reverse_iterator rbegin() _GLIBCXX_NOEXCEPT
     {
       return reverse_iterator(m_data + _size);
+    }
+
+    const reverse_iterator rbegin() const _GLIBCXX_NOEXCEPT
+    {
+      return const_reverse_iterator(m_data + _size);
+    }
+
+    reverse_iterator rend()
+    {
+      return reverse_iterator(m_data);
+    }
+
+    const reverse_iterator rend() const _GLIBCXX_NOEXCEPT
+    {
+      return const_reverse_iterator(m_data);
+    }
+
+    const_reverse_iterator crbegin() const _GLIBCXX_NOEXCEPT
+    {
+      return rbegin();
+    }
+    const_reverse_iterator crend() const _GLIBCXX_NOEXCEPT
+    {
+      return rend();
     }
 
     void insert(iterator it, value_type val);
@@ -156,12 +185,30 @@ namespace tinystl
 
     value_type back() { return m_data[_size - 1]; }
 
+    const_iterator begin() const _GLIBCXX_NOEXCEPT { return const_iterator(m_data); }
+
     iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
+
+    const_iterator cbegin() const _GLIBCXX_NOEXCEPT
+    {
+      return begin();
+    }
 
     iterator end() _GLIBCXX_NOEXCEPT
     {
 
       return iterator(m_data + _size);
+    }
+
+    const_iterator end() const _GLIBCXX_NOEXCEPT
+    {
+
+      return const_iterator(m_data + _size);
+    }
+
+    const_iterator cend() const _GLIBCXX_NOEXCEPT
+    {
+      return end();
     }
 
     size_t capacity() { return _capacity; }
@@ -212,7 +259,7 @@ namespace tinystl
   template <typename T>
   Vector<T>::~Vector()
   {
-    destroy_one();
+    destroy();
     if (m_data)
     {
       data_allocator::deallocate(m_data);
@@ -310,8 +357,8 @@ namespace tinystl
     for (int i = 0; i < _size; i++)
     {
       // m_data[i] = vec.m_data[i];
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(vec.m_data[i]);
+      T *ptr = std::addressof(m_data[i]);
+      new ((void *)ptr) T(vec.m_data[i]);
     }
     return *this;
   }

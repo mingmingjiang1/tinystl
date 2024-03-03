@@ -233,104 +233,6 @@ namespace tinystl
         }
     };
 
-    template <typename T>
-    class Stack
-    {
-    public:
-        Stack()
-        {
-            m_data = nullptr;
-            m_size = 0;
-        }
-        Stack(const Stack &s)
-        {
-            m_data = s.m_data;
-            m_size = s.m_size;
-        }
-        Stack(Stack &&s)
-        {
-            m_data = s.m_data;
-            m_size = s.m_size;
-        }
-        ~Stack()
-        {
-            if (m_data)
-            {
-                // Alloc::deallocate(m_data, m_size);
-            }
-        }
-
-        Stack &operator=(const Stack &s)
-        {
-            if (this == &s)
-                return *this;
-            if (m_data)
-            {
-                // Alloc::deallocate(m_data, m_size);
-            }
-            m_data = s.m_data;
-            m_size = s.m_size;
-            return *this;
-        }
-
-        Stack &operator=(Stack &&s)
-        {
-            if (this == &s)
-                return *this;
-            if (m_data)
-            {
-                // Alloc::deallocate(m_data, m_size);
-            }
-            m_data = s.m_data;
-            m_size = s.m_size;
-            return *this;
-        }
-
-        void push(const T &value)
-        {
-            if (m_data == nullptr)
-            {
-                // m_data = Alloc::allocate();
-            }
-            else
-            {
-                // m_data = Alloc::allocate(m_size + 1);
-            }
-            tinystl::construct(m_data + m_size, value);
-            m_size++;
-        }
-
-        void pop()
-        {
-            if (m_size == 0)
-            {
-                return;
-            }
-            m_size--;
-            // tinystl::destroy(m_data + m_size);
-            // Alloc::deallocate(m_data + m_size, 1);
-        }
-
-        T top() const
-        {
-            return *(m_data + m_size - 1);
-        }
-
-        bool empty() const
-        {
-            return m_size == 0;
-        }
-
-        size_t size() const
-        {
-            return m_size;
-        }
-
-    private:
-        T *m_data;
-        size_t m_size;
-    };
-
     /** 迭代器适配器 */
     template <typename T, typename charT = char>
     class ostream_iterator
@@ -342,7 +244,7 @@ namespace tinystl
         typedef charT char_type;
         typedef std::basic_ostream<charT> ostream_type;
         ostream_iterator(ostream_type &s) : out_stream(&s), delim(0) {}
-        ostream_iterator(ostream_type &s, const charT *delimiter) : out_stream(s.out_stream), delim(delimiter) {}
+        ostream_iterator(ostream_type &s, const charT *delimiter) : out_stream(&s), delim(delimiter) {}
         ~ostream_iterator() {}
         ostream_iterator<T, charT> &operator=(const T &value)
         {
@@ -357,10 +259,16 @@ namespace tinystl
     };
 
     /** 迭代器适配器 */
-    template <typename Iterator, typename Ref, typename Ptr>
+    template <typename Iterator>
     class reverse_iterator
     {
-        typedef reverse_iterator<Iterator, Ref, Ptr> Self;
+        typedef reverse_iterator<Iterator> Self;
+
+        typedef typename tinystl::Iterator_Traits<Iterator>::iterator_category iterator_category;
+        typedef typename tinystl::Iterator_Traits<Iterator>::value_type value_type;
+        typedef typename tinystl::Iterator_Traits<Iterator>::difference_type difference_type;
+        typedef typename tinystl::Iterator_Traits<Iterator>::pointer pointer;
+        typedef typename tinystl::Iterator_Traits<Iterator>::reference reference;
 
     public:
         reverse_iterator(Iterator it)
@@ -368,13 +276,13 @@ namespace tinystl
         {
         }
 
-        Ref operator*()
+        reference operator*()
         {
             Iterator tmp = _it;
-            return *(tmp); // 与正向迭代器对称的设计，解引用访问前一个位置
+            return *(--tmp); // 与正向迭代器对称的设计，解引用访问前一个位置
         }
 
-        Ptr operator->()
+        pointer operator->()
         {
             return &(operator*());
         }

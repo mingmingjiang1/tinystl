@@ -264,7 +264,7 @@ public:
   typedef typename self_base::reference reference;
   typedef typename self_base::difference_type difference_type;
 
-  typedef Iterator_Traits<self> __traits_type;
+  typedef tinystl::Iterator_Traits<self> __traits_type;
 
   Random_Access_Iterator() : Output_Iterator<T, Container>() {}
 
@@ -670,7 +670,7 @@ private:
   Iterator current; // 记录对应的正向迭代器
 
 public:
-  typedef Iterator_Traits<Iterator> __traits_type;
+  typedef tinystl::Iterator_Traits<Iterator> __traits_type;
   typedef tinystl::bidirectional_iterator_tag iterator_category;
   typedef Iterator value_type;
   typedef Iterator *pointer;

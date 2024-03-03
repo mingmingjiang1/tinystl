@@ -280,7 +280,7 @@ int main()
 
   tinystl::Vector<int>::iterator it_tmp_vec; // 声明一个迭代器
   tinystl::Vector<int> v2(5);
-    cout << "v5: >>>>>" << endl;
+  cout << "v5: >>>>>" << endl;
   tinystl::Vector<int> v5(v2);
   cout << "v2: >>>>>" << endl;
   for (it_tmp_vec = v2.begin(); it_tmp_vec != v2.end(); it_tmp_vec++)
@@ -299,7 +299,7 @@ int main()
   {
     cout << *it_tmp_vec << endl;
   }
-    cout << "v2: >>>>>"  << endl;
+  cout << "v2: >>>>>" << endl;
 
   for (it_tmp_vec = v5.begin(); it_tmp_vec != v5.end(); it_tmp_vec++)
   {
@@ -490,7 +490,7 @@ int main()
   tinystl::for_each(l1.begin(), l1.end(), Play1("Element:"));
 
   tinystl::Vector<int> v1{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-   tinystl::Vector<int> vhh(v1.begin() + 1, v1.end());
+  tinystl::Vector<int> vhh(v1.begin() + 1, v1.end());
   for (int i = 0; i < 10; i++)
     v1.push_back(i * 10);
   tinystl::Vector<int>::iterator it_vector = v1.begin();
@@ -510,6 +510,23 @@ int main()
   tinystl::for_each(v1.begin(), v1.end(), Play1("Element:"));
 
   cout << "********************** Test ptr_func **********************" << endl;
+
+  cout << "********************** Test ostream_iterator **********************" << endl;
+
+  tinystl::ostream_iterator<int, char> out_iter(cout, "#");
+
+  tinystl::Vector<int> tmp;
+  int num;
+  while (cin >> num)
+    tmp.push_back(num);
+  tinystl::copy(tmp.begin(), tmp.end(), out_iter);
+
+ tinystl::Vector<int>::reverse_iterator rit = tmp.rbegin();
+  while (rit != tmp.rend())
+  {
+    cout << *rit << " ";
+    ++rit;
+  }
 
   return 0;
 }

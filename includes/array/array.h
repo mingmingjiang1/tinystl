@@ -1,7 +1,6 @@
 #ifndef ARRAY
 #define ARRAY
 
-
 #include "iterator/iterator.h"
 #include "iterator/iterator_traits.h"
 #include "adapter.h"
@@ -18,11 +17,14 @@ namespace tinystl
         /** allocator */
         typedef tinystl::allocator<T> data_allocator;
 
+        /** constructor */
+        typedef tinystl::Construct<T> constructor;
+
         /** typedefs */
         typedef typename data_allocator::value_type value_type;
         typedef typename data_allocator::pointer pointer;
         typedef typename data_allocator::const_pointer const_pointer;
-        typedef typename data_allocator::reference reference; 
+        typedef typename data_allocator::reference reference;
         typedef typename data_allocator::const_reference const_reference;
         typedef typename data_allocator::size_type size_type;
         typedef typename data_allocator::difference_type difference_type;
@@ -96,22 +98,22 @@ namespace tinystl
             return iterator(m_data + _size);
         }
 
-        void destroy_one()
+        void destroy()
         {
             for (int i = 0; i < _size; i++)
             {
-
-                pointer ptr = std::addressof(m_data[i]);
-                if (ptr)
-                {
-                    ptr->~value_type();
-                }
+                constructor::destroy(m_data[i]);
+                // pointer ptr = std::addressof(m_data[i]);
+                // if (ptr)
+                // {
+                //     ptr->~value_type();
+                // }
             }
         }
 
         ~Array()
         {
-            destroy_one();
+            destroy();
             if (m_data)
             {
                 data_allocator::deallocate(m_data);
@@ -205,17 +207,15 @@ namespace tinystl
             // }
             if (m_data)
             {
-                destroy_one();
+                destroy();
                 data_allocator::deallocate(m_data);
             }
             _size = arr._size;
 
-            // memset(m_data, 0, sizeof(T) * arr._size);
             // m_data = new value_type[_size];
             m_data = data_allocator::allocate(_size);
             for (i = 0; i < _size; i++)
             {
-                // m_data[i] = arr.m_data[i];
                 pointer ptr = std::addressof(m_data[i]);
                 new ((void *)ptr) value_type(arr[i]);
             }

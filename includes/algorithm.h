@@ -5,24 +5,23 @@
 #include "array/array.h"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations" // 静默 warning: warning: 'template<class _Operation> class tinystl::binder2nd' is deprecated [-Wdeprecated-declarations]...
 
-
 namespace tinystl
 {
   template <size_t idx, typename Head, typename... Tail>
-typename get_helper<idx, Tuple<Head, Tail...>>::value_type
-get(Tuple<Head, Tail...> &tup)
-{
-  using next_type = typename get_helper<idx, Tuple<Head, Tail...>>::next_type;
-  // cout << "addr: " << ((next_type *)(&tup)) << "  " << sizeof(tup) << "  " << &tup << ((next_type *)(&tup))->value_ << endl;
-  return ((next_type *)(&tup))->get_value();
-}
+  typename get_helper<idx, Tuple<Head, Tail...>>::value_type
+  get(Tuple<Head, Tail...> &tup)
+  {
+    using next_type = typename get_helper<idx, Tuple<Head, Tail...>>::next_type;
+    // cout << "addr: " << ((next_type *)(&tup)) << "  " << sizeof(tup) << "  " << &tup << ((next_type *)(&tup))->value_ << endl;
+    return ((next_type *)(&tup))->get_value();
+  }
 
-// Array<int, 2UL>
-template <size_t id, size_t idx, typename Tp>
-Tp get(tinystl::Array<Tp, idx> &arr)
-{
-  return arr[id];
-}
+  // Array<int, 2UL>
+  template <size_t id, size_t idx, typename Tp>
+  Tp get(tinystl::Array<Tp, idx> &arr)
+  {
+    return arr[id];
+  }
 
   template <typename... Types>
   Tuple<Types &...> tie(Types &...args) noexcept
@@ -401,6 +400,67 @@ Tp get(tinystl::Array<Tp, idx> &arr)
   ptr_fun(Result (*x)(Arg1, Arg2))
   {
     return pointer_to_binary_function<Arg1, Arg2, Result>(x);
+  }
+
+  /** 各种__copy模板 */
+
+  template <class InputIterator, class OutputIterator>
+  inline OutputIterator __copy(InputIterator first, InputIterator last,
+                               OutputIterator result, input_iterator_tag)
+  {
+    // 通过迭代器将一个元素一个元素的复制
+    for (; first != last; ++result, ++first)
+      *result = *first;
+    return result;
+  }
+
+  template <class RandomAccessIterator, class OutputIterator, class Distance>
+  inline OutputIterator
+  __copy_d(RandomAccessIterator first, RandomAccessIterator last,
+           OutputIterator result, Distance *)
+  {
+    // 通过迭代器之间的元素个数将一个元素一个元素的复制
+    for (Distance n = last - first; n > 0; --n, ++result, ++first)
+      *result = *first;
+    return result;
+  }
+
+  template <class RandomAccessIterator, class OutputIterator>
+  inline OutputIterator
+  __copy(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, random_access_iterator_tag)
+  {
+    return __copy_d(first, last, result, distance_type(first));
+  }
+
+  template <class InputIterator, class OutputIterator>
+  struct __copy_dispatch
+  {
+    OutputIterator operator()(InputIterator first, InputIterator last,
+                              OutputIterator result)
+    {
+      // iterator_category获取迭代器类型, 不同迭代器选择不同的重载函数
+      return __copy(first, last, result, iterator_category(first));
+    }
+  };
+
+  template <class InputIterator, class OutputIterator>
+  inline OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
+  {
+    return __copy_dispatch<InputIterator, OutputIterator>()(first, last, result);
+  }
+  // 重载
+  // 在偏特化与全特化中分析过, 最适合的函数会优先调用, 普通函数优于模板函数
+  inline char *copy(const char *first, const char *last, char *result)
+  {
+    // 直接调用memmove效率最高
+    memmove(result, first, last - first);
+    return result + (last - first);
+  }
+  inline wchar_t *copy(const wchar_t *first, const wchar_t *last, wchar_t *result)
+  {
+    // 直接调用memmove效率最高
+    memmove(result, first, sizeof(wchar_t) * (last - first));
+    return result + (last - first);
   }
 }
 

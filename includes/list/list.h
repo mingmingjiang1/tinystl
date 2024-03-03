@@ -132,14 +132,6 @@ namespace tinystl
 		}
 		void destroy_node(node_ptr p)
 		{
-			// data_allocator::destroy(mystl::address_of(p->value));
-			// T *ptr = std::addressof(p->m_data);
-
-			// if (ptr)
-			// {
-			// 	ptr->~T();
-			// }
-
 			constructor::destroy(p->m_data);
 
 			node_allocator::deallocate(p);
@@ -152,9 +144,7 @@ namespace tinystl
 			{
 				auto next = node->next;
 				// delete node;
-				// data_allocator::destroy(mystl::address_of(p->value));
-
-				// allocator_type::deallocate(node);
+				
 				destroy_node(node->as_node());
 				node = next;
 			}

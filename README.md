@@ -83,4 +83,12 @@ wip
 https://wangjii.github.io/article/25e9/
 
 
+todo:
+1. tcc和header文件分离
+2. gtest 单元测试 for string, algorithm, deque, tuple, pair, memory_pool
+3. add deque and forward_list
+4. 文章完善
+
+
+
 
