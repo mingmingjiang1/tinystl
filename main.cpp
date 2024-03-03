@@ -1,14 +1,14 @@
-#include "list.h"
+#include "list/list.h"
 // #include "cow_string.h"
-#include "String.h"
-#include "vector.h"
+#include "string/string.h"
+#include "vector/vector.h"
 #include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "tuple.h"
-#include "pair.h"
-#include "array.h"
+#include "auxiliary/tuple.h"
+#include "auxiliary/pair.h"
+#include "array/array.h"
 #include "algorithm.h"
 #include "global.h"
 #include <stdlib.h>
@@ -370,7 +370,7 @@ int main()
 
   tinystl::Tuple<int, double, std::string> mm;
 
-  Pair<int, std::string> a1(101, "lanzhihui"); // 参数类型必须与定义类型一样
+  tinystl::Pair<int, std::string> a1(101, "lanzhihui"); // 参数类型必须与定义类型一样
   cout << a1.first << " " << a1.second << endl;
 
   // // Tuple<int, std::string> t2;

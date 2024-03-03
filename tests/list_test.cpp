@@ -3,8 +3,8 @@
 
 #include <gtest/gtest.h>
 
-#include "list.h"
-#include "String.h"
+#include "list/list.h"
+#include "string/string.h"
 #include <string>
 #include <list>
 #pragma GCC diagnostic ignored "-Wunused-parameter" // disable warning: unused variable 'i' [-Wunused-variable]
@@ -176,8 +176,8 @@ TYPED_TEST_P(ListTest, Constructor)
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
     testDeclareWithInit<TypeParam>(tmp, 5);
-    // testDeclareWithNoInit<TypeParam>(5);
-    // testAssign<TypeParam>(tmp, 5);
+    testDeclareWithNoInit<TypeParam>(5);
+    testAssign<TypeParam>(tmp, 5);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(ListTest, Constructor);

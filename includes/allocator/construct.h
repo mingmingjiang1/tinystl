@@ -4,7 +4,7 @@
 // construct : 负责对象的构造
 // destroy   : 负责对象的析构
 
-#include "iterator.h"
+#include "iterator/iterator.h"
 #include "util.h"
 
 namespace tinystl

@@ -1,11 +1,10 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "iterator.h"
-#include "iterator_traits.h"
+#include "iterator/iterator.h"
+#include "iterator/iterator_traits.h"
 #include "adapter.h"
-#include "allocator_copy.h"
-#include <iostream>
+#include "allocator/allocator_copy.h"
 
 namespace tinystl
 {
@@ -41,7 +40,6 @@ namespace tinystl
     {
       _size = _capacity = last - first;
       m_data = data_allocator::allocate(_size);
-      std::cout << "hgfhhghghg " << _size << std::endl;
       for (int i = 0; i < _size; i++)
       {
         // node_ptr node = data_allocator::allocate();
@@ -180,9 +178,9 @@ namespace tinystl
     bool operator==(value_type &vec);
 
   private:
+    T *m_data;
     size_t _size;
     size_t _capacity;
-    T *m_data;
   };
 
   template <typename T>

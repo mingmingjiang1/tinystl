@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
-#include "construct.h"
+#include "allocator/construct.h"
+#include "iterator/iterator.h"
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
@@ -231,35 +232,186 @@ namespace tinystl
             tinystl::construct(ptr, tinystl::forward<Args>(args)...);
         }
     };
+
+    template <typename T>
+    class Stack
+    {
+    public:
+        Stack()
+        {
+            m_data = nullptr;
+            m_size = 0;
+        }
+        Stack(const Stack &s)
+        {
+            m_data = s.m_data;
+            m_size = s.m_size;
+        }
+        Stack(Stack &&s)
+        {
+            m_data = s.m_data;
+            m_size = s.m_size;
+        }
+        ~Stack()
+        {
+            if (m_data)
+            {
+                // Alloc::deallocate(m_data, m_size);
+            }
+        }
+
+        Stack &operator=(const Stack &s)
+        {
+            if (this == &s)
+                return *this;
+            if (m_data)
+            {
+                // Alloc::deallocate(m_data, m_size);
+            }
+            m_data = s.m_data;
+            m_size = s.m_size;
+            return *this;
+        }
+
+        Stack &operator=(Stack &&s)
+        {
+            if (this == &s)
+                return *this;
+            if (m_data)
+            {
+                // Alloc::deallocate(m_data, m_size);
+            }
+            m_data = s.m_data;
+            m_size = s.m_size;
+            return *this;
+        }
+
+        void push(const T &value)
+        {
+            if (m_data == nullptr)
+            {
+                // m_data = Alloc::allocate();
+            }
+            else
+            {
+                // m_data = Alloc::allocate(m_size + 1);
+            }
+            tinystl::construct(m_data + m_size, value);
+            m_size++;
+        }
+
+        void pop()
+        {
+            if (m_size == 0)
+            {
+                return;
+            }
+            m_size--;
+            // tinystl::destroy(m_data + m_size);
+            // Alloc::deallocate(m_data + m_size, 1);
+        }
+
+        T top() const
+        {
+            return *(m_data + m_size - 1);
+        }
+
+        bool empty() const
+        {
+            return m_size == 0;
+        }
+
+        size_t size() const
+        {
+            return m_size;
+        }
+
+    private:
+        T *m_data;
+        size_t m_size;
+    };
+
+    /** 迭代器适配器 */
+    template <typename T, typename charT = char>
+    class ostream_iterator
+    {
+        std::basic_ostream<charT> *out_stream;
+        const charT *delim;
+
+    public:
+        typedef charT char_type;
+        typedef std::basic_ostream<charT> ostream_type;
+        ostream_iterator(ostream_type &s) : out_stream(&s), delim(0) {}
+        ostream_iterator(ostream_type &s, const charT *delimiter) : out_stream(s.out_stream), delim(delimiter) {}
+        ~ostream_iterator() {}
+        ostream_iterator<T, charT> &operator=(const T &value)
+        {
+            *out_stream << value;
+            if (delim != 0)
+                *out_stream << delim;
+            return *this;
+        }
+        ostream_iterator<T, charT> &operator*() { return *this; }
+        ostream_iterator<T, charT> &operator++() { return *this; }
+        ostream_iterator<T, charT> &operator++(int) { return *this; }
+    };
+
+    /** 迭代器适配器 */
+    template <typename Iterator, typename Ref, typename Ptr>
+    class reverse_iterator
+    {
+        typedef reverse_iterator<Iterator, Ref, Ptr> Self;
+
+    public:
+        reverse_iterator(Iterator it)
+            : _it(it)
+        {
+        }
+
+        Ref operator*()
+        {
+            Iterator tmp = _it;
+            return *(tmp); // 与正向迭代器对称的设计，解引用访问前一个位置
+        }
+
+        Ptr operator->()
+        {
+            return &(operator*());
+        }
+
+        Self &operator++()
+        {
+            --_it;
+            return *this;
+        }
+
+        Self &operator--()
+        {
+            ++_it;
+            return *this;
+        }
+
+        bool operator!=(const Self &s) const
+        {
+            return _it != s._it;
+        }
+
+    private:
+        Iterator _it;
+    };
+
+    // 仿函数适配器
+    class bind
+    {
+    };
 }
 
 /*
-    container adapter
-    1. stack 0
-    2. queue 0
-    3. priority 1day
 
 
     auxiliary 0
-    iterator adapter (1)
-
-    插入迭代器：front_insert_iterator，back_insert_iterator，insert_iterator
-    反向迭代器：reverse_iterator
-    流迭代器：ostream_iterator，istream_iterator
-    front_insert_iterator：在容器的尾部插入新元素，底层调用push_back()
-    back_insert_iterator：在容器的头部插入新元素，底层调用push_front()
-    insert_iterator：在容器指定位置插入新元素，底层调用insert()
 
 
- */
-
-/*
-    allocator(1)
- */
-
-/*
-    algorithm adapter (0)
-    bind
- */
+*/
 
 #endif

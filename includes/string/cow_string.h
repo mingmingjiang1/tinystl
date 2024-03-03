@@ -65,7 +65,6 @@ namespace tinystl
 
         ~CowString()
         {
-            std::cout << "~CowString" << std::endl;
             if (m_data && *(int *)(m_data - 4) == 1)
             {
                 delete[] (m_data - 4);

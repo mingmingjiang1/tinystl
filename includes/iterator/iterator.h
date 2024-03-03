@@ -564,7 +564,7 @@ public:
   T &operator*()
   {
     // this->_M_current->m_data
-    tinystl::list_node<T>* p = static_cast<tinystl::list_node<T>*>(this->_M_current);
+    // tinystl::list_node<T>* p = static_cast<tinystl::list_node<T>*>(this->_M_current);
     return this->_M_current->as_node()->m_data;;
   }
 

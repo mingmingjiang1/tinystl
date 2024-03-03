@@ -1,8 +1,8 @@
 #ifndef AGRITHOM_H
 #define AGRITHOM_H
 
-#include "./tuple.h"
-#include "./array.h"
+#include "auxiliary/tuple.h"
+#include "array/array.h"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations" // 静默 warning: warning: 'template<class _Operation> class tinystl::binder2nd' is deprecated [-Wdeprecated-declarations]...
 
 

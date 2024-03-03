@@ -3,8 +3,8 @@
 
 #include <gtest/gtest.h>
 
-#include "array.h"
-#include "String.h"
+#include "array/array.h"
+#include "string/string.h"
 #include <string>
 
 template <typename T>

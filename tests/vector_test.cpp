@@ -3,8 +3,8 @@
 
 #include <gtest/gtest.h>
 
-#include "vector.h"
-#include "String.h"
+#include "vector/vector.h"
+#include "string/string.h"
 #include <string>
 
 template <typename T>
@@ -35,7 +35,7 @@ public:
         delete[] value_;
     }
 
-    void fillVal(unsigned int val, int size)
+    void fillVal(unsigned int, int size)
     {
         value_ = new unsigned int[size];
         srand((unsigned)time(NULL));
@@ -45,7 +45,7 @@ public:
         }
     }
 
-    void fillVal(double val, int size)
+    void fillVal(double, int size)
     {
         value_ = new double[size];
         srand((unsigned)time(NULL));
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    void fillVal(int val, int size)
+    void fillVal(int, int size)
     {
         value_ = new int[size];
         srand((unsigned)time(NULL));
@@ -65,7 +65,7 @@ public:
         }
     }
 
-    void fillVal(char val, int size)
+    void fillVal(char, int size)
     {
         // 随机生成string
 
@@ -77,7 +77,7 @@ public:
         }
     }
 
-    void fillVal(const char *val, int size)
+    void fillVal(const char *, int size)
     {
         // 随机生成string
         value_ = new const char *[size];
@@ -139,7 +139,6 @@ void testDeclareWithNoInit(int size)
     typename tinystl::Vector<T>::iterator it_tmp; // 声明一个迭代器
     tinystl::Vector<T> l1(size);
     ASSERT_EQ(l1.size(), size);
-    int i = 0;
     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
     {
         ASSERT_EQ(*it_tmp, static_cast<T>(0));
@@ -287,8 +286,6 @@ TEST(VectorTests, Test_Vector_Initialize_List)
 TEST(VectorTests, Test_Vector_Member_Function)
 {
     tinystl::Vector<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    tinystl::Vector<int>::iterator it_tmp; // 声明一个迭代器
-    int i = 0;
     int back = l1.back();
     // back
     ASSERT_EQ(9, back);
