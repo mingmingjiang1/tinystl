@@ -40,10 +40,8 @@ namespace tinystl
             _size = str._size;
             m_data = str.m_data; // shallow copy
 
-            std::cout << "copt ctor " << *(int *)(m_data - 4) << std::endl;
             *(int *)(m_data - 4) += 1;
 
-            std::cout << "copt ctor " << *(int *)(m_data - 4) << std::endl;
             // m_data = new char[size + 1];
             // strcpy(m_data, str.m_data);
         }
@@ -52,17 +50,15 @@ namespace tinystl
         {
             _size = str._size;
             m_data = str.m_data; // shallow copy
-            std::cout << "move copt ctor " << *(int *)(m_data - 4) << std::endl;
             *(int *)(m_data - 4) += 1;
 
-            std::cout << "move copt ctor " << *(int *)(m_data - 4) << std::endl;
             // m_data = new char[size + 1];
             // strcpy(m_data, str.m_data);
         }
 
         ~String()
         {
-            std::cout << "destructor " << m_data << " addr: " << (void *)m_data << " length: " << _size << " ref: " << *(int *)(m_data - 4) << endl;
+            // std::cout << "destructor " << m_data << " addr: " << (void *)m_data << " length: " << _size << " ref: " << *(int *)(m_data - 4) << endl;
             _size = 0;
             if (*(int *)(m_data - 4) == 1)
             {
