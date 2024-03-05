@@ -21,7 +21,7 @@ namespace tinystl
     // typedef Random_Access_Iterator<T, Vector> iterator;
 
     /** allocator */
-    typedef tinystl::allocator<T> data_allocator;
+    typedef tinystl::Allocator<T> data_allocator;
 
     /** constructor */
     typedef tinystl::Construct<T> constructor;
@@ -45,7 +45,9 @@ namespace tinystl
       m_data = data_allocator::allocate(_size);
       for (int i = 0; i < size; i++)
       {
-        m_data[i] = static_cast<T>(0);
+        // m_data[i] = static_cast<T>(0);
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(0);
       }
     }
 
@@ -349,8 +351,9 @@ namespace tinystl
     {
       return *this;
     }
-    if (m_data != nullptr)
+    if (m_data)
     {
+      destroy();
       data_allocator::deallocate(m_data);
       m_data = nullptr;
     }
