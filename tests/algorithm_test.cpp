@@ -3,14 +3,14 @@
 
 // #include <gtest/gtest.h>
 
-// #include "array.h"
-// #include "String.h"
+// #include "array/array.h"
+// #include "string/string.h"
 // #include "algorithm.h"
-// #include "vector.h"
-// #include "iterator.h"
+// #include "vector/vector.h"
+// #include "iterator/iterator.h"
 // #include <string>
 
-// /* template <typename T>
+// template <typename T>
 // class AlgorithmTest : public testing::Test
 // {
 // public:
@@ -23,6 +23,11 @@
 //         {
 //             value_[i] = rand() % (100 + 1);
 //         }
+//     }
+
+//     ~AlgorithmTest()
+//     {
+//         delete[] value_;
 //     }
 
 //     void fillVal(int val, int size)
@@ -177,18 +182,17 @@
 //     TypeParam n = 0;
 
 //     this->fillVal(n, 5);
-//     // TypeParam *tmp = this->value_;
-//     // testDeclareWithInit<TypeParam>(tmp, 5);
-//     // testDeclareWithNoInit<TypeParam>(5);
-//     // testAssign<TypeParam>(tmp, 5);
-//     // delete[] tmp;
+//     TypeParam *tmp = this->value_;
+//     testDeclareWithInit<TypeParam>(tmp, 5);
+//     testDeclareWithNoInit<TypeParam>(5);
+//     testAssign<TypeParam>(tmp, 5);
 // }
 
 // REGISTER_TYPED_TEST_CASE_P(AlgorithmTest, Contructor);
 
 // typedef testing::Types<char, int, unsigned int, const char *> AlgorithmTypes;
 
-// INSTANTIATE_TYPED_TEST_CASE_P(tinystl, AlgorithmTest, AlgorithmTypes); */
+// INSTANTIATE_TYPED_TEST_CASE_P(tinystl, AlgorithmTest, AlgorithmTypes);
 
 // // 测试自定义string类型
 // TEST(AlgorithmTests, Test_Algorithm_String)
@@ -215,59 +219,59 @@
 
 //     std::cout << *it_tmp4 << "#####======";
 
-//     Output_Iterator<int, tinystl::Vector<int>> it1 = l3.begin();
-//     Output_Iterator<int, tinystl::Vector<int>> x; 
+//     // Output_Iterator<int, tinystl::Vector<int>> it1 = l3.begin();
+//     // Output_Iterator<int, tinystl::Vector<int>> x;
 //     // x = *it1;
 // }
 
 // // 测试嵌套类型
-// // TEST(AlgorithmTests, Algorithm_Initialize_List)
-// // {
-// //     tinystl::Array<int, 9> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-// //     tinystl::Array<int, 9>::iterator it_tmp; // 声明一个迭代器
-// //     int i = 0;
-// //     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-// //     {
-// //         ASSERT_EQ(*it_tmp, i + 1);
-// //         i++;
-// //     }
+// TEST(AlgorithmTests, Algorithm_Initialize_List)
+// {
+//     tinystl::Array<int, 9> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+//     tinystl::Array<int, 9>::iterator it_tmp; // 声明一个迭代器
+//     int i = 0;
+//     for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+//     {
+//         ASSERT_EQ(*it_tmp, i + 1);
+//         i++;
+//     }
 
-// //     tinystl::Array<std::string, 3> l2{"1", "2", "3"};
-// //     tinystl::Array<std::string, 3>::iterator it_tmp_2; // 声明一个迭代器
-// //     i = 0;
-// //     for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
-// //     {
-// //         ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-// //         i++;
-// //     }
+//     tinystl::Array<std::string, 3> l2{"1", "2", "3"};
+//     tinystl::Array<std::string, 3>::iterator it_tmp_2; // 声明一个迭代器
+//     i = 0;
+//     for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
+//     {
+//         ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+//         i++;
+//     }
 
-// //     tinystl::Array<std::string, 3> l3;
-// //     l3 = l2;
-// //     i = 0;
-// //     for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
-// //     {
-// //         ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-// //         i++;
-// //     }
+//     tinystl::Array<std::string, 3> l3;
+//     l3 = l2;
+//     i = 0;
+//     for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
+//     {
+//         ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+//         i++;
+//     }
 
-// //     tinystl::Array<tinystl::String, 3> l4{"1", "2", "3"};
-// //     tinystl::Array<tinystl::String, 3>::iterator it_tmp_3; // 声明一个迭代器
-// //     i = 0;
-// //     for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
-// //     {
-// //         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-// //         i++;
-// //     }
+//     tinystl::Array<tinystl::String, 3> l4{"1", "2", "3"};
+//     tinystl::Array<tinystl::String, 3>::iterator it_tmp_3; // 声明一个迭代器
+//     i = 0;
+//     for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
+//     {
+//         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+//         i++;
+//     }
 
-// //     tinystl::Array<tinystl::String, 3> l5;
-// //     l5 = l4;
-// //     i = 0;
-// //     for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
-// //     {
-// //         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-// //         i++;
-// //     }
-// // }
+//     tinystl::Array<tinystl::String, 3> l5;
+//     l5 = l4;
+//     i = 0;
+//     for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
+//     {
+//         ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+//         i++;
+//     }
+// }
 
 // // 明天给list测试一些常见方法
 

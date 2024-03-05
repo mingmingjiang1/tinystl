@@ -167,7 +167,7 @@ int main()
     cout << *fl1_tmp << endl;
   }
 
-    cout << "********************** Test Forward_List --ctor **********************" << endl;
+  cout << "********************** Test Forward_List --ctor **********************" << endl;
 
   tinystl::forward_list<int> fl2(3, 100);
 
@@ -176,7 +176,7 @@ int main()
     cout << *fl2_tmp << endl;
   }
 
-    cout << "********************** Test Forward_List --copy ctor **********************" << endl;
+  cout << "********************** Test Forward_List --copy ctor **********************" << endl;
 
   tinystl::forward_list<int> fl3(fl2);
 
@@ -186,9 +186,8 @@ int main()
   }
 
   cout << "********************** Test Forward_List --right value  **********************" << endl;
-  
-  tinystl::forward_list<tinystl::String> fl4(std::move(fl1));
 
+  tinystl::forward_list<tinystl::String> fl4(std::move(fl1));
 
   for (auto fl4_tmp = fl4.begin(); fl4_tmp != fl4.end(); fl4_tmp++)
   {
@@ -207,16 +206,15 @@ int main()
 
   cout << "********************** Test Forward_List -- initialize_list **********************" << endl;
 
-    tinystl::forward_list<tinystl::String> fl6{"hello", "world", "!"};
+  tinystl::forward_list<tinystl::String> fl6{"hello", "world", "!"};
   fl6.push_front("hello");
   fl6.push_front("world");
   fl6.push_front("!");
 
-    for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
+  for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
   {
     cout << *fl6_tmp << endl;
   }
-
 
   cout << "********************** Test Forward_List -- pop  **********************" << endl;
 
@@ -231,13 +229,13 @@ int main()
 
   cout << "********************** Test Forward_List -- remove **********************" << endl;
   fl6.push_front("hello");
-      for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
+  for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
   {
     cout << *fl6_tmp << endl;
   }
   fl6.remove("hello");
 
-    for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
+  for (auto fl6_tmp = fl6.begin(); fl6_tmp != fl6.end(); fl6_tmp++)
   {
     cout << *fl6_tmp << endl;
   }
@@ -251,8 +249,13 @@ int main()
     cout << *fl6_tmp << endl;
   }
 
-
-
+  cout << "********************** Test Forward_List -- iterator gen **********************" << endl;
+  tinystl::String str[] = {"hello", "world", "!"};
+  tinystl::forward_list<tinystl::String > fl7(str, str+3);
+  for (auto fl7_tmp = fl7.begin(); fl7_tmp != fl7.end(); fl7_tmp++)
+  {
+    cout << *fl7_tmp << endl;
+  }
 
   cout << "********************** Test Forward_List **********************" << endl;
 

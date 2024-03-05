@@ -32,6 +32,8 @@ namespace tinystl
         forward_list(size_t size, const T& val);
         forward_list(const forward_list& other);
         forward_list(forward_list&& other);
+        forward_list(iterator first, iterator last);
+        forward_list(const T* first, const T* last);
         forward_list(const std::initializer_list<T>& il);
         forward_list& operator=(const forward_list& other);
         forward_list& operator=(forward_list&& other);
@@ -41,6 +43,7 @@ namespace tinystl
         void pop_front();
         void pop_back();
         void clear();
+        bool empty() const;
         // iterator erase(iterator pos); // todo
         void remove(const T& val); // todo
         void swap(forward_list& other); // todo

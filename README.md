@@ -86,7 +86,7 @@ https://wangjii.github.io/article/25e9/
 todo:
 1. tcc(函数定义)和header(类声明)文件分离
 2. gtest 单元测试 for string, algorithm, deque, forward_list, tuple, pair, memory_pool(不用特意写单测，只要没内存溢出就行)
-3. add deque
+3. add deque(optional)
 4. 文章完善
 
 
