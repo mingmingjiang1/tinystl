@@ -46,7 +46,7 @@ cmake 3.15 或以上
 
 ## 安装及运行
 
-gcc on linux
+gcc on linux(不支持其它平台以及编译器)
 ``` shell
 克隆仓库
 $ git clone git@github.com:mingmingjiang1/tinystl.git
@@ -63,30 +63,18 @@ $ cd ../bin && ./tinystl
 
 运行测试用例
 $ make test // 运行所有测试
-$ ./bin/xxx // 运行某个测试
-$ xsltproc ../gtest2html.xslt test_detail.xml > test_detail.html // 查看某个测试
-打开改html文件
+$ ./tests/xxx // 运行某个测试
+$ xxx --gtest_output=xml:test_detail.xml // 生成xml测试结果
+$ xsltproc ../gtest2html.xslt test_detail.xml > test_detail.html // xml => html
+浏览器打开html文件
 ```
 
-clang on linux
-```
-wip
-```
 
-mingw on window
-```
-wip
-
-```
-
-## 参考
-https://wangjii.github.io/article/25e9/
 
 
 todo:
 1. tcc(函数定义)和header(类声明)文件分离
-2. gtest 单元测试 for string, algorithm, deque, forward_list, tuple, pair, memory_pool(不用特意写单测，只要没内存溢出就行)
-3. add deque(optional)
+2. gtest 单元测试 for string, algorithm, forward_list
 4. 文章完善
 
 

@@ -5,10 +5,9 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
-#include "./includes/adapter.h"
-#include "./includes/String.h"
-#include "./includes/list.h"
-#include <vector>
+// #include "./includes/adapter.h"
+// #include "./includes/string/string.h"
+// #include "./includes/list/list.h"
 #include <list>
 
 template <typename T>
@@ -130,38 +129,38 @@ int main()
 
     // char *start_free = nullptr;
     // FreeList *arr[2] = {nullptr, nullptr};
-    int *p = Pool<int>::allocate();
-    *p = 2;
-    std::cout << "pointer: " << p << " value = " << *p << std::endl;
+    TreeNode *p = Pool<TreeNode>::allocate();
+    p = new TreeNode();
+    // std::cout << "pointer: " << p << " value = " << *p << std::endl;
 
-    size_t N = 20;
-    vector<TreeNode *> vet;
-    vet.resize(N);
-    for (size_t i = 0; i < vet.size(); i++)
-    {
-        vet[i] = new TreeNode;
-    }
+    // size_t N = 20;
+    // std::vector<TreeNode *> vet;
+    // vet.resize(N);
+    // for (size_t i = 0; i < vet.size(); i++)
+    // {
+    //     vet[i] = new TreeNode;
+    // }
 
-    ObjectPool<TreeNode> pool;
+    // ObjectPool<TreeNode> pool;
 
-    for (size_t i = 0; i < vet.size(); i++)
-    {
-        vet[i] = pool.New();
-    }
+    // for (size_t i = 0; i < vet.size(); i++)
+    // {
+    //     vet[i] = pool.New();
+    // }
 
-    for (size_t i = 0; i < vet.size(); i++)
-    {
-        pool.Delete(vet[i]);
-    }
+    // for (size_t i = 0; i < vet.size(); i++)
+    // {
+    //     pool.Delete(vet[i]);
+    // }
 
     // arr[0] = new FreeList();
 
     // Test Container
-    std::list<tinystl::String, tinystl::Allocator<tinystl::String>> vec;
+    // std::list<tinystl::String, tinystl::Allocator<tinystl::String>> vec;
     // tinystl::List<tinystl::String> vec;
-    tinystl::String s("nvfjnvfjn");
+    // tinystl::String s("nvfjnvfjn");
     // vec.push_back();
-    vec.push_back(s);
+    // vec.push_back(s);
     // std::cout << vec.back() << "frfggt";
 
     // tinystl::String a[] = {"aa", "bb", "cc", "dd", "ee"};
