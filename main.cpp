@@ -14,6 +14,7 @@
 #include "global.h"
 #include <stdlib.h>
 #include <time.h>
+#include "adapter/stack.h"
 
 using namespace ::std;
 
@@ -251,13 +252,41 @@ int main()
 
   cout << "********************** Test Forward_List -- iterator gen **********************" << endl;
   tinystl::String str[] = {"hello", "world", "!"};
-  tinystl::forward_list<tinystl::String > fl7(str, str+3);
+  tinystl::forward_list<tinystl::String> fl7(str, str + 3);
   for (auto fl7_tmp = fl7.begin(); fl7_tmp != fl7.end(); fl7_tmp++)
   {
     cout << *fl7_tmp << endl;
   }
 
   cout << "********************** Test Forward_List **********************" << endl;
+
+  cout << "********************** Test Container stack  **********************" << endl;
+
+  tinystl::Stack<int> first;
+
+  tinystl::Vector<int> myvec(3, 100);
+  tinystl::Stack<int> second(myvec);
+
+  tinystl::Stack<int, tinystl::Vector<int>> third; // 指明用vector实现一个栈（存放int），空栈size=0
+
+  tinystl::Vector<int> myvector(2, 200);                      // 构造一个存放2个元素的vector
+  tinystl::Stack<int, tinystl::Vector<int>> fourth(myvector); // 用自己的vector构造一个栈，size=2
+
+  // 输出四个栈的大小
+  cout << "size of first: " << first.size() << endl;
+
+  first.push(1);
+  first.push(2);
+  first.push(3);
+  first.push(100);
+
+
+
+  cout << "size of first: " << first.size() << endl;
+
+  cout << "size of second: " << second.size() << endl;
+  cout << "size of third: " << third.size() << endl;
+  cout << "size of fourth: " << fourth.size() << endl;
 
   cout << "********************** Test List **********************" << endl;
   int a22[] = {11, 22, 33, 44, 55};

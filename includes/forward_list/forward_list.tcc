@@ -1,7 +1,6 @@
 #ifndef TINYSTL_FORWARD_LIST_TCC
 #define TINYSTL_FORWARD_LIST_TCC
 
-// #include "forward_list.h"
 
 #include "algorithm.h"
 

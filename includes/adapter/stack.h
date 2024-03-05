@@ -1,6 +1,11 @@
+#ifndef TINYSTL_STACK_H
+#define TINYSTL_STACK_H
+
+#include "vector/vector.h"
+
 namespace tinystl
 {
-    template <typename T, typename Container>
+    template <typename T, typename Container = tinystl::Vector<T>>
     class Stack
     {
     private:
@@ -45,7 +50,7 @@ namespace tinystl
         {
         }
         Stack(Container &&c) noexcept(std::is_nothrow_move_constructible<Container>::value)
-            : m_container(mystl::move(c))
+            : m_container(tinystl::move(c))
         {
         }
 
@@ -54,7 +59,7 @@ namespace tinystl
         {
         }
         Stack(Stack &&rhs) noexcept(std::is_nothrow_move_constructible<Container>::value)
-            : m_container(mystl::move(rhs.m_container))
+            : m_container(tinystl::move(rhs.m_container))
         {
         }
 
@@ -65,7 +70,7 @@ namespace tinystl
         }
         Stack &operator=(Stack &&rhs) noexcept(std::is_nothrow_move_assignable<Container>::value)
         {
-            m_container = mystl::move(rhs.m_container);
+            m_container = tinystl::move(rhs.m_container);
             return *this;
         }
 
@@ -90,7 +95,7 @@ namespace tinystl
         template <class... Args>
         void emplace(Args &&...args)
         {
-            m_container.emplace_back(mystl::forward<Args>(args)...);
+            m_container.emplace_back(tinystl::forward<Args>(args)...);
         }
 
         void push(const value_type &value)
@@ -99,7 +104,7 @@ namespace tinystl
         }
         void push(value_type &&value)
         {
-            m_container.push_back(mystl::move(value));
+            m_container.push_back(tinystl::move(value));
         }
 
         void pop()
@@ -113,10 +118,10 @@ namespace tinystl
                 pop();
         }
 
-        void swap(Stack &rhs) noexcept(noexcept(mystl::swap(m_container, rhs.m_container)))
-        {
-            mystl::swap(m_container, rhs.m_container);
-        }
+        // void swap(Stack &rhs) noexcept(noexcept(tinystl::swap(m_container, rhs.m_container)))
+        // {
+        //     tinystl::swap(m_container, rhs.m_container);
+        // }
 
     public:
         friend bool operator==(const Stack &lhs, const Stack &rhs) { return lhs.m_container == rhs.m_container; }
@@ -160,10 +165,12 @@ namespace tinystl
         return !(lhs < rhs);
     }
 
-    // 重载 mystl 的 swap
+    // 重载 tinystl 的 swap
     template <class T, class Container>
     void swap(Stack<T, Container> &lhs, Stack<T, Container> &rhs) noexcept(noexcept(lhs.swap(rhs)))
     {
         lhs.swap(rhs);
     }
 }
+
+#endif

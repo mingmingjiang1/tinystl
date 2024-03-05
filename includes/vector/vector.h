@@ -14,6 +14,9 @@ namespace tinystl
   public:
     typedef T value_type; // alias for T
     typedef T *iterator;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef size_t size_type;
 
     // typedef Random_Access_Iterator<T, Vector> iterator;
 
@@ -211,11 +214,11 @@ namespace tinystl
       return end();
     }
 
-    size_t capacity() { return _capacity; }
+    size_type capacity() { return _capacity; }
 
     bool empty() { return _size == 0; }
 
-    size_t size() { return _size; }
+    size_type size() const { return _size; }
 
     value_type &operator[](int index)
     {
@@ -226,8 +229,8 @@ namespace tinystl
 
   private:
     T *m_data;
-    size_t _size;
-    size_t _capacity;
+    size_type _size;
+    size_type _capacity;
   };
 
   template <typename T>
