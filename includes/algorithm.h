@@ -164,7 +164,6 @@ namespace tinystl
   template <typename Iterator, typename Compare>
   Iterator find_if(Iterator start, Iterator end, Compare comp)
   {
-    std::cout << *start << "fvgggt";
     while (start != end)
     {
       if (comp(*start))

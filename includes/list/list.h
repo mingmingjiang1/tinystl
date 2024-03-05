@@ -73,9 +73,9 @@ namespace tinystl
 		// typedef tinystl::NodeAlloc<T> data_allocator;
 
 		/** allocator */
-		typedef tinystl::Allocator<list_node_base<T>> base_allocator;
-		typedef tinystl::Allocator<list_node<T>> node_allocator;
-		typedef tinystl::Allocator<T> data_allocator;
+		typedef tinystl::allocator<list_node_base<T>> base_allocator;
+		typedef tinystl::allocator<list_node<T>> node_allocator;
+		typedef tinystl::allocator<T> data_allocator;
 
 		typedef typename node_traits<T>::base_ptr base_ptr;
 		typedef typename node_traits<T>::node_ptr node_ptr;

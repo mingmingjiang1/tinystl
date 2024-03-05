@@ -376,7 +376,6 @@ int main()
 
   for (it = l1.begin(); it != l1.end(); it++)
   {
-    *it = 10;
     cout << *it << endl;
   }
 
@@ -609,9 +608,13 @@ int main()
 
   std::cout << "The xxx element in mylist is: " << *it1 << '\n';
 
-  // // 1 2 3 4 5 6
+  // 1 2 3 4 5 6
 
   it1 = tinystl::find_if(l1.begin(), l1.end(), tinystl::bind2nd(tinystl::less<int>(), 5));
+
+  for (auto ele: l1) {
+    cout << ele << " fffffff" ;
+  }
 
   std::cout << "find ele less than 5: " << *it1 << '\n';
 
