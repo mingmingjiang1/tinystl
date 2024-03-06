@@ -197,9 +197,6 @@ namespace tinystl
         }
         static void deallocate(T *p, size_t n)
         {
-            // for (int i = 0; i < n;i++) {
-            //     p[i].~T();
-            // }
             if (n != 0)
             {
                 Alloc::deallocate(p, n * sizeof(T));

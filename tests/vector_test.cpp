@@ -173,7 +173,7 @@ void testAssign(T *a, int size)
         std::cout << i << " " << std::endl;
     }
 
-    // // test for iterator
+    // test for iterator
     tinystl::Vector<T> lt(l1.begin() + 1, l1.end());
     l5 = lt;
     i = 1;
@@ -285,6 +285,8 @@ TEST(VectorTests, Test_Vector_Initialize_List)
 
 TEST(VectorTests, Test_Vector_Member_Function)
 {
+    tinystl::Vector<int> lrrr(5, 1);
+
     tinystl::Vector<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
     int back = l1.back();
     // back

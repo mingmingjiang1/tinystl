@@ -42,7 +42,7 @@ namespace tinystl
         iterator end() _GLIBCXX_NOEXCEPT;
         void destroy();
         ~Array();
-        Array(const_reference arr);
+        Array(const Array<T, N, Alloc>&);
         reference operator[](size_type idx) const;
         reference at(size_t idx) const;
         pointer data();

@@ -61,7 +61,6 @@ public:
     }
 };
 
-TYPED_TEST_CASE_P(ArrayTest);
 
 // 测试所有的声明
 template <typename T>
@@ -173,6 +172,8 @@ void testAssign(T *a, int size)
     }
 }
 
+TYPED_TEST_SUITE_P(ArrayTest);
+
 TYPED_TEST_P(ArrayTest, Contructor)
 {
 
@@ -185,11 +186,11 @@ TYPED_TEST_P(ArrayTest, Contructor)
     testAssign<TypeParam>(tmp, 5);
 }
 
-// REGISTER_TYPED_TEST_CASE_P(ArrayTest, Contructor);
+REGISTER_TYPED_TEST_SUITE_P(ArrayTest, Contructor);
 
 typedef testing::Types<char, int, unsigned int, const char *> ArrayTypes;
 
-// INSTANTIATE_TYPED_TEST_CASE_P(tinystl, ArrayTest, ArrayTypes);
+INSTANTIATE_TYPED_TEST_SUITE_P(tinystl, ArrayTest, ArrayTypes);
 
 // 测试自定义string类型
 TEST(ArrayTests, Test_Array_String)

@@ -95,7 +95,7 @@ namespace tinystl
         destroy();
         if (m_data)
         {
-            data_allocator::deallocate(m_data);
+            data_allocator::deallocate(m_data, _size);
         }
         // delete[] m_data;
         m_data = nullptr;
@@ -104,14 +104,13 @@ namespace tinystl
     }
 
     template <typename T, size_t N, typename Alloc>
-    Array<T, N, Alloc>::Array(const_reference arr)
+    Array<T, N, Alloc>::Array(const Array& arr)
     {
-        int i;
         _size = arr._size;
         // m_data = new T[arr._size];
         m_data = data_allocator::allocate(arr._size);
         memset(m_data, 0, sizeof(value_type) * arr._size);
-        for (i = 0; i < arr._size; i++)
+        for (int i = 0; i < arr._size; i++)
         {
             // *(m_data + i) = *(arr.m_data + i);
             pointer ptr = std::addressof(m_data[i]);
@@ -200,7 +199,7 @@ namespace tinystl
         if (m_data)
         {
             destroy();
-            data_allocator::deallocate(m_data);
+            data_allocator::deallocate(m_data, _size);
         }
         _size = arr._size;
 

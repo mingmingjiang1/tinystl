@@ -14,8 +14,8 @@ namespace tinystl
   public:
     typedef T value_type; // alias for T
     typedef T *iterator;
-    typedef T& reference;
-    typedef const T& const_reference;
+    typedef T &reference;
+    typedef const T &const_reference;
     typedef size_t size_type;
 
     // typedef Random_Access_Iterator<T, Vector> iterator;
@@ -47,7 +47,7 @@ namespace tinystl
       {
         // m_data[i] = static_cast<T>(0);
         T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(0);
+        new ((void *)ptr) T();
       }
     }
 
@@ -57,26 +57,23 @@ namespace tinystl
       m_data = data_allocator::allocate(_size);
       for (int i = 0; i < _size; i++)
       {
-        // node_ptr node = data_allocator::allocate();
         T *ptr = std::addressof(m_data[i]);
         new ((void *)ptr) T(first[i]);
-        // m_data[i] = first[i];
       }
     }
 
-    // Vector(iterator first, iterator last)
-    // {
-    //   _size = _capacity = last - first;
-    //   m_data = data_allocator::allocate(_size);
-    //   for (int i = 0; i < _size; i++)
-    //   {
-    //     // m_data[i] = first[i];
-    //     T *ptr = std::addressof(m_data[i]);
-    //     new ((void *)ptr) T(first[i]);
-    //   }
-    // }
-
     Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
+    {
+      _size = _capacity = size;
+      m_data = data_allocator::allocate(_size);
+      for (int i = 0; i < size; i++)
+      {
+        // m_data[i] = value;
+        T *ptr = std::addressof(m_data[i]);
+        new ((void *)ptr) T(value);
+      }
+    }
+    Vector(size_t size, T &&value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     {
       _size = _capacity = size;
       m_data = data_allocator::allocate(_size);
@@ -105,21 +102,6 @@ namespace tinystl
     ~Vector();
     Vector<T> &operator=(const Vector<T> &vec);
 
-    // 移动赋值，为了拿到右值的控制权
-    // Vector &operator=(const value_type &&vec)
-    // {
-    //   if (&vec == this)
-    //   {
-    //     return *this;
-    //   }
-    //   // delete[] m_data;
-    //   // _size = vec.size;
-    //   // _capacity = vec.capacity;
-    //   m_data = vec.m_data;
-    //   _capacity = vec._capacity;
-    //   _size = vec._size;
-    // }
-
     void push_back(const value_type &vec);
 
     void clear()
@@ -140,11 +122,6 @@ namespace tinystl
         m_data[i] = m_data[i + 1];
       }
       --_size;
-    }
-
-    void rinser(reverse_iterator it, value_type val)
-    {
-      const size_t index = it - rbegin();
     }
 
     void destroy()
@@ -250,7 +227,7 @@ namespace tinystl
       {
         new_data[i] = m_data[i];
       }
-      data_allocator::deallocate(m_data);
+      data_allocator::deallocate(m_data, _size);
       m_data = new_data;
       _capacity *= 2;
     }
@@ -267,7 +244,7 @@ namespace tinystl
     destroy();
     if (m_data)
     {
-      data_allocator::deallocate(m_data);
+      data_allocator::deallocate(m_data, _size);
     }
     m_data = nullptr;
     _size = 0;
@@ -298,7 +275,7 @@ namespace tinystl
       {
         temp[i + 1] = m_data[i];
       }
-      data_allocator::deallocate(m_data);
+      data_allocator::deallocate(m_data, _size);
       m_data = temp;
     }
     else
@@ -334,7 +311,9 @@ namespace tinystl
     m_data = data_allocator::allocate(_size);
     for (int i = 0; i < _size; i++)
     {
-      m_data[i] = vec.m_data[i];
+      T *ptr = std::addressof(m_data[i]);
+      new ((void *)ptr) T(vec.m_data[i]);
+      // m_data[i] = vec.m_data[i];
     }
   }
 
@@ -351,10 +330,11 @@ namespace tinystl
     {
       return *this;
     }
-    if (m_data)
+    if (_size)
     {
+      std::cout << m_data << _size << "frjngnjntg" << std::endl;
       destroy();
-      data_allocator::deallocate(m_data);
+      data_allocator::deallocate(m_data, _size);
       m_data = nullptr;
     }
     _size = vec._size;
