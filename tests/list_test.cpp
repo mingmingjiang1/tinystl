@@ -12,6 +12,7 @@
 template <typename T>
 bool compare(const tinystl::List<T> &a, const tinystl::List<T> b)
 {
+    // 一旦限定是const成员了，成员函数必须是const，不然不保证成员函数会不会修改成员变量
     if (a.size() != b.size())
     {
         return false;
@@ -279,29 +280,29 @@ TEST(ForwardListTests, Test_ForwardList_Member_Function)
     compare(l1, tinystl::List<int>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
     // pop_back
-    // l1.pop_back();
-    // // size
-    // ASSERT_EQ(l1.size(), 9);
-    // compare(l1, tinystl::List<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
+    l1.pop_back();
+    // size
+    ASSERT_EQ(l1.size(), 9);
+    compare(l1, tinystl::List<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
 
-    // // insert
-    // l1.insert(l1.begin(), 1000);
+    // insert
+    l1.insert(l1.begin(), 1000);
 
-    // compare(l1, tinystl::List<int>{1000, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    // ASSERT_EQ(l1.size(), 10);
+    compare(l1, tinystl::List<int>{1000, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    ASSERT_EQ(l1.size(), 10);
 
-    // // erase
-    // l1.erase(l1.begin() + 1);
+    // erase
+    l1.erase(l1.begin() + 1);
 
-    // compare(l1, tinystl::List<int>{1000, 2, 3, 4, 5, 6, 7, 8, 9});
-    // // size
-    // ASSERT_EQ(l1.size(), 9);
+    compare(l1, tinystl::List<int>{1000, 2, 3, 4, 5, 6, 7, 8, 9});
+    // size
+    ASSERT_EQ(l1.size(), 9);
 
-    // // clear
-    // l1.clear();
+    // clear
+    l1.clear();
 
-    // // empty
-    // ASSERT_EQ(l1.empty(), true);
+    // empty
+    ASSERT_EQ(l1.empty(), true);
 }
 
 int main(int argc, char **argv)
