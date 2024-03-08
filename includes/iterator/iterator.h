@@ -579,23 +579,6 @@ public:
 };
 
 
-// 有问题不能直接减
-template <typename _Iterator, typename _Container>
-typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
-operator-(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
-{
-  return __lhs.base() - __rhs.base();
-}
-
-template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
-operator+(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
-{
-  return __lhs.base() + __rhs.base();
-}
-
 template <typename _Iterator, typename _Container>
 typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
 operator>=(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
@@ -634,24 +617,6 @@ operator==(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
            const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
 {
   return __lhs.base() == __rhs.base();
-}
-
-
-
-template <typename _Iterator, typename _Container>
-typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
-operator-(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
-{
-  return __lhs.base() - __rhs.base();
-}
-
-template <typename _Iterator, typename _IteratorR, typename _Container>
-typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type
-operator+(const Bidirectional_Access_Iterator<_Iterator, _Container> &__lhs,
-          const Bidirectional_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
-{
-  return __lhs.base() + __rhs.base();
 }
 
 template <typename _Iterator, typename _Container>
