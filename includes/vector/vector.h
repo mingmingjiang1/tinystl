@@ -12,17 +12,15 @@ namespace tinystl
   class Vector
   {
   public:
-    typedef T value_type; // alias for T
     typedef T *iterator;
-    typedef T &reference;
-    typedef const T &const_reference;
-    typedef size_t size_type;
 
-    // typedef Random_Access_Iterator<T, Vector> iterator;
-
-    /** allocator */
-    // typedef tinystl::Allocator<T> data_allocator;
     typedef Alloc data_allocator;
+
+    typedef typename data_allocator::value_type value_type;
+    typedef typename data_allocator::size_type size_type;
+
+    typedef typename data_allocator::reference reference;
+    typedef typename data_allocator::const_reference const_reference;
 
     /** constructor */
     typedef tinystl::Construct<T> constructor;
@@ -33,18 +31,16 @@ namespace tinystl
       typedef Iterator_Traits<iterator, tinystl::random_access_iterator_tag> __traits_type; // buildin pointer
      */
 
-    // typedef Reverse_Iterator<T *> reverse_iterator;
-
     typedef const value_type *const_iterator;
     typedef tinystl::reverse_iterator<iterator> reverse_iterator;
 
     typedef tinystl::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    Vector(size_t size);
+    Vector(size_type size);
 
     Vector(T *first, T *last);
 
-    Vector(size_t size, const T &value); // value为临时对象的时候，value在当前行之后的生命周期结束了
+    Vector(size_type size, const T &value); // value为临时对象的时候，value在当前行之后的生命周期结束了
 
     Vector(std::initializer_list<T> arr);
     Vector();
@@ -81,7 +77,7 @@ namespace tinystl
     iterator begin() _GLIBCXX_NOEXCEPT;
 
     const_iterator begin() const _GLIBCXX_NOEXCEPT;
-    
+
     const_iterator cbegin() const _GLIBCXX_NOEXCEPT;
 
     iterator end() _GLIBCXX_NOEXCEPT;

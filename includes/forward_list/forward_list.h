@@ -25,7 +25,6 @@ namespace tinystl
         typedef typename data_allocator::size_type size_type;
 
         typedef Forward_Access_Iterator<T, forward_list> iterator;
-        		// typedef Bidirectional_Access_Iterator<T, List> iterator;
 
     public:
         forward_list();

@@ -77,13 +77,17 @@ namespace tinystl
 		typedef typename node_traits<T>::node_ptr node_ptr;
 
 		typedef typename data_allocator::size_type size_type;
+		typedef typename data_allocator::value_type value_type;
+
+		typedef typename data_allocator::reference reference;
+		typedef typename data_allocator::const_reference const_reference;
 
 		/** constructor */
 		typedef tinystl::Construct<T> constructor;
 
 		List();
 		List(size_type size);
-		List(size_type size, const T& val);
+		List(size_type size, const T &val);
 		size_type size() const;
 		bool empty();
 		void destroy_node(node_ptr p);
