@@ -23,7 +23,7 @@ namespace tinystl
 		// 拷贝构造函数
 		template <class U, class V>
 		Pair(const Pair<U, V> &p)
-			: first(p.first), second(p.second) { cout << "a" << endl; } //{用来测试那些对象创建调用了copy构造函数}
+			: first(p.first), second(p.second) { } //{用来测试那些对象创建调用了copy构造函数}
 	};
 
 	// 比较

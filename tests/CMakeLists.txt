@@ -20,6 +20,7 @@ add_executable(list_test list_test.cpp)
 add_executable(vector_test vector_test.cpp)
 add_executable(array_test array_test.cpp)
 add_executable(algorithm_test algorithm_test.cpp)
+add_executable(forward_list_test forward_list_test.cpp)
 
 # 把GTest和被测函数都链接到 可执行文件 上
 target_link_libraries(list_test
@@ -35,6 +36,11 @@ target_link_libraries(vector_test
  PRIVATE
   GTest::GTest)
 
+
+target_link_libraries(forward_list_test
+PRIVATE
+ GTest::GTest)
+
 # 为了引入头文件：#include <gtest/gtest.h>
 target_link_libraries(array_test
  PRIVATE
@@ -44,3 +50,5 @@ target_link_libraries(array_test
 add_test(vector_gtests vector_test)
 add_test(list_gtests list_test)
 add_test(array_gtests array_test)
+add_test(algorithm_gtests algorithm_test)
+add_test(forward_list_gests forward_list_test)

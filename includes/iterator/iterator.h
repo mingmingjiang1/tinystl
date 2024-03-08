@@ -443,6 +443,8 @@ public:
 
   Forward_Access_Iterator() : iterator_base<tinystl::list_node_base<T>>() {}
 
+  pointer base() const { return this->_M_current; }
+
   Forward_Access_Iterator(tinystl::list_node_base<T> *cur) : iterator_base<tinystl::list_node_base<T>>(cur){};
 
   self &operator++()
@@ -499,6 +501,8 @@ public:
 
   // Bidirectional_Access_Iterator() = default;
   Bidirectional_Access_Iterator() : iterator_base<tinystl::list_node_base<T>>() {}
+
+  pointer base() const { return this->_M_current; }
 
   Bidirectional_Access_Iterator(tinystl::list_node_base<T> *cur) : iterator_base<tinystl::list_node_base<T>>(cur){};
 
@@ -573,6 +577,65 @@ public:
   // private:
   //   node *_M_current;
 };
+
+
+template <typename _Iterator, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator-(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() - __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator+(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() + __rhs.base();
+}
+
+template <typename _Iterator, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator>=(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() >= __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator>(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() > __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator<=(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() <= __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator<(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+          const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() < __rhs.base();
+}
+
+template <typename _Iterator, typename _IteratorR, typename _Container>
+typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
+operator==(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,
+           const Forward_Access_Iterator<_Iterator, _Container> &__rhs) noexcept
+{
+  return __lhs.base() == __rhs.base();
+}
+
+
 
 template <typename _Iterator, typename _Container>
 typename Bidirectional_Access_Iterator<_Iterator, _Container>::difference_type

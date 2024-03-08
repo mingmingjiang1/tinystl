@@ -25,7 +25,6 @@ namespace tinystl
     Tuple() = default;
     Tuple(const Head value, const Tail... tail) : Tuple<Tail...>(tail...), value_(value)
     {
-      cout << "addring: " << this << value << endl;
     }
 
     Head get_value() const
@@ -50,7 +49,6 @@ namespace tinystl
       Tuple<Tail...> *parent = &tmp;
       Tuple<Tail...> *pa = (Tuple<Tail...> *)(this); // 指针类型转换
 
-      cout << "addr1: " << pa << " " << &tmp << endl;
 
       pa->value_ = p.second;
       return *this;
@@ -62,7 +60,6 @@ namespace tinystl
       value_ = t.value_;
       Tuple<Tail...> tmp1 = Tuple<Tail...>(*this);
       Tuple<Tail...> tmp2 = Tuple<Tail...>(*this);
-      cout << "hello world" << &tmp1 << &tmp2 << endl;
       Tuple<Tail &...> *pa = (Tuple<Tail &...> *)(this);
       Tuple<Args...> tmp = Tuple<Args...>(t);
       pa = &tmp; // trick: 向上转型，类型转换 // will call implicit copy ctor

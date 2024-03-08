@@ -39,170 +39,63 @@ namespace tinystl
 
     typedef tinystl::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    Vector(size_t size)
-    {
-      _size = _capacity = size;
-      m_data = data_allocator::allocate(_size);
-      for (int i = 0; i < size; i++)
-      {
-        // m_data[i] = static_cast<T>(0);
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T();
-      }
-    }
+    Vector(size_t size);
 
-    Vector(T *first, T *last)
-    {
-      _size = _capacity = last - first;
-      m_data = data_allocator::allocate(_size);
-      for (int i = 0; i < _size; i++)
-      {
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(first[i]);
-      }
-    }
+    Vector(T *first, T *last);
 
-    Vector(size_t size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
-    {
-      _size = _capacity = size;
-      m_data = data_allocator::allocate(_size);
-      for (int i = 0; i < size; i++)
-      {
-        // m_data[i] = value;
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(value);
-      }
-    }
-    Vector(size_t size, T &&value) // value为临时对象的时候，value在当前行之后的生命周期结束了
-    {
-      _size = _capacity = size;
-      m_data = data_allocator::allocate(_size);
-      for (int i = 0; i < size; i++)
-      {
-        // m_data[i] = value;
-        T *ptr = std::addressof(m_data[i]);
-        new ((void *)ptr) T(value);
-      }
-    }
+    Vector(size_t size, const T &value); // value为临时对象的时候，value在当前行之后的生命周期结束了
 
-    Vector(std::initializer_list<T> arr)
-    {
-      _size = _capacity = arr.size();
-      m_data = data_allocator::allocate(_size);
-      int i = 0;
-      for (auto it = arr.begin(); it != arr.end(); ++it)
-      {
-        // m_data[i++] = *it;
-        T *ptr = std::addressof(m_data[i++]);
-        new ((void *)ptr) T(*it);
-      }
-    }
-    Vector() : m_data(nullptr), _size(0), _capacity(0) {}
+    Vector(std::initializer_list<T> arr);
+    Vector();
     Vector(const Vector &vec);
     ~Vector();
     Vector<T> &operator=(const Vector<T> &vec);
 
     void push_back(const value_type &vec);
 
-    void clear()
-    {
-      _size = 0;
-    }
+    void clear();
 
-    void pop_back() { --_size; }
-    void erase(const iterator it)
-    {
-      if (it >= iterator(m_data + _size))
-      {
-        return;
-      }
-      int index = it - begin();
-      for (int i = index; i < _size; i++)
-      {
-        m_data[i] = m_data[i + 1];
-      }
-      --_size;
-    }
+    void pop_back();
+    void erase(const iterator it);
 
-    void destroy()
-    {
-      for (int i = 0; i < _size; i++)
-      {
-        constructor::destroy(m_data[i]);
-      }
-    }
+    void destroy();
 
-    reverse_iterator rbegin() _GLIBCXX_NOEXCEPT
-    {
-      return reverse_iterator(m_data + _size);
-    }
+    reverse_iterator rbegin() _GLIBCXX_NOEXCEPT;
 
-    const reverse_iterator rbegin() const _GLIBCXX_NOEXCEPT
-    {
-      return const_reverse_iterator(m_data + _size);
-    }
+    const reverse_iterator rbegin() const _GLIBCXX_NOEXCEPT;
 
-    reverse_iterator rend()
-    {
-      return reverse_iterator(m_data);
-    }
+    reverse_iterator rend();
 
-    const reverse_iterator rend() const _GLIBCXX_NOEXCEPT
-    {
-      return const_reverse_iterator(m_data);
-    }
+    const reverse_iterator rend() const _GLIBCXX_NOEXCEPT;
 
-    const_reverse_iterator crbegin() const _GLIBCXX_NOEXCEPT
-    {
-      return rbegin();
-    }
-    const_reverse_iterator crend() const _GLIBCXX_NOEXCEPT
-    {
-      return rend();
-    }
+    const_reverse_iterator crbegin() const _GLIBCXX_NOEXCEPT;
+    const_reverse_iterator crend() const _GLIBCXX_NOEXCEPT;
 
     void insert(iterator it, value_type val);
 
-    value_type front() { return m_data[0]; }
+    value_type front();
 
-    value_type back() { return m_data[_size - 1]; }
+    value_type back();
 
-    const_iterator begin() const _GLIBCXX_NOEXCEPT { return const_iterator(m_data); }
+    iterator begin() _GLIBCXX_NOEXCEPT;
 
-    iterator begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
+    const_iterator begin() const _GLIBCXX_NOEXCEPT;
+    
+    const_iterator cbegin() const _GLIBCXX_NOEXCEPT;
 
-    const_iterator cbegin() const _GLIBCXX_NOEXCEPT
-    {
-      return begin();
-    }
+    iterator end() _GLIBCXX_NOEXCEPT;
 
-    iterator end() _GLIBCXX_NOEXCEPT
-    {
+    const_iterator end() const _GLIBCXX_NOEXCEPT;
 
-      return iterator(m_data + _size);
-    }
+    const_iterator cend() const _GLIBCXX_NOEXCEPT;
 
-    const_iterator end() const _GLIBCXX_NOEXCEPT
-    {
+    size_type capacity();
 
-      return const_iterator(m_data + _size);
-    }
+    bool empty();
 
-    const_iterator cend() const _GLIBCXX_NOEXCEPT
-    {
-      return end();
-    }
+    size_type size() const;
 
-    size_type capacity() { return _capacity; }
-
-    bool empty() { return _size == 0; }
-
-    size_type size() const { return _size; }
-
-    value_type &operator[](int index)
-    {
-      return m_data[index];
-    }
+    value_type &operator[](int index);
 
     bool operator==(value_type &vec);
 
@@ -211,143 +104,8 @@ namespace tinystl
     size_type _size;
     size_type _capacity;
   };
-
-  template <typename T>
-  void Vector<T>::push_back(const value_type &vec)
-  {
-    if (_capacity == 0)
-    {
-      _capacity = 1;
-      m_data = data_allocator::allocate(_capacity);
-    }
-    else if (_size == _capacity)
-    {
-      T *new_data = data_allocator::allocate(_capacity * 2);
-      for (int i = 0; i < _size; i++)
-      {
-        new_data[i] = m_data[i];
-      }
-      data_allocator::deallocate(m_data, _size);
-      m_data = new_data;
-      _capacity *= 2;
-    }
-    m_data[_size++] = vec;
-  }
-
-  /*
-    初始化列表的初始化顺序并不是由构造函数后的变量顺序决定的，而是由类中成员变量的定义顺序决定的
-   */
-
-  template <typename T>
-  Vector<T>::~Vector()
-  {
-    destroy();
-    if (m_data)
-    {
-      data_allocator::deallocate(m_data, _size);
-    }
-    m_data = nullptr;
-    _size = 0;
-    _capacity = 0;
-  }
-
-  template <typename T>
-  void Vector<T>::insert(iterator it, value_type val)
-  {
-    // int index = it - m_data;
-    const size_t index = it - begin();
-    if (0 == _capacity)
-    {
-      _capacity = 1;
-      m_data = data_allocator::allocate();
-      m_data[0] = val;
-    }
-    else if (_size + 1 > _capacity)
-    {
-      _capacity *= 2;
-      value_type *temp = data_allocator::allocate(_capacity);
-      for (int i = 0; i < index; ++i)
-      {
-        temp[i] = m_data[i];
-      }
-      temp[index] = val;
-      for (int i = index; i < _size; i++)
-      {
-        temp[i + 1] = m_data[i];
-      }
-      data_allocator::deallocate(m_data, _size);
-      m_data = temp;
-    }
-    else
-    {
-      for (int i = _size - 1; i >= index; --i)
-      {
-        m_data[i + 1] = m_data[i];
-      }
-      m_data[index] = val;
-    }
-    ++_size;
-  }
-
-  template <typename T>
-  bool Vector<T>::operator==(value_type &vec)
-  {
-    if (_size != vec._size)
-      return false;
-    for (int i = 0; i < _size; ++i)
-    {
-      if (m_data[i] != vec._data[i])
-        return false;
-    }
-    return true;
-  }
-
-  // deep copy
-  template <typename T>
-  Vector<T>::Vector(const Vector<T> &vec)
-  {
-    _size = vec._size;
-    _capacity = vec._capacity;
-    m_data = data_allocator::allocate(_size);
-    for (int i = 0; i < _size; i++)
-    {
-      T *ptr = std::addressof(m_data[i]);
-      new ((void *)ptr) T(vec.m_data[i]);
-      // m_data[i] = vec.m_data[i];
-    }
-  }
-
-  /*
-  赋值运算符重载函数时将传入参数的所有信息拷贝一份。
-  针对vector而言，赋值运算符重载函数具体实现的是vec1 =
-  ve2;，按函数调用来理解就是vec1.operator=(vec2)
-   */
-
-  template <typename T>
-  Vector<T> &Vector<T>::operator=(const Vector<T> &vec)
-  {
-    if (&vec == this)
-    {
-      return *this;
-    }
-    if (_size)
-    {
-      std::cout << m_data << _size << "frjngnjntg" << std::endl;
-      destroy();
-      data_allocator::deallocate(m_data, _size);
-      m_data = nullptr;
-    }
-    _size = vec._size;
-    _capacity = vec._capacity;
-    m_data = data_allocator::allocate(_size);
-    for (int i = 0; i < _size; i++)
-    {
-      // m_data[i] = vec.m_data[i];
-      T *ptr = std::addressof(m_data[i]);
-      new ((void *)ptr) T(vec.m_data[i]);
-    }
-    return *this;
-  }
 }
+
+#include "vector.tcc"
 
 #endif

@@ -152,11 +152,11 @@ int main()
     cout << a << " ";
   }
 
-  cout << endl;
+  // cout << endl;
 
-  cout << "********************** Test Array **********************" << endl;
+  // cout << "********************** Test Array **********************" << endl;
 
-  cout << "********************** Test Forward_List **********************" << endl;
+  // cout << "********************** Test Forward_List **********************" << endl;
 
   tinystl::forward_list<tinystl::String> fl1;
   fl1.push_back("hello");
@@ -168,7 +168,7 @@ int main()
     cout << *fl1_tmp << endl;
   }
 
-  cout << "********************** Test Forward_List --ctor **********************" << endl;
+  // cout << "********************** Test Forward_List --ctor **********************" << endl;
 
   tinystl::forward_list<int> fl2(3, 100);
 
@@ -177,7 +177,7 @@ int main()
     cout << *fl2_tmp << endl;
   }
 
-  cout << "********************** Test Forward_List --copy ctor **********************" << endl;
+  // cout << "********************** Test Forward_List --copy ctor **********************" << endl;
 
   tinystl::forward_list<int> fl3(fl2);
 
@@ -186,7 +186,7 @@ int main()
     cout << *fl3_tmp << endl;
   }
 
-  cout << "********************** Test Forward_List --right value  **********************" << endl;
+  // cout << "********************** Test Forward_List --right value  **********************" << endl;
 
   tinystl::forward_list<tinystl::String> fl4(std::move(fl1));
 
@@ -198,16 +198,16 @@ int main()
   tinystl::forward_list<int> fl5;
   fl5 = fl3;
 
-  cout << "********************** Test Forward_List -- operator= **********************" << endl;
+  // cout << "********************** Test Forward_List -- operator= **********************" << endl;
 
-  for (auto fl5_tmp = fl5.begin(); fl5_tmp != fl5.end(); fl5_tmp++)
-  {
-    cout << *fl5_tmp << endl;
-  }
+  // for (auto fl5_tmp = fl5.begin(); fl5_tmp != fl5.end(); fl5_tmp++)
+  // {
+  //   cout << *fl5_tmp << endl;
+  // }
 
-  cout << "********************** Test Forward_List -- initialize_list **********************" << endl;
+  // cout << "********************** Test Forward_List -- initialize_list **********************" << endl;
 
-  tinystl::forward_list<tinystl::String> fl6{"hello", "world", "!"};
+  tinystl::forward_list<std::string> fl6{"hello", "world", "!"};
   fl6.push_front("hello");
   fl6.push_front("world");
   fl6.push_front("!");
@@ -217,7 +217,7 @@ int main()
     cout << *fl6_tmp << endl;
   }
 
-  cout << "********************** Test Forward_List -- pop  **********************" << endl;
+  // cout << "********************** Test Forward_List -- pop  **********************" << endl;
 
   fl6.pop_front();
   fl6.pop_front();
@@ -262,33 +262,33 @@ int main()
 
   cout << "********************** Test Container stack  **********************" << endl;
 
-  tinystl::Stack<int> first;
+  // tinystl::Stack<int> first;
 
-  tinystl::Vector<int> myvec(3, 100);
-  tinystl::Stack<int> second(myvec);
+  // tinystl::Vector<int> myvec(3, 100);
+  // tinystl::Stack<int> second(myvec);
 
-  tinystl::Stack<int, tinystl::Vector<int>> third; // 指明用vector实现一个栈（存放int），空栈size=0
+  // tinystl::Stack<int, tinystl::Vector<int>> third; // 指明用vector实现一个栈（存放int），空栈size=0
 
-  tinystl::Vector<int> myvector(2, 200);                      // 构造一个存放2个元素的vector
-  tinystl::Stack<int, tinystl::Vector<int>> fourth(myvector); // 用自己的vector构造一个栈，size=2
+  // tinystl::Vector<int> myvector(2, 200);                      // 构造一个存放2个元素的vector
+  // tinystl::Stack<int, tinystl::Vector<int>> fourth(myvector); // 用自己的vector构造一个栈，size=2
 
-  // 输出四个栈的大小
-  cout << "size of first: " << first.size() << endl;
+  // // 输出四个栈的大小
+  // cout << "size of first: " << first.size() << endl;
 
-  first.push(1);
-  first.push(2);
-  first.push(3);
-  first.push(100);
+  // first.push(1);
+  // first.push(2);
+  // first.push(3);
+  // first.push(100);
 
 
 
-  cout << "size of first: " << first.size() << endl;
+  // cout << "size of first: " << first.size() << endl;
 
-  cout << "size of second: " << second.size() << endl;
-  cout << "size of third: " << third.size() << endl;
-  cout << "size of fourth: " << fourth.size() << endl;
+  // cout << "size of second: " << second.size() << endl;
+  // cout << "size of third: " << third.size() << endl;
+  // cout << "size of fourth: " << fourth.size() << endl;
 
-  cout << "********************** Test List **********************" << endl;
+  // cout << "********************** Test List **********************" << endl;
   int a22[] = {11, 22, 33, 44, 55};
   tinystl::List<int>::iterator it_tmp; // 声明一个迭代器
   tinystl::List<int> lint{1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -463,19 +463,19 @@ int main()
     cout << *it_tmp_vec << endl;
   }
   tinystl::Vector<int> v9;
-  v9 = std::move(v3);
-  cout << "v9: >>>>>" << endl;
-  for (it_tmp_vec = v9.begin(); it_tmp_vec != v9.end(); it_tmp_vec++)
-  {
-    cout << *it_tmp_vec << endl;
-  }
-  tinystl::Vector<int> v10;
-  v10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
-  cout << "v10: >>>>>" << endl;
-  for (it_tmp_vec = v10.begin(); it_tmp_vec != v10.end(); it_tmp_vec++)
-  {
-    cout << *it_tmp_vec << endl;
-  }
+  v9 = v8;
+  // cout << "v9: >>>>>" << endl;
+  // for (it_tmp_vec = v9.begin(); it_tmp_vec != v9.end(); it_tmp_vec++)
+  // {
+  //   cout << *it_tmp_vec << endl;
+  // }
+  // tinystl::Vector<int> v10;
+  // v10 = {1, 2, 2, 3, 5, 6, 7, 8, 9};
+  // cout << "v10: >>>>>" << endl;
+  // for (it_tmp_vec = v10.begin(); it_tmp_vec != v10.end(); it_tmp_vec++)
+  // {
+  //   cout << *it_tmp_vec << endl;
+  // }
 
   cout << "********************** Test Vector **********************" << endl;
 
@@ -581,14 +581,14 @@ int main()
 
   cout << "********************** Test Array get **********************" << endl;
 
-  tinystl::Array<int, 3> arr1{1, 2, 3};
+  // tinystl::Array<int, 3> arr1{1, 2, 3};
 
-  for (auto ele : arr1)
-  {
-    cout << ele << " ";
-  }
+  // for (auto ele : arr1)
+  // {
+  //   cout << ele << " ";
+  // }
 
-  cout << get<0>(arr1) << endl;
+  // cout << get<0>(arr1) << endl;
 
   cout << "********************** Test Array get **********************" << endl;
 
