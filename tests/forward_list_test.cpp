@@ -97,40 +97,39 @@ template <typename T>
 void testDeclareWithInit(T *a, int size)
 {
     typename tinystl::forward_list<T>::iterator it_tmp; // 声明一个迭代器
-    // tinystl::forward_list<T> l1(a, a + size);
-    // std::cout << l1.size() << std::endl;
-    // ASSERT_EQ(l1.size(), size);
-    // int i = 0;
-    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    tinystl::forward_list<T> l1(a, a + size);
+    ASSERT_EQ(l1.size(), size);
+    int i = 0;
+    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, a[i++]);
+    }
 
-    // tinystl::forward_list<T> l3(a, a + 2);
-    // i = 0;
-    // ASSERT_EQ(l3.size(), 2);
-    // for (it_tmp = l3.begin(); it_tmp != l3.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    tinystl::forward_list<T> l3(a, a + 2);
+    i = 0;
+    ASSERT_EQ(l3.size(), 2);
+    for (it_tmp = l3.begin(); it_tmp != l3.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, a[i++]);
+    }
 
     // test for iterator
-    // tinystl::forward_list<T> l4(l1.begin(), l1.end());
-    // i = 0;
-    // ASSERT_EQ(l4.size(), size);
-    // for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    tinystl::forward_list<T> l4(l1.begin(), l1.end());
+    i = 0;
+    ASSERT_EQ(l4.size(), size);
+    for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, a[i++]);
+    }
 
-    // // test for l-value
-    // tinystl::forward_list<T> l6(std::move(l1));
-    // i = 0;
-    // ASSERT_EQ(l6.size(), size);
-    // for (it_tmp = l6.begin(); it_tmp != l6.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, a[i++]);
-    // }
+    // test for l-value
+    tinystl::forward_list<T> l6(std::move(l1));
+    i = 0;
+    ASSERT_EQ(l6.size(), size);
+    for (it_tmp = l6.begin(); it_tmp != l6.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, a[i++]);
+    }
 }
 
 template <typename T>
@@ -167,11 +166,6 @@ void testAssign(T *a, int size)
     {
         ASSERT_EQ(*it_tmp, a[i++]);
     }
-    std::cout << "l4.size() = " << std::endl;
-    for (auto i : l1)
-    {
-        std::cout << i << " " << std::endl;
-    }
 
     // // test for iterator
     tinystl::forward_list<T> lt(l1.begin() + 1, l1.end());
@@ -201,8 +195,8 @@ TYPED_TEST_P(ForwardListTEST, Constructor)
     this->fillVal(n, 5);
     TypeParam *tmp = this->value_;
     testDeclareWithInit<TypeParam>(tmp, 5);
-    // testDeclareWithNoInit<TypeParam>(5);
-    // testAssign<TypeParam>(tmp, 5);
+    testDeclareWithNoInit<TypeParam>(5);
+    testAssign<TypeParam>(tmp, 5);
 
 }
 
@@ -223,8 +217,6 @@ TEST(ForwardListTEST, Test_ForwardList_String)
     const char *a2[5] = {"aa", "bb", "cc", "dd", "ee"};
     tinystl::forward_list<const char *> lun(a2, a2 + 5);
 
-    lun.begin() + 3;
-    lun.end();
     // test for iterator
     tinystl::forward_list<const char *> lt(lun.begin(), lun.end());
     int i = 0;
@@ -238,50 +230,50 @@ TEST(ForwardListTEST, Test_ForwardList_String)
 // 测试嵌套类型
 TEST(ForwardListTests, Test_ForwardList_Initialize_List)
 {
-    // tinystl::forward_list<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    // tinystl::forward_list<int>::iterator it_tmp; // 声明一个迭代器
-    // int i = 0;
-    // for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
-    // {
-    //     ASSERT_EQ(*it_tmp, i + 1);
-    //     i++;
-    // }
+    tinystl::forward_list<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    tinystl::forward_list<int>::iterator it_tmp; // 声明一个迭代器
+    int i = 0;
+    for (it_tmp = l1.begin(); it_tmp != l1.end(); it_tmp++)
+    {
+        ASSERT_EQ(*it_tmp, i + 1);
+        i++;
+    }
 
-    // tinystl::forward_list<std::string> l2{"1", "2", "3"};
-    // tinystl::forward_list<std::string>::iterator it_tmp_2; // 声明一个迭代器
-    // i = 0;
-    // for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
-    // {
-    //     ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::forward_list<std::string> l2{"1", "2", "3"};
+    tinystl::forward_list<std::string>::iterator it_tmp_2; // 声明一个迭代器
+    i = 0;
+    for (it_tmp_2 = l2.begin(); it_tmp_2 != l2.end(); it_tmp_2++)
+    {
+        ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::forward_list<std::string> l3;
-    // l3 = l2;
-    // i = 0;
-    // for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
-    // {
-    //     ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::forward_list<std::string> l3;
+    l3 = l2;
+    i = 0;
+    for (it_tmp_2 = l3.begin(); it_tmp_2 != l3.end(); it_tmp_2++)
+    {
+        ASSERT_EQ(*it_tmp_2, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::forward_list<tinystl::String> l4{"1", "2", "3"};
-    // tinystl::forward_list<tinystl::String>::iterator it_tmp_3; // 声明一个迭代器
-    // i = 0;
-    // for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
-    // {
-    //     ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::forward_list<tinystl::String> l4{"1", "2", "3"};
+    tinystl::forward_list<tinystl::String>::iterator it_tmp_3; // 声明一个迭代器
+    i = 0;
+    for (it_tmp_3 = l4.begin(); it_tmp_3 != l4.end(); it_tmp_3++)
+    {
+        ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+        i++;
+    }
 
-    // tinystl::forward_list<tinystl::String> l5;
-    // l5 = l4;
-    // i = 0;
-    // for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
-    // {
-    //     ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
-    //     i++;
-    // }
+    tinystl::forward_list<tinystl::String> l5;
+    l5 = l4;
+    i = 0;
+    for (it_tmp_3 = l5.begin(); it_tmp_3 != l5.end(); it_tmp_3++)
+    {
+        ASSERT_EQ(*it_tmp_3, std::to_string(i + 1).c_str());
+        i++;
+    }
 }
 
 // TEST(ForwardListTests, Test_ForwardList_Member_Function)

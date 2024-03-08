@@ -7,7 +7,7 @@
 
 namespace tinystl
 {
-    template <typename T, typename Alloc = Allocator<T>>
+    template <typename T, typename Alloc = allocator<T>>
     class forward_list
     {
     public:
@@ -29,17 +29,19 @@ namespace tinystl
 
     public:
         forward_list();
-        forward_list(size_t size, const T& val);
+        forward_list(size_type size, const T& val);
+        forward_list(size_type size);
         forward_list(const forward_list& other);
         forward_list(forward_list&& other);
         forward_list(iterator first, iterator last);
-        forward_list(const T* first, const T* last);
-        forward_list(const std::initializer_list<T>& il);
+        forward_list(T* first, T* last);
+        forward_list(std::initializer_list<T> il);
         forward_list& operator=(const forward_list& other);
         forward_list& operator=(forward_list&& other);
         size_type size() const;
         void push_front(const T& data);
         void push_back(const T& data);
+        void push_back(T &&val);
         void pop_front();
         void pop_back();
         void clear();

@@ -92,6 +92,8 @@ void testDeclareWithInit(T *a, int size)
 
     // test for iterator
     tinystl::List<T> l4(l1.begin(), l1.end());
+
+    std::cout << size <<" hello======>" << l1.end() - l1.begin() << std::endl;
     i = 0;
     ASSERT_EQ(l4.size(), size);
     for (it_tmp = l4.begin(); it_tmp != l4.end(); it_tmp++)
@@ -183,7 +185,7 @@ TYPED_TEST_P(ListTest, Constructor)
 REGISTER_TYPED_TEST_SUITE_P(ListTest, Constructor);
 using ListTypes = ::testing::Types<int, unsigned int, const char *>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(tinystl1, ListTest, ListTypes);
+INSTANTIATE_TYPED_TEST_SUITE_P(tinystl, ListTest, ListTypes);
 
 // 测试自定义string类型
 TEST(ListTests, Test_List_String)

@@ -1,7 +1,6 @@
 #ifndef TINYSTL_FORWARD_LIST_TCC
 #define TINYSTL_FORWARD_LIST_TCC
 
-
 #include "algorithm.h"
 
 namespace tinystl
@@ -16,7 +15,7 @@ namespace tinystl
     }
 
     template <class T, class Allocator>
-    forward_list<T, Allocator>::forward_list(size_t size, const T &val)
+    forward_list<T, Allocator>::forward_list(size_type size, const T &val)
     {
         head = base_allocator::allocate();
         tail = base_allocator::allocate();
@@ -24,6 +23,18 @@ namespace tinystl
         for (int i = 0; i < size; i++)
         {
             push_back(val);
+        }
+    }
+
+    template <class T, class Allocator>
+    forward_list<T, Allocator>::forward_list(size_type size)
+    {
+        head = base_allocator::allocate();
+        tail = base_allocator::allocate();
+        head->next = tail;
+        for (int i = 0; i < size; i++)
+        {
+            push_back(T());
         }
     }
 
@@ -43,26 +54,45 @@ namespace tinystl
     template <class T, class Allocator>
     forward_list<T, Allocator>::forward_list::forward_list(iterator first, iterator last)
     {
-        size_type size = last - first;
         head = base_allocator::allocate();
         tail = base_allocator::allocate();
         head->next = tail;
-        for (int i = 0; i < size; i++)
+
+        base_ptr pre = head;
+        while (first != last)
         {
-            push_back(*(first + i));
+            node_ptr node = node_allocator::allocate();
+            T *ptr = std::addressof(node->m_data);
+            new ((void *)ptr) T(*first);
+
+            node->next = tail;
+
+            pre->next = node;
+            pre = node;
+            ++first;
         }
     }
 
     template <class T, class Allocator>
-    forward_list<T, Allocator>::forward_list::forward_list(const T *first, const T *last)
+    forward_list<T, Allocator>::forward_list::forward_list(T *first, T *last)
     {
-        size_type size = last - first;
         head = base_allocator::allocate();
         tail = base_allocator::allocate();
         head->next = tail;
-        for (int i = 0; i < size; i++)
+        m_size = last - first;
+
+        base_ptr pre = head;
+        while (first != last)
         {
-            push_back(*(first + i));
+            node_ptr node = node_allocator::allocate();
+            T *ptr = std::addressof(node->m_data);
+            new ((void *)ptr) T(*first);
+
+            node->next = tail;
+
+            pre->next = node;
+            pre = node;
+            ++first;
         }
     }
 
@@ -89,22 +119,50 @@ namespace tinystl
         head = base_allocator::allocate();
         tail = base_allocator::allocate();
         head->next = tail;
-        node_ptr node = static_cast<node_ptr>((other.head)->next);
-        while (node != other.tail)
+        m_size = other.size();
+        node_ptr tmp = static_cast<node_ptr>((other.head)->next);
+
+        base_ptr pre = head;
+        while (tmp != other.tail)
         {
-            push_back(node->m_data);
-            node = static_cast<node_ptr>(node->next);
+            node_ptr node = node_allocator::allocate();
+            T *ptr = std::addressof(node->m_data);
+            new ((void *)ptr) T(tmp->m_data);
+
+            node->next = tail;
+
+            pre->next = node;
+            pre = node;
+
+            tmp = static_cast<node_ptr>(tmp->next);
         }
+
+        // while (node != other.tail)
+        // {
+        //     push_back(node->m_data);
+        //     node = static_cast<node_ptr>(node->next);
+        // }
     }
     template <class T, class Allocator>
-    forward_list<T, Allocator>::forward_list(const std::initializer_list<T> &il)
+    forward_list<T, Allocator>::forward_list(std::initializer_list<T> il)
     {
         head = base_allocator::allocate();
         tail = base_allocator::allocate();
         head->next = tail;
-        for (auto &i : il)
+
+        m_size = il.size();
+
+        base_ptr pre = head;
+        for (auto it = il.begin(); it != il.end(); ++it)
         {
-            push_back(i);
+            node_ptr node = node_allocator::allocate();
+            T *ptr = std::addressof(node->m_data);
+            new ((void *)ptr) T(*it);
+
+            node->next = tail;
+
+            pre->next = node;
+            pre = node;
         }
     }
 
@@ -193,6 +251,23 @@ namespace tinystl
     }
 
     template <class T, class Allocator>
+    void forward_list<T, Allocator>::push_back(T &&val)
+    {
+        node_ptr node = node_allocator::allocate();
+
+        construct(std::addressof(node->m_data), val);
+
+        base_ptr tmp = head;
+        while (tmp->next != tail)
+        {
+            tmp = tmp->next;
+        }
+        node->next = tmp->next;
+        tmp->next = node;
+        m_size++;
+    }
+
+    template <class T, class Allocator>
     void forward_list<T, Allocator>::push_front(const T &val)
     {
         node_ptr node = node_allocator::allocate();
@@ -222,16 +297,11 @@ namespace tinystl
     template <class T, class Allocator>
     forward_list<T, Allocator>::~forward_list()
     {
-        node_ptr tmp = static_cast<node_ptr>(head->next);
-        while (tmp != tail)
-        {
-            // node_ptr tmp = tmp->next;
-            destroy(std::addressof(tmp->m_data));
-            tmp = static_cast<node_ptr>(tmp->next);
-            node_allocator::deallocate(tmp);
-        }
+        clear();
         base_allocator::deallocate(head);
         base_allocator::deallocate(tail);
+        head = NULL;
+        tail = NULL;
     }
     template <class T, class Allocator>
     typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::begin()
@@ -248,7 +318,14 @@ namespace tinystl
     template <class T, class Allocator>
     typename forward_list<T, Allocator>::size_type forward_list<T, Allocator>::size() const
     {
-        return m_size;
+        auto node = head->next;
+        size_type s = 0;
+        while (node != tail)
+        {
+            node = node->next;
+            ++s;
+        }
+        return s;
     }
 
     template <class T, class Allocator>
