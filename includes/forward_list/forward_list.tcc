@@ -27,6 +27,21 @@ namespace tinystl
     }
 
     template <class T, class Allocator>
+    void forward_list<T, Allocator>::insert(forward_list<T, Allocator>::iterator it, T val)
+    {
+        auto node = head;
+        while (iterator(node->next) != it && node->next != tail)
+        {
+            node = node->next;
+        }
+        auto next = node->next;
+        node_ptr cur = node_allocator::allocate();
+        construct(std::addressof(cur->m_data), val);
+        node->next = cur;
+        cur->next = next;
+    }
+
+    template <class T, class Allocator>
     forward_list<T, Allocator>::forward_list(size_type size)
     {
         head = base_allocator::allocate();
@@ -110,6 +125,7 @@ namespace tinystl
             node = next;
         }
         head->next = tail;
+        m_size = 0;
     }
 
     template <class T, class Allocator>
@@ -183,19 +199,26 @@ namespace tinystl
         return *this;
     }
 
-    // template <class T, class Allocator>
-    // typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::erase(typename forward_list<T, Allocator>::iterator it) {
-    //     // if (it == head || it == tail)
-    // 	// 	{
-    // 	// 		return;
-    // 	// 	}
-    // 		node_ptr next = ;
-    // 		it.node->prev->next = it.node->next;
-    // 		it.node->next->prev = it.node->prev;
-    // 		node_allocator::deallocate(it.node);
-    // 		it.node = next;
-    // 		return it;
-    // }
+    template <class T, class Allocator>
+    void forward_list<T, Allocator>::erase(typename forward_list<T, Allocator>::iterator it)
+    {
+        if (head->next == tail)
+        {
+            return;
+        }
+
+        auto node = head;
+
+        while (iterator(node->next) != it && node->next != tail)
+        {
+            node = node->next;
+        }
+        auto next = node->next->next;
+        constructor::destroy(static_cast<node_ptr>(node->next)->m_data);
+
+        node_allocator::deallocate(static_cast<node_ptr>(node->next));
+        node->next = next;
+    }
 
     template <class T, class Allocator>
     void forward_list<T, Allocator>::remove(const T &val)
@@ -281,6 +304,26 @@ namespace tinystl
     template <class T, class Allocator>
     void forward_list<T, Allocator>::pop_back()
     {
+        // static_assert(m_size > 0);
+        if (head->next == tail)
+        {
+            return;
+        }
+
+        m_size--;
+        auto tmp = head;
+
+        while (tmp->next->next != tail)
+        {
+            tmp = tmp->next;
+        }
+
+        node_ptr pop_ = static_cast<node_ptr>(tmp->next);
+        tmp->next = tail;
+
+        constructor::destroy(pop_->m_data);
+
+        node_allocator::deallocate(pop_);
     }
 
     template <class T, class Allocator>
@@ -304,13 +347,13 @@ namespace tinystl
         tail = NULL;
     }
     template <class T, class Allocator>
-    typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::begin()
+    typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::begin() const
     {
         return iterator(static_cast<node_ptr>(head->next));
     }
 
     template <class T, class Allocator>
-    typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::end()
+    typename forward_list<T, Allocator>::iterator forward_list<T, Allocator>::end() const
     {
         return iterator(static_cast<node_ptr>(tail));
     }

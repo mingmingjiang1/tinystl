@@ -1,0 +1,4 @@
+#ifndef TINYSTL_DEQUE_TEST_H
+#define TINYSTL_DEQUE_TEST_H
+
+#endif

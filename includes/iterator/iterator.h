@@ -579,6 +579,7 @@ public:
 };
 
 
+// 有问题不能直接减
 template <typename _Iterator, typename _Container>
 typename Forward_Access_Iterator<_Iterator, _Container>::difference_type
 operator-(const Forward_Access_Iterator<_Iterator, _Container> &__lhs,

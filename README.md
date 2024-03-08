@@ -70,11 +70,7 @@ $ xsltproc ../gtest2html.xslt test_detail.xml > test_detail.html // xml => html
 ```
 
 
-
-
-todo:
-2. gtest 单元测试 algorithm, forward_list
-4. 文章完善
+1. 文章完善
 
 
 

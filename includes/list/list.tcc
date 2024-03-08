@@ -253,13 +253,13 @@ namespace tinystl
     }
 
     template <typename T, typename Alloc>
-    typename List<T, Alloc>::iterator List<T, Alloc>::begin()
+    typename List<T, Alloc>::iterator List<T, Alloc>::begin() const
     {
         return iterator(static_cast<typename List<T, Alloc>::node_ptr>(head->next));
     }
 
     template <typename T, typename Alloc>
-    typename List<T, Alloc>::iterator List<T, Alloc>::end()
+    typename List<T, Alloc>::iterator List<T, Alloc>::end() const
     {
         return iterator(static_cast<node_ptr>(tail));
     }
@@ -292,34 +292,71 @@ namespace tinystl
         node_allocator::deallocate(node);
     }
 
-    template <typename T, typename Alloc>
-    typename List<T, Alloc>::iterator List<T, Alloc>::erase(iterator &it)
+    template <class T, class Allocator>
+    typename List<T, Allocator>::value_type &List<T, Allocator>::operator[](List<T, Allocator>::size_type index)
     {
-        if (it == head || it == tail)
+        node_ptr node = static_cast<node_ptr>((head)->next);
+        while (--index && node != tail)
         {
-            throw InvalidIteratorException();
+            node = static_cast<node_ptr>(node->next);
         }
-        node_ptr next = it.node->next;
-        it.node->prev->next = it.node->next;
-        it.node->next->prev = it.node->prev;
-        // delete it.node;
-        node_allocator::deallocate(it.node);
-        it.node = next;
-        return it;
+
+        std::cout << "fhbvbhgb*****" << node->m_data << std::endl;
+
+        return node->m_data;
+    }
+
+    template <typename T, typename Alloc>
+    void List<T, Alloc>::erase(iterator it)
+    {
+        if (head->next == tail)
+        {
+            return;
+        }
+
+        auto node = head;
+
+        while (iterator(node->next) != it && node->next != tail)
+        {
+            node = node->next;
+        }
+        auto next = node->next->next;
+        constructor::destroy(static_cast<node_ptr>(node->next)->m_data);
+
+        node_allocator::deallocate(static_cast<node_ptr>(node->next));
+        node->next = next;
+        next->prev = node;
     }
     // it之前插入
-    // iterator insert(iterator &it, T data)
-    // {
-    // 	if (it.node == head)
-    // 	{
-    // 		throw InvalidIteratorException();
-    // 	}
-    // 	node_ptr node = new node_type(data, it.node->prev, it.node);
-    // 	it.node->prev->next = node;
-    // 	it.node->prev = node;
-    // 	it.node = node;
-    // 	return it;
-    // }
+    template <typename T, typename Alloc>
+    void List<T, Alloc>::insert(iterator it, T val)
+    {
+        /*
+
+                auto node = head;
+                while (iterator(node->next) != it && node->next != tail) {
+                    node = node->next;
+                }
+                auto next = node->next;
+                node_ptr cur = node_allocator::allocate();
+                construct(std::addressof(cur->m_data), val);
+                node->next = cur;
+                cur->next = next;
+        */
+        auto node = head;
+        while (iterator(node->next) != it && node->next != tail)
+        {
+            node = node->next;
+        }
+
+        auto next = node->next;
+        node_ptr cur = node_allocator::allocate();
+        construct(std::addressof(cur->m_data), val);
+        node->next = cur;
+        cur->prev = node;
+        cur->next = next;
+        next->prev = cur;
+    }
 }
 
 #endif

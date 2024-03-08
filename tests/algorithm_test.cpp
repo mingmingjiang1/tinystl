@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_TEST_H
-#define ALGORITHM_TEST_H
+#ifndef TINYSTL_ALGORITHM_TEST_H
+#define TINYSTL_ALGORITHM_TEST_H
 
 #include <gtest/gtest.h>
 

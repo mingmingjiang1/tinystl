@@ -1,5 +1,5 @@
-#ifndef ARRAY_TEST_H
-#define ARRAY_TEST_H
+#ifndef TINYSTL_ARRAY_TEST_H
+#define TINYSTL_ARRAY_TEST_H
 
 #include <gtest/gtest.h>
 

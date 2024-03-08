@@ -45,11 +45,12 @@ namespace tinystl
         void pop_back();
         void clear();
         bool empty() const;
-        // iterator erase(iterator pos); // todo
+        void erase(iterator pos);
+        void insert(iterator it, T data);
         void remove(const T& val); // todo
         void swap(forward_list& other); // todo
-        iterator begin();
-        iterator end();
+        iterator begin() const;
+        iterator end() const;
         iterator cbegin() const; // todo
         iterator cend() const; // todo
         ~forward_list();

@@ -1,5 +1,5 @@
-#ifndef FORWARDLIST_TEST_H
-#define FORWARDLIST_TEST_H
+#ifndef TINYSTL_FORWARDLIST_TEST_H
+#define TINYSTL_FORWARDLIST_TEST_H
 
 #include <gtest/gtest.h>
 
@@ -8,16 +8,16 @@
 #include <string>
 
 template <typename T>
-bool compare(tinystl::forward_list<T> &a, tinystl::forward_list<T> b)
+bool compare(const tinystl::forward_list<T> &a, const tinystl::forward_list<T> &b)
 {
     if (a.size() != b.size())
     {
         return false;
     }
-    for (int i = 0; i < a.size(); i++)
-    {
-        if (a[i] != b[i])
-        {
+
+    
+    while (a.begin() != a.end()) {
+        if (a.begin() != b.begin()) {
             return false;
         }
     }
@@ -31,7 +31,8 @@ class ForwardListTEST : public testing::Test
 public:
     T *value_;
 
-    ~ForwardListTEST() {
+    ~ForwardListTEST()
+    {
         delete[] value_;
     }
 
@@ -88,7 +89,6 @@ public:
         }
     }
 };
-
 
 TYPED_TEST_SUITE_P(ForwardListTEST);
 
@@ -197,13 +197,10 @@ TYPED_TEST_P(ForwardListTEST, Constructor)
     testDeclareWithInit<TypeParam>(tmp, 5);
     testDeclareWithNoInit<TypeParam>(5);
     testAssign<TypeParam>(tmp, 5);
-
 }
 
-
 REGISTER_TYPED_TEST_SUITE_P(ForwardListTEST, Constructor);
-using ForwardListEleTypes = ::testing::Types<int, unsigned int, char, const char*, double>;
-
+using ForwardListEleTypes = ::testing::Types<int, unsigned int, char, const char *, double>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(tinystl, ForwardListTEST, ForwardListEleTypes);
 
@@ -276,40 +273,49 @@ TEST(ForwardListTests, Test_ForwardList_Initialize_List)
     }
 }
 
-// TEST(ForwardListTests, Test_ForwardList_Member_Function)
-// {
-//     tinystl::forward_list<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-//     ASSERT_EQ(l1.size(), 9);
-//     // push_back
-//     l1.push_back(10);
-//     // size
-//     ASSERT_EQ(l1.size(), 10);
-//     compare(l1, tinystl::forward_list<int>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+TEST(ForwardListTests, Test_ForwardList_Member_Function)
+{
+    tinystl::forward_list<int> l1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    ASSERT_EQ(l1.size(), 9);
+    // push_back
+    l1.push_back(10);
+    // size
+    ASSERT_EQ(l1.size(), 10);
+    compare(l1, tinystl::forward_list<int>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
-//     // pop_back
-//     l1.pop_back();
-//     // size
-//     ASSERT_EQ(l1.size(), 9);
-//     compare(l1, tinystl::forward_list<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
+    // pop_back
+    l1.pop_back();
+    // size
+    ASSERT_EQ(l1.size(), 9);
+    compare(l1, tinystl::forward_list<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
 
-//     ASSERT_EQ(l1.size(), 10);
-//     compare(l1, tinystl::forward_list<int>{1, 10, 2, 3, 4, 5, 6, 7, 8, 9});
+    // insert
+    l1.insert(l1.begin(), 1000);
 
-//     // erase
-//     // l1.erase(l1.begin() + 1);
-//     compare(l1, tinystl::forward_list<int>{1, 2, 3, 4, 5, 6, 7, 8, 9});
-//     // size
-//     ASSERT_EQ(l1.size(), 9);
-//     // compare
+    for (auto &x : l1)
+    {
+        std::cout << "fhbvbhgb" << x << std::endl;
+    }
 
-//     // capacity
+    compare(l1, tinystl::forward_list<int>{1000, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    ASSERT_EQ(l1.size(), 10);
 
-//     // clear
-//     l1.clear();
+    // erase
+    l1.erase(l1.begin() + 1);
+    for (auto &x : l1)
+    {
+        std::cout << "fhbvbhgb======>" << x << std::endl;
+    }
+    compare(l1, tinystl::forward_list<int>{1000, 2, 3, 4, 5, 6, 7, 8, 9});
+    // size
+    ASSERT_EQ(l1.size(), 9);
 
-//     // empty
-//     ASSERT_EQ(l1.empty(), true);
-// }
+    // clear
+    l1.clear();
+
+    // empty
+    ASSERT_EQ(l1.empty(), true);
+}
 
 int main(int argc, char **argv)
 {

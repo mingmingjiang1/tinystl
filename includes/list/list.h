@@ -101,25 +101,15 @@ namespace tinystl
 		List(iterator from, iterator to);
 		List(std::initializer_list<T> lt);
 		List &operator=(const List &lt);
-		iterator begin();
-		iterator end();
+		iterator begin() const;
+		iterator end() const;
 		void pop_front();
 		void pop_back();
 		// 删除it所指向的节点
-		iterator erase(iterator &it);
+		void erase(iterator it);
 		// it之前插入
-		// iterator insert(iterator &it, T data)
-		// {
-		// 	if (it.node == head)
-		// 	{
-		// 		throw InvalidIteratorException();
-		// 	}
-		// 	node_ptr node = new node_type(data, it.node->prev, it.node);
-		// 	it.node->prev->next = node;
-		// 	it.node->prev = node;
-		// 	it.node = node;
-		// 	return it;
-		// }
+		void insert(iterator it, T data);
+		value_type& operator[](size_type index);
 
 	private:
 		base_ptr head;
