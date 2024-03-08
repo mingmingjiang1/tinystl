@@ -3,8 +3,8 @@
 
 namespace tinystl
 {
-    template <typename T>
-    Vector<T>::Vector(Vector<T>::size_type size)
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector(Vector<T, Alloc>::size_type size)
     {
         _size = _capacity = size;
         m_data = data_allocator::allocate(_size);
@@ -15,8 +15,8 @@ namespace tinystl
             new ((void *)ptr) T();
         }
     }
-    template <typename T>
-    Vector<T>::Vector(T *first, T *last)
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector(T *first, T *last)
     {
         _size = _capacity = last - first;
         m_data = data_allocator::allocate(_size);
@@ -26,8 +26,8 @@ namespace tinystl
             new ((void *)ptr) T(first[i]);
         }
     }
-    template <typename T>
-    Vector<T>::Vector(Vector<T>::size_type size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector(Vector<T, Alloc>::size_type size, const T &value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     {
         _size = _capacity = size;
         m_data = data_allocator::allocate(_size);
@@ -39,7 +39,7 @@ namespace tinystl
         }
     }
     // template <typename T>
-    // Vector<T>::Vector(typename Vector<T>::size_type size, T &&value) // value为临时对象的时候，value在当前行之后的生命周期结束了
+    // Vector<T, Alloc>::Vector(typename Vector<T, Alloc>::size_type size, T &&value) // value为临时对象的时候，value在当前行之后的生命周期结束了
     // {
     //     _size = _capacity = size;
     //     m_data = data_allocator::allocate(_size);
@@ -50,8 +50,8 @@ namespace tinystl
     //         new ((void *)ptr) T(value);
     //     }
     // }
-    template <typename T>
-    Vector<T>::Vector(std::initializer_list<T> arr)
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector(std::initializer_list<T> arr)
     {
         _size = _capacity = arr.size();
         m_data = data_allocator::allocate(_size);
@@ -63,20 +63,20 @@ namespace tinystl
             new ((void *)ptr) T(*it);
         }
     }
-    template <typename T>
-    Vector<T>::Vector() : m_data(nullptr), _size(0), _capacity(0) {}
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector() : m_data(nullptr), _size(0), _capacity(0) {}
 
-    template <typename T>
-    void Vector<T>::clear()
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::clear()
     {
         _size = 0;
     }
 
-    template <typename T>
-    void Vector<T>::pop_back() { --_size; }
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::pop_back() { --_size; }
 
-    template <typename T>
-    void Vector<T>::erase(const iterator it)
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::erase(const iterator it)
     {
         if (it >= iterator(m_data + _size))
         {
@@ -90,8 +90,8 @@ namespace tinystl
         --_size;
     }
 
-    template <typename T>
-    void Vector<T>::destroy()
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::destroy()
     {
         for (int i = 0; i < _size; i++)
         {
@@ -99,97 +99,97 @@ namespace tinystl
         }
     }
 
-    template <typename T>
-    typename Vector<T>::reverse_iterator Vector<T>::rbegin() _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::reverse_iterator Vector<T, Alloc>::rbegin() _GLIBCXX_NOEXCEPT
     {
         return reverse_iterator(m_data + _size);
     }
 
-    template <typename T>
-    const typename Vector<T>::reverse_iterator Vector<T>::rbegin() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    const typename Vector<T, Alloc>::reverse_iterator Vector<T, Alloc>::rbegin() const _GLIBCXX_NOEXCEPT
     {
         return const_reverse_iterator(m_data + _size);
     }
 
-    template <typename T>
-    typename Vector<T>::reverse_iterator Vector<T>::rend()
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::reverse_iterator Vector<T, Alloc>::rend()
     {
         return reverse_iterator(m_data);
     }
 
-    template <typename T>
-    const typename Vector<T>::reverse_iterator Vector<T>::rend() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    const typename Vector<T, Alloc>::reverse_iterator Vector<T, Alloc>::rend() const _GLIBCXX_NOEXCEPT
     {
         return const_reverse_iterator(m_data);
     }
 
-    template <typename T>
-    typename Vector<T>::const_reverse_iterator Vector<T>::crbegin() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_reverse_iterator Vector<T, Alloc>::crbegin() const _GLIBCXX_NOEXCEPT
     {
         return rbegin();
     }
 
-    template <typename T>
-    typename Vector<T>::const_reverse_iterator Vector<T>::crend() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_reverse_iterator Vector<T, Alloc>::crend() const _GLIBCXX_NOEXCEPT
     {
         return rend();
     }
 
-    template <typename T>
-    typename Vector<T>::value_type Vector<T>::front() { return m_data[0]; }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::value_type Vector<T, Alloc>::front() { return m_data[0]; }
 
-    template <typename T>
-    typename Vector<T>::value_type Vector<T>::back() { return m_data[_size - 1]; }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::value_type Vector<T, Alloc>::back() { return m_data[_size - 1]; }
 
-    template <typename T>
-    typename Vector<T>::const_iterator Vector<T>::begin() const _GLIBCXX_NOEXCEPT { return const_iterator(m_data); }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_iterator Vector<T, Alloc>::begin() const _GLIBCXX_NOEXCEPT { return const_iterator(m_data); }
 
-    template <typename T>
-    typename Vector<T>::iterator Vector<T>::begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::iterator Vector<T, Alloc>::begin() _GLIBCXX_NOEXCEPT { return iterator(m_data); }
 
-    template <typename T>
-    typename Vector<T>::const_iterator Vector<T>::cbegin() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_iterator Vector<T, Alloc>::cbegin() const _GLIBCXX_NOEXCEPT
     {
         return begin();
     }
 
-    template <typename T>
-    typename Vector<T>::iterator Vector<T>::end() _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::iterator Vector<T, Alloc>::end() _GLIBCXX_NOEXCEPT
     {
 
         return iterator(m_data + _size);
     }
 
-    template <typename T>
-    typename Vector<T>::const_iterator Vector<T>::end() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_iterator Vector<T, Alloc>::end() const _GLIBCXX_NOEXCEPT
     {
 
         return const_iterator(m_data + _size);
     }
 
-    template <typename T>
-    typename Vector<T>::const_iterator Vector<T>::cend() const _GLIBCXX_NOEXCEPT
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::const_iterator Vector<T, Alloc>::cend() const _GLIBCXX_NOEXCEPT
     {
         return end();
     }
 
-    template <typename T>
-    typename Vector<T>::size_type Vector<T>::capacity() { return _capacity; }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::size_type Vector<T, Alloc>::capacity() { return _capacity; }
 
-    template <typename T>
-    bool Vector<T>::empty() { return _size == 0; }
+    template <typename T, typename Alloc>
+    bool Vector<T, Alloc>::empty() { return _size == 0; }
 
-    template <typename T>
-    typename Vector<T>::size_type Vector<T>::size() const { return _size; }
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::size_type Vector<T, Alloc>::size() const { return _size; }
 
-    template <typename T>
-    typename Vector<T>::value_type &Vector<T>::operator[](int index)
+    template <typename T, typename Alloc>
+    typename Vector<T, Alloc>::value_type &Vector<T, Alloc>::operator[](int index)
     {
         return m_data[index];
     }
 
-    template <typename T>
-    void Vector<T>::push_back(const value_type &vec)
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::push_back(const value_type &vec)
     {
         if (_capacity == 0)
         {
@@ -214,8 +214,8 @@ namespace tinystl
       初始化列表的初始化顺序并不是由构造函数后的变量顺序决定的，而是由类中成员变量的定义顺序决定的
      */
 
-    template <typename T>
-    Vector<T>::~Vector()
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::~Vector()
     {
         destroy();
         if (m_data)
@@ -227,8 +227,8 @@ namespace tinystl
         _capacity = 0;
     }
 
-    template <typename T>
-    bool Vector<T>::operator==(value_type &vec)
+    template <typename T, typename Alloc>
+    bool Vector<T, Alloc>::operator==(value_type &vec)
     {
         if (_size != vec._size)
             return false;
@@ -241,8 +241,8 @@ namespace tinystl
     }
 
     // deep copy
-    template <typename T>
-    Vector<T>::Vector(const Vector<T> &vec)
+    template <typename T, typename Alloc>
+    Vector<T, Alloc>::Vector(const Vector<T, Alloc> &vec)
     {
         _size = vec._size;
         _capacity = vec._capacity;
@@ -255,8 +255,8 @@ namespace tinystl
         }
     }
 
-    template <typename T>
-    void Vector<T>::insert(iterator it, value_type val)
+    template <typename T, typename Alloc>
+    void Vector<T, Alloc>::insert(iterator it, value_type val)
     {
         // int index = it - m_data;
         const size_type index = it - begin();
@@ -293,8 +293,8 @@ namespace tinystl
         ++_size;
     }
 
-    template <typename T>
-    Vector<T> &Vector<T>::operator=(const Vector<T> &vec)
+    template <typename T, typename Alloc>
+    Vector<T, Alloc> &Vector<T, Alloc>::operator=(const Vector<T, Alloc> &vec)
     {
         if (&vec == this)
         {
@@ -302,7 +302,6 @@ namespace tinystl
         }
         if (_size)
         {
-            std::cout << m_data << _size << "frjngnjntg" << std::endl;
             destroy();
             data_allocator::deallocate(m_data, _size);
             m_data = nullptr;

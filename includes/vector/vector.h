@@ -8,7 +8,7 @@
 
 namespace tinystl
 {
-  template <typename T>
+  template <typename T, typename Alloc = Allocator<T>>
   class Vector
   {
   public:
@@ -21,7 +21,8 @@ namespace tinystl
     // typedef Random_Access_Iterator<T, Vector> iterator;
 
     /** allocator */
-    typedef tinystl::Allocator<T> data_allocator;
+    // typedef tinystl::Allocator<T> data_allocator;
+    typedef Alloc data_allocator;
 
     /** constructor */
     typedef tinystl::Construct<T> constructor;
@@ -49,7 +50,7 @@ namespace tinystl
     Vector();
     Vector(const Vector &vec);
     ~Vector();
-    Vector<T> &operator=(const Vector<T> &vec);
+    Vector<T, Alloc> &operator=(const Vector<T, Alloc> &vec);
 
     void push_back(const value_type &vec);
 
