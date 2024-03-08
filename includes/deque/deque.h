@@ -1,5 +1,6 @@
-#ifndef DEUQE
-#define DEQUE
+// wip
+#ifndef TINYSTL_DEQUE_H
+#define TINYSTL_DEQUE_H
 
 
 #endif

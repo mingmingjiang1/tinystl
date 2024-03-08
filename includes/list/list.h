@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef TINYSTL_LIST_H
+#define TINYSTL_LIST_H
 
 #include "iterator/iterator.h"
 #include "adapter.h"

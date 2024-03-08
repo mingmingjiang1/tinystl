@@ -1,5 +1,5 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef TINYSTL_STRING_H
+#define TINYSTL_STRING_H
 
 /**
  * @brief String Class

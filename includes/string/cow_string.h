@@ -1,5 +1,5 @@
-#ifndef COW_STRING_H
-#define COW_STRING_H
+#ifndef TINYSTL_COW_STRING_H
+#define TINYSTL_COW_STRING_H
 
 /**
  * @brief CowString Class

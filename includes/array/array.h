@@ -1,5 +1,5 @@
-#ifndef ARRAY
-#define ARRAY
+#ifndef TINYSTL_ARRAY_H
+#define TINYSTL_ARRAY_H
 
 #include "iterator/iterator.h"
 #include "iterator/iterator_traits.h"
