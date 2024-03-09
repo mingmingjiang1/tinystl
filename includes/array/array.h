@@ -4,7 +4,8 @@
 #include "iterator/iterator.h"
 #include "iterator/iterator_traits.h"
 #include "adapter.h"
-#include "allocator/allocator_copy.h"
+#include "allocator/alloc.h"
+#include "allocator/allocator.h"
 
 namespace tinystl
 {

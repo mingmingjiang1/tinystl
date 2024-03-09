@@ -3,7 +3,8 @@
 
 #include "iterator/iterator.h"
 #include "adapter.h"
-#include "allocator/allocator_copy.h"
+#include "allocator/alloc.h"
+#include "allocator/allocator.h"
 #include <string>
 #include <memory>
 #include <iostream>

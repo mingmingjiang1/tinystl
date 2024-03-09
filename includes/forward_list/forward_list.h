@@ -2,8 +2,10 @@
 #define TINYSTL_FORWARD_LIST_H
 
 #include "adapter.h"
-#include "allocator/allocator_copy.h"
+#include "allocator/alloc.h"
+#include "allocator/allocator.h"
 #include "iterator/iterator.h"
+
 
 namespace tinystl
 {

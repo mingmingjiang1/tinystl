@@ -1,4 +1,3 @@
-# SET(LLVM_SRC /usr/bin/llvm-config)
 add_definitions("-Wall -g")
 SET(CMAKE_C_COMPILER /usr/bin/gcc)
 SET(CMAKE_CXX_COMPILER /usr/bin/g++)
@@ -6,11 +5,11 @@ cmake_minimum_required(VERSION 3.0.0)
 project(tinystl)
 
 # version
-set(MyTinySTL_VERSION_MAJOR 1)
-set(MyTinySTL_VERSION_MINOR 0)
-set(MyTinySTL_VERSION_PATCH 0)
-set(MyTinySTL_VERSION "${MyTinySTL_VERSION_MAJOR}.${MyTinySTL_VERSION_MINOR}.${MyTinySTL_VERSION_PATCH}")
-message(STATUS "The version of this project is: ${MyTinySTL_VERSION}")
+set(tinySTL_VERSION_MAJOR 1)
+set(tinySTL_VERSION_MINOR 0)
+set(tinySTL_VERSION_PATCH 0)
+set(tinySTL_VERSION "${tinySTL_VERSION_MAJOR}.${tinySTL_VERSION_MINOR}.${tinySTL_VERSION_PATCH}")
+message(STATUS "The version of this project is: ${tinySTL_VERSION}")
 
 
 include_directories(${PROJECT_SOURCE_DIR}/includes)

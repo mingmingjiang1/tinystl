@@ -1,82 +1,232 @@
-#ifndef ALLOCATOR_H
-#define ALLOCATOR_H
+#ifndef ALLOC_H
+#define ALLOC_H
 
 #include <iostream>
-// #include "./pool.h"
 
-template <typename T, size_t N = 0>
-class StackAllocator
+namespace tinystl
 {
-public:
-    using value_type = T;
-    using pointer = T *;
-    using const_pointer = const T *;
-    using reference = T &;
-    using const_reference = const T &;
-    using difference_type = ptrdiff_t;
+    static const int ALIGN = 8;
+    static const int MAX_BYTES = 128;
+    static const int FREE_LIST_NUMS = MAX_BYTES / ALIGN; // 16
 
-    StackAllocator() noexcept {}
-    template <class U>
-    StackAllocator(const StackAllocator<U, N> &) noexcept {}
-    ~StackAllocator() noexcept {}
-
-    pointer allocate(size_t n)
+    class Alloc
     {
-        cout << n << max_size() << std::endl;
-        if (n > max_size())
+    public:
+        static void *allocate(size_t n)
         {
-            throw std::bad_alloc();
+            obj **my_free_list;
+            obj *result;
+            if (n > (size_t)MAX_BYTES)
+            {
+                return ::operator new(n);
+            }
+            my_free_list = free_list + FREE_LIST_INDEX(n);
+            result = *my_free_list;
+            if (result == nullptr)
+            {
+                void *r = refill(ROUND_UP(n));
+                return r;
+            }
+            try
+            {
+                // std::cout << " Alloc::allocate(size_t n) " << *my_free_list << " "  << result << std::endl; // *my_free_list是给用户的
+                *my_free_list = result->next;
+            }
+            catch (...)
+            {
+                // std::cout << " catch branch " << std::endl;
+            }
+            return result;
         }
-        if (_start + n > _end)
+        static void deallocate(void *p, size_t n)
         {
-            throw std::bad_alloc();
+            obj *q = (obj *)p;
+            obj **my_free_list;
+            if (n > (size_t)MAX_BYTES)
+            {
+                return ::operator delete(p);
+            }
+            my_free_list = free_list + FREE_LIST_INDEX(n);
+            q->next = *my_free_list;
+            *my_free_list = q;
         }
-        auto result = _start;
-        _start += n;
+
+    private:
+        // 单向链表
+        union obj
+        {
+            union obj *next;
+        };
+
+    private:
+        // 内存池
+        static char *start_free;
+        static char *end_free;
+        static size_t heap_size;
+
+    private:
+        static obj *free_list[FREE_LIST_NUMS];
+        static void *refill(size_t n);
+        static char *chunk_alloc(size_t n, int &blocks);
+
+    private:
+        // 从 1 起步
+        static size_t FREE_LIST_INDEX(size_t bytes)
+        {
+            return ((bytes + ALIGN - 1) / (ALIGN - 1));
+        }
+        static size_t ROUND_UP(size_t bytes)
+        {
+            return ((bytes + ALIGN - 1) & ~(ALIGN - 1));
+        }
+    };
+
+    Alloc::obj *Alloc::free_list[FREE_LIST_NUMS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char *Alloc::start_free = nullptr;
+    char *Alloc::end_free = nullptr;
+    size_t Alloc::heap_size = 0;
+
+    void *Alloc::refill(size_t n)
+    {
+        int blocks = 20;
+        char *chunk = chunk_alloc(n, blocks);
+
+        obj **my_free_list;
+        obj *result;
+        obj *next_obj, *current_obj;
+        if (blocks == 1)
+        {
+            return chunk;
+        }
+        my_free_list = free_list + FREE_LIST_INDEX(n);
+        result = (obj *)chunk;
+        *my_free_list = next_obj = (obj *)(chunk + n);
+        for (int i = 1;; ++i)
+        {
+            current_obj = next_obj;
+            next_obj = (obj *)((char *)next_obj + n);
+            if (blocks - 1 == i)
+            {
+                current_obj->next = nullptr;
+                break;
+            }
+            else
+            {
+                current_obj->next = next_obj;
+            }
+        }
         return result;
     }
 
-    pointer allocate()
+    char *Alloc::chunk_alloc(size_t n, int &blocks)
     {
-        // return
-        // _buf = ;
-        // return static_cast<pointer>(::operator new(sizeof(T))); // 堆上分配
+        size_t bytes_left = end_free - start_free;
+        size_t total_bytes = n * blocks;
+        char *result;
+        if (bytes_left >= total_bytes)
+        {
+            result = start_free;
+            start_free += total_bytes;
+            return result;
+        }
+        else if (bytes_left >= n)
+        {
+            blocks = bytes_left / n;
+            total_bytes = n * blocks;
+            result = start_free;
+            start_free += total_bytes;
+            return result;
+        }
+        else
+        {
+            size_t bytes_to_get = 2 * total_bytes + ROUND_UP(heap_size >> 4);
+            if (bytes_left > 0)
+            {
+                obj **my_free_list = free_list + FREE_LIST_INDEX(bytes_left);
+                ((obj *)start_free)->next = *my_free_list;
+                *my_free_list = (obj *)start_free;
+            }
+            start_free = (char *)std::malloc(bytes_to_get);
+            if (start_free == nullptr)
+            {
+                obj **my_free_list;
+                obj *p;
+                for (int i = n + ALIGN; i <= MAX_BYTES; i += ALIGN)
+                {
+                    my_free_list = free_list + FREE_LIST_INDEX(i);
+                    p = *my_free_list;
+                    if (p != nullptr)
+                    {
+                        *my_free_list = p->next;
+                        start_free = (char *)p;
+                        end_free = (char *)p + i;
+                        return chunk_alloc(n, blocks);
+                    }
+                }
+                end_free = nullptr;
+                start_free = (char *)::operator new(bytes_to_get);
+            }
+            heap_size += bytes_to_get;
+            end_free = start_free + bytes_to_get;
+            return chunk_alloc(n, blocks);
+        }
     }
 
-    void deallocate()
+    template <typename T>
+    class Allocator
     {
-        // if (p == nullptr)
-        //     return;
-    }
+    public:
+        typedef T value_type;
+        typedef T *pointer;
+        typedef const T *const_pointer;
+        typedef T &reference;
+        typedef const T &const_reference;
+        typedef size_t size_type;
+        typedef ptrdiff_t difference_type;
 
-    template <class U, class... Args>
-    void construct(U *p, Args &&...args)
-    {
-        new (p) U(std::forward<Args>(args)...);
-    }
+        static T *allocate(size_t n)
+        {
+            return (n == 0) ? 0 : (T *)Alloc::allocate(n * sizeof(T));
+        }
+        static T *allocate()
+        {
+            return (T *)Alloc::allocate(sizeof(T));
+        }
+        static void deallocate(T *p, size_t n)
+        {
+            if (n != 0)
+            {
+                Alloc::deallocate(p, n * sizeof(T));
+            }
+        }
+        static void deallocate(T *p)
+        {
+            // p->~T();
+            Alloc::deallocate(p, sizeof(T));
+        }
 
-    void destroy(pointer p) { p->~T(); }
+        static void construct(T *ptr)
+        {
+            tinystl::construct(ptr);
+        }
 
-    size_t max_size() const noexcept { return N; }
+        static void construct(T *ptr, const T &value)
+        {
+            tinystl::construct(ptr, value);
+        }
 
-private:
-    // alignas(alignof(T))
-    char _buf[N * sizeof(T)];
-    // MemPool<sizeof(T) * N, 1> mp;
-    pointer _start = reinterpret_cast<pointer>(_buf);
-    pointer _end = reinterpret_cast<pointer>(_buf + sizeof(_buf));
-};
+        static void construct(T *ptr, T &&value)
+        {
+            tinystl::construct(ptr, tinystl::move(value));
+        }
 
-template <typename T, typename U, size_t N>
-bool operator==(const StackAllocator<T, N> &, const StackAllocator<U, N> &)
-{
-    return true;
-}
+        template <class... Args>
+        static void construct(T *ptr, Args &&...args)
+        {
+            tinystl::construct(ptr, tinystl::forward<Args>(args)...);
+        }
+    };
 
-template <typename T, typename U, size_t N>
-bool operator!=(const StackAllocator<T, N> &lhs, const StackAllocator<U, N> &rhs)
-{
-    return !(lhs == rhs);
 }
 
 #endif
