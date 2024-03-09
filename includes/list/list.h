@@ -14,54 +14,9 @@
  *
  */
 
-class NotElementException : public std::exception
-{
-public:
-	NotElementException(const char *info = "没有元素") : errinfo(info) {}
-	~NotElementException() throw() {}
-	const char *what() throw()
-	{
-		return errinfo.c_str();
-	}
-
-private:
-	std::string errinfo;
-};
-
-class InvalidIteratorException : public std::exception
-{
-public:
-	InvalidIteratorException(const char *info = "无效迭代器指针") : errinfo(info) {}
-	~InvalidIteratorException() throw() {}
-	const char *what() throw()
-	{
-		return errinfo.c_str();
-	}
-
-private:
-	std::string errinfo;
-};
 
 namespace tinystl
 {
-	template <typename T>
-	class NodeAlloc
-	{
-	public:
-		static T *allocate()
-		{
-			return static_cast<T *>(::operator new(sizeof(T)));
-			;
-		}
-
-		static void deallocate(T *ptr)
-		{
-			if (ptr == nullptr)
-				return;
-			::operator delete(ptr); // 一定要用这个，用new T()，会调用构造函数，会自动初始化所有数据成员
-		}
-	};
-
 	template <typename T, typename Alloc = Allocator<T>>
 	class List
 	{

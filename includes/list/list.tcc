@@ -269,7 +269,6 @@ namespace tinystl
     {
         if (empty())
         {
-            throw NotElementException();
         }
         List<T, Alloc>::node_ptr node = static_cast<List<T, Alloc>::node_ptr>(head->next);
         head->next->next->prev = head;
@@ -283,7 +282,7 @@ namespace tinystl
     {
         if (empty())
         {
-            throw NotElementException();
+            // throw NotElementException();
         }
         node_ptr node = static_cast<node_ptr>(tail->prev);
         tail->prev->prev->next = tail;
