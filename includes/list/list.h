@@ -1,10 +1,10 @@
 #ifndef TINYSTL_LIST_H
 #define TINYSTL_LIST_H
 
-#include "iterator/iterator.h"
-#include "adapter.h"
-#include "allocator/alloc.h"
-#include "allocator/allocator.h"
+#include "../iterator/iterator.h"
+#include "../adapter.h"
+#include "../allocator/alloc.h"
+#include "../allocator/allocator.h"
 #include <string>
 #include <memory>
 #include <iostream>

@@ -1,11 +1,11 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "iterator/iterator.h"
-#include "iterator/iterator_traits.h"
-#include "adapter.h"
-#include "allocator/allocator.h"
-#include "allocator/alloc.h"
+#include "../iterator/iterator.h"
+#include "../iterator/iterator_traits.h"
+#include "../adapter.h"
+#include "../allocator/allocator.h"
+#include "../allocator/alloc.h"
 
 namespace tinystl
 {

@@ -1,10 +1,10 @@
 #ifndef TINYSTL_FORWARD_LIST_H
 #define TINYSTL_FORWARD_LIST_H
 
-#include "adapter.h"
-#include "allocator/alloc.h"
-#include "allocator/allocator.h"
-#include "iterator/iterator.h"
+#include "../adapter.h"
+#include "../allocator/alloc.h"
+#include "../allocator/allocator.h"
+#include "../iterator/iterator.h"
 
 
 namespace tinystl

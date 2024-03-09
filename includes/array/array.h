@@ -1,11 +1,11 @@
 #ifndef TINYSTL_ARRAY_H
 #define TINYSTL_ARRAY_H
 
-#include "iterator/iterator.h"
-#include "iterator/iterator_traits.h"
-#include "adapter.h"
-#include "allocator/alloc.h"
-#include "allocator/allocator.h"
+#include "../iterator/iterator.h"
+#include "../iterator/iterator_traits.h"
+#include "../adapter.h"
+#include "../allocator/alloc.h"
+#include "../allocator/allocator.h"
 
 namespace tinystl
 {

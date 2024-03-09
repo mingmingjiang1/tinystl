@@ -27,7 +27,7 @@ public:
         delete[] value_;
     }
 
-    void fillVal(int val, int size)
+    void fillVal(int, int size)
     {
         value_ = new int[size];
         srand((unsigned)time(NULL));

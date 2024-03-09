@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <iostream>
 #include <assert.h>
-#include "./list/node.h"
+#include "../list/node.h"
 
 
 
